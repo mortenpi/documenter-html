@@ -10,3 +10,34 @@ pre, code {
     padding: 1px;
     border: 1px solid black;
 }*/
+
+nav {
+    position: absolute;
+    width: 300px;
+    top: 0;
+    left: 0;
+}
+
+article {
+    margin-left: 300px;
+}
+
+article > header {
+    border-bottom: 1px solid gray;
+}
+
+article > footer {
+    border-top: 1px solid gray;
+}
+
+@media screen and (max-device-width: 480px) {
+    nav {
+        background-color: red;
+        position: relative;
+        width: 100%;
+    }
+
+    article {
+        margin-left: auto;
+    }
+}
