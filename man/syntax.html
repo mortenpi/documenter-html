@@ -1,0 +1,121 @@
+<html><head><title>Documenter.jl</title><link href="style.css" rel="stylesheet" type="text/css"/></head><body><nav><a href="http://julialang.org/"><img class="logo" src="http://docs.julialang.org/en/release-0.4/_static/julia-logo.svg"/></a><ul><li><a href="index.html">index.md</a></li><li>Manual<ul><li><a href="man/guide.html">man/guide.md</a></li><li><a href="man/examples.html">man/examples.md</a></li><li><a href="man/syntax.html">man/syntax.md</a></li><li><a href="man/doctests.html">man/doctests.md</a></li><li><a href="man/hosting.html">man/hosting.md</a></li><li><a href="man/latex.html">man/latex.md</a></li><li><a href="man/internals.html">man/internals.md</a></li></ul></li><li>Library<ul><li><a href="lib/public.html">lib/public.md</a></li><li><a href="lib/internals.html">lib/internals.md</a></li></ul></li></ul></nav><article><header>Header stuff</header><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>This section of the manual describes the syntax used by Documenter to build documentation.</p><pre class="ukwnode">Documenter.Documents.ContentsNode</pre><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>Splice one or more docstrings into a document in place of the code block, i.e.</p><code>```@docs
+Documenter
+makedocs
+deploydocs
+```</code><p>This block type is evaluated within the <code>CurrentModule</code> module if defined, otherwise within <code>current_module()</code>, and so each object listed in the block should be visible from that module. Undefined objects will raise warnings during documentation generation and cause the code block to be rendered in the final document unchanged.</p><p>Objects may not be listed more than once within the document. When duplicate objects are detected an error will be raised and the build process will be terminated.</p><p>To ensure that all docstrings from a module are included in the final document the <code>modules</code> keyword for <a href="../lib/public.html#Documenter.makedocs"><code>makedocs</code></a> can be set to the desired module or modules, i.e.</p><code>makedocs(
+    modules = [Documenter],
+)</code><p>which will cause any unlisted docstrings to raise warnings when <a href="../lib/public.html#Documenter.makedocs"><code>makedocs</code></a> is called. If <code>modules</code> is not defined then no warnings are printed, even if a document has missing docstrings.</p><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>Automatically splices all docstrings from the provided modules in place of the code block. This is equivalent to manually adding all the docstrings in a <code>@docs</code> block.</p><code>```@autodocs
+Modules = [Foo, Bar]
+Order   = [:function, :type]
+```</code><p>The above <code>@autodocs</code> block adds all the docstrings found in modules <code>Foo</code> and <code>Bar</code> that refer to functions or types to the document.</p><p>Each module is added in order and so all docs from <code>Foo</code> will appear before those of <code>Bar</code>. Possible values for the <code>Order</code> vector are</p><ul><li><code>:module</code></li><li><code>:constant</code></li><li><code>:type</code></li><li><code>:function</code></li><li><code>:macro</code></li></ul><p>If no <code>Order</code> is provided then the order listed above is used.</p><p>When a potential docstring is found in one of the listed modules, but does not match any value from <code>Order</code> then it will be omitted from the document. Hence <code>Order</code> acts as a basic filter as well as sorter.</p><p><strong>Note</strong></p><p>When more complex sorting and filtering is needed then use <code>@docs</code> to define it explicitly.</p><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>Used in markdown links as the URL to tell Documenter to generate a cross-reference automatically. The text part of the link can be a docstring, header name, or GitHub PR/Issue number.</p><code># Syntax
+
+... [`makedocs`](@ref) ...
+
+# Functions
+
+```@docs
+makedocs
+```
+
+... [Syntax](@ref) ...
+
+... [#42](@ref) ...</code><p>Plain text in the &quot;text&quot; part of a link will either cross-reference a header, or, when it is a number preceded by a <code>#</code>, a GitHub issue/pull request. Text wrapped in backticks will cross-reference a docstring from a <code>@docs</code> block.</p><p><code>@ref</code>s may refer to docstrings or headers on different pages as well as the current page using the same syntax.</p><p>Note that depending on what the <code>CurrentModule</code> is set to, a docstring <code>@ref</code> may need to be prefixed by the module which defines it.</p><p><strong>Duplicate Headers</strong></p><p>In some cases a document may contain multiple headers with the same name, but on different pages or of different levels. To allow <code>@ref</code> to cross-reference a duplicate header it must be given a name as in the following example</p><code># [Header](@id my_custom_header_name)
+
+...
+
+## Header
+
+... [Custom Header](@ref my_custom_header_name) ...</code><p>The link that wraps the named header is removed in the final document. The text for a named <code>@ref ...</code> does not need to match the header that it references. Named <code>@ref ...</code>s may refer to headers on different pages in the same way as unnamed ones do.</p><p>Duplicate docstring references do not occur since splicing the same docstring into a document more than once is disallowed.</p><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>This block type is used to define metadata key/value pairs that can be used elsewhere in the page. Currently <code>CurrentModule</code> and <code>DocTestSetup</code> are the only recognised keys.</p><code>```@meta
+CurrentModule = FooBar
+DocTestSetup  = quote
+    using MyPackage
+end
+```</code><p>Note that <code>@meta</code> blocks are always evaluated with the <code>current_module()</code>, which is typically <code>Main</code>.</p><p>See <a href="doctests.html#Setup-Code-1">Setup Code</a> section of the Doctests page for an explanation of <code>DocTestSetup</code>.</p><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>Generates a list of links to docstrings that have been spliced into a document. Valid settings are <code>Pages</code>, <code>Modules</code>, and <code>Order</code>. For example:</p><code>```@index
+Pages   = [&quot;foo.md&quot;]
+Modules = [Foo, Bar]
+Order   = [:function, :type]
+```</code><p>When <code>Pages</code> or <code>Modules</code> are not provided then all pages or modules are included. <code>Order</code> defaults to</p><code>[:module, :constant, :type, :function, :macro]</code><p>if not specified. <code>Order</code> and <code>Modules</code> behave the same way as in <a href="syntax.html#@autodocs-block-1"><code>@autodocs</code> block</a>s and filter out docstrings that do not match one of the modules or categories specified.</p><p>Note that the values assigned to <code>Pages</code>, <code>Modules</code>, and <code>Order</code> may be any valid Julia code and thus can be something more complex that an array literal if required, i.e.</p><code>```@index
+Pages = map(file -&gt; joinpath(&quot;man&quot;, file), readdir(&quot;man&quot;))
+```</code><p>It should be noted though that in this case <code>Pages</code> may not be sorted in the order that is expected by the user. Try to stick to array literals as much as possible.</p><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>Generates a nested list of links to document sections. Valid settings are <code>Pages</code> and <code>Depth</code>.</p><code>```@contents
+Pages = [&quot;foo.md&quot;]
+Depth = 5
+```</code><p>As with <code>@index</code> if <code>Pages</code> is not provided then all pages are included. The default <code>Depth</code> value is <code>2</code>.</p><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>Evaluates the code block and inserts the result into the final document along with the original source code.</p><code>```@example
+a = 1
+b = 2
+a + b
+```</code><p>The above <code>@example</code> block will splice the following into the final document</p><code>```julia
+a = 1
+b = 2
+a + b
+```
+
+```
+3
+```</code><p>Leading and trailing newlines are removed from the rendered code blocks. Trailing whitespace on each line is also removed.</p><p><strong>Hiding Source Code</strong></p><p>Code blocks may have some content that does not need to be displayed in the final document. <code># hide</code> comments can be appended to lines that should not be rendered, i.e.</p><code>```@example
+srand(1) # hide
+A = rand(3, 3)
+b = [1, 2, 3]
+A \ b
+```</code><p>Note that appending <code># hide</code> to every line in an <code>@example</code> block will result in the block being hidden in the rendered document. The results block will still be rendered though.</p><p><strong><code>STDOUT</code> and <code>STDERR</code></strong></p><p>The Julia output streams are redirected to the results block when evaluating <code>@example</code> blocks in the same way as when running doctest code blocks.</p><p><strong><code>nothing</code> Results</strong></p><p>When the <code>@example</code> block evaluates to <code>nothing</code> then the second block is not displayed. Only the source code block will be shown in the rendered document. Note that if any output from either <code>STDOUT</code> or <code>STDERR</code> is captured then the results block will be displayed even if <code>nothing</code> is returned.</p><p><strong>Named <code>@example</code> Blocks</strong></p><p>By default <code>@example</code> blocks are run in their own anonymous <code>Module</code>s to avoid side-effects between blocks. To share the same module between different blocks on a page the <code>@example</code> can be named with the following syntax</p><code>```@example 1
+a = 1
+```
+
+```@example 1
+println(a)
+```</code><p>The name can be any text, not just integers as in the example above, i.e. <code>@example foo</code>.</p><p>Named <code>@example</code> blocks can be useful when generating documentation that requires intermediate explanation or multimedia such as plots as illustrated in the following example</p><code>First we define some functions
+
+```@example 1
+using PyPlot # hide
+f(x) = sin(2x) + 1
+g(x) = cos(x) - x
+```
+
+and then we plot `f` over the interval from ``-π`` to ``π``
+
+```@example 1
+x = linspace(-π, π)
+plot(x, f(x), color = &quot;red&quot;)
+savefig(&quot;f-plot.svg&quot;); nothing # hide
+```
+
+![](f-plot.svg)
+
+and then we do the same with `g`
+
+```@example 1
+plot(x, g(x), color = &quot;blue&quot;)
+savefig(&quot;g-plot.svg&quot;); nothing # hide
+```
+
+![](g-plot.svg)</code><p>Note that <code>@example</code> blocks are evaluated within the directory of <code>build</code> where the file will be rendered . This means than in the above example <code>savefig</code> will output the <code>.svg</code> files into that directory. This allows the images to be easily referenced without needing to worry about relative paths.</p><p><code>@example</code> blocks automatically define <code>ans</code> which, as in the Julia REPL, is bound to the value of the last evaluated expression. This can be useful in situations such as the following one where where binding the object returned by <code>plot</code> to a named variable would look out of place in the final rendered documentation:</p><code>```@example
+using Gadfly # hide
+plot([sin, x -&gt; 2sin(x) + x], -2π, 2π)
+draw(SVG(&quot;plot.svg&quot;, 6inch, 4inch), ans); nothing # hide
+```
+
+![](plot.svg)</code><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>These are similar to <code>@example</code> blocks, but adds a <code>julia&gt;</code> prompt before each toplevel expression. <code>;</code> and <code># hide</code> syntax may be used in <code>@repl</code> blocks in the same way as in the Julia REPL and <code>@example</code> blocks.</p><code>```@repl
+a = 1
+b = 2
+a + b
+```</code><p>will generate</p><code>```julia
+julia&gt; a = 1
+1
+
+julia&gt; b = 2
+2
+
+julia&gt; a + b
+3
+```</code><p>Named <code>@repl &lt;name&gt;</code> blocks behave in the same way as named <code>@example &lt;name&gt;</code> blocks.</p><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>Evaluates the contents of the block and inserts the resulting value into the final document.</p><p>In the following example we use the PyPlot package to generate a plot and display it in the final document.</p><code>```@eval
+using PyPlot
+
+x = linspace(-π, π)
+y = sin(x)
+
+plot(x, y, color = &quot;red&quot;)
+savefig(&quot;plot.svg&quot;)
+
+nothing
+```
+
+![](plot.svg)</code><p>Note that each <code>@eval</code> block evaluates its contents within a separate module. When evaluating each block the present working directory, <code>pwd</code>, is set to the directory in <code>build</code> where the file will be written to.</p><p>Also, instead of returning <code>nothing</code> in the example above we could have returned a new <code>Markdown.Image</code> object directly. This can be more appropriate when the filename is not known until evaluation of the block itself.</p><p><strong>Note</strong></p><p>In most cases <code>@example</code> is preferred over <code>@eval</code>. Just like in normal Julia code where <code>eval</code> should be only be considered as a last resort, <code>@eval</code> should be treated in the same way.</p><footer>Footer stuff</footer></article></body></html>

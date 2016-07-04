@@ -41,3 +41,9 @@ article > footer {
         margin-left: auto;
     }
 }
+
+.ukwnode {
+    margin: 20px;
+    padding: 20px;
+    border: 3px dashed blueviolet;
+}
