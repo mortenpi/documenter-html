@@ -6,6 +6,7 @@ git clone git@github.com:mortenpi/documenter-html.git gh-pages.dir/
 cd gh-pages.dir/
 git checkout gh-pages
 
+rm -R *
 cp -R ../build/* .
 
 git add --all

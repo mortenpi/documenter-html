@@ -1,20 +1,37 @@
-import Documenter: Formats
-
-function build end
+using Documenter
+import Documenter: Builder, Selectors, Formats
+import Documenter.Builder: SetupBuildDirectory
+import Documenter: Selectors
 
 include("lib/HTMLWriter.jl")
 
-#=import Documenter.Documents: Document, addpage!
-function addpage!(doc::Document, dst::AbstractString)
-    page = Page(src, dst)
-    doc.internal.pages[src] = page
-end=#
+pages = [
+    "index.md"
+    "Manual" => [
+        "man/guide.md"
+        "man/examples.md"
+        "man/syntax.md"
+        "man/doctests.md"
+        "man/hosting.md"
+        "man/latex.md"
+        "man/internals.md"
+    ]
+    "Library" => [
+        "lib/public.md"
+        "lib/internals.md"
+    ]
+]
+
 
 println("Creating the document...")
-doc = Documenter.Documents.Document()
-Documenter.Documents.addpage!(doc, "src/index.md", "index")
-Documenter.Documents.addpage!(doc, "src/guide.md", "guide")
-
-println("Build starting...")
-build(doc)
-println("Build complete.")
+ispath("build") && rm("build", recursive=true)
+doc = Documenter.Documents.Document(
+    source = relpath(joinpath(Pkg.dir("Documenter"), "docs/src")),
+    format = Formats.HTML,
+    modules = Documenter,
+    pages = pages
+)
+@show doc.user.source
+cd(doc.user.root) do
+    Selectors.dispatch(Builder.DocumentPipeline, doc)
+end
