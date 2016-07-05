@@ -44,6 +44,20 @@ article > footer {
 
 .ukwnode {
     margin: 20px;
-    padding: 20px;
-    border: 3px dashed blueviolet;
+    padding-left: 20px;
+    padding-right: 20px;
+    border: 2px solid black;
+    background-color: lightblue;
+}
+
+code {
+    background-color: lightgray;
+}
+
+code pre {
+    background: inherit;
+}
+
+.ukwnode h1 {
+    font-size: medium;
 }

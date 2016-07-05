@@ -1,42 +1,47 @@
-<html><head><title>Documenter.jl</title><link href="style.css" rel="stylesheet" type="text/css"/></head><body><nav><a href="http://julialang.org/"><img class="logo" src="http://docs.julialang.org/en/release-0.4/_static/julia-logo.svg"/></a><ul><li><a href="index.html">index.md</a></li><li>Manual<ul><li><a href="man/guide.html">man/guide.md</a></li><li><a href="man/examples.html">man/examples.md</a></li><li><a href="man/syntax.html">man/syntax.md</a></li><li><a href="man/doctests.html">man/doctests.md</a></li><li><a href="man/hosting.html">man/hosting.md</a></li><li><a href="man/latex.html">man/latex.md</a></li><li><a href="man/internals.html">man/internals.md</a></li></ul></li><li>Library<ul><li><a href="lib/public.html">lib/public.md</a></li><li><a href="lib/internals.html">lib/internals.md</a></li></ul></li></ul></nav><article><header>Header stuff</header><pre class="ukwnode">Documenter.Anchors.Anchor</pre><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>Documenter is a registered package and so can be installed via <code>Pkg.add</code>.</p><code>Pkg.add(&quot;Documenter&quot;)</code><p>This package supports Julia <code>0.4</code> and <code>0.5</code>.</p><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>Documenter is designed to do one thing – combine markdown files and inline docstrings from Julia&#39;s docsystem into a single inter-linked document. What follows is a step-by-step guide to creating a simple document.</p><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>Firstly, we need a Julia module to document. This could be a package generated via <code>PkgDev.generate</code> or a single <code>.jl</code> script. For this guide we&#39;ll be using a package called <code>Example.jl</code> that has the following directory layout:</p><code>Example/
+<html><head><title>Documenter.jl</title><link href="../style.css" rel="stylesheet" type="text/css"/><link href="../highlight.css" rel="stylesheet" type="text/css"/><script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script><script src="../mathjaxhelper.js"></script></head><body><nav><a href="http://julialang.org/"><img class="logo" src="http://docs.julialang.org/en/release-0.4/_static/julia-logo.svg"/></a><ul><li><a href="../index.html">index.md</a></li><li>Manual<ul><li><a href="guide.html">man/guide.md</a></li><li><a href="examples.html">man/examples.md</a></li><li><a href="syntax.html">man/syntax.md</a></li><li><a href="doctests.html">man/doctests.md</a></li><li><a href="hosting.html">man/hosting.md</a></li><li><a href="latex.html">man/latex.md</a></li><li><a href="internals.html">man/internals.md</a></li></ul></li><li>Library<ul><li><a href="../lib/public.html">lib/public.md</a></li><li><a href="../lib/internals.html">lib/internals.md</a></li></ul></li></ul></nav><article><header>Header stuff</header><a id="Package-Guide-1"></a><a id="Installation-1"></a><p>Documenter is a registered package and so can be installed via <code class="asdf">Pkg.add</code>.</p><code class="language-julia"><pre><span class="n">Pkg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;</span><span class="s">Documenter</span><span class="s">&quot;</span><span class="p">)</span><span>
+</span></pre></code><p>This package supports Julia <code class="asdf">0.4</code> and <code class="asdf">0.5</code>.</p><a id="Usage-1"></a><p>Documenter is designed to do one thing – combine markdown files and inline docstrings from Julia&#39;s docsystem into a single inter-linked document. What follows is a step-by-step guide to creating a simple document.</p><a id="Setting-up-the-folder-structure-1"></a><p>Firstly, we need a Julia module to document. This could be a package generated via <code class="asdf">PkgDev.generate</code> or a single <code class="asdf">.jl</code> script. For this guide we&#39;ll be using a package called <code class="asdf">Example.jl</code> that has the following directory layout:</p><code class="language-none"><pre>Example/
     src/
         Example.jl
-    ...</code><p>Note that the <code>...</code> just represent unimportant files and folders.</p><p>We must decide on a location where we&#39;d like to store the documentation for this package. It&#39;s recommended to use a folder named <code>docs/</code> in the toplevel of the package, like so</p><code>Example/
+    ...</pre></code><p>Note that the <code class="asdf">...</code> just represent unimportant files and folders.</p><p>We must decide on a location where we&#39;d like to store the documentation for this package. It&#39;s recommended to use a folder named <code class="asdf">docs/</code> in the toplevel of the package, like so</p><code class="language-none"><pre>Example/
     docs/
         ...
     src/
         Example.jl
-    ...</code><p>Inside the <code>docs/</code> folder we need to add two things. A source folder which will contain the markdown files that will be used to build the finished document and a Julia script that will be used to control the build process. The following names are recommended</p><code>docs/
+    ...</pre></code><p>Inside the <code class="asdf">docs/</code> folder we need to add two things. A source folder which will contain the markdown files that will be used to build the finished document and a Julia script that will be used to control the build process. The following names are recommended</p><code class="language-none"><pre>docs/
     src/
-    make.jl</code><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>With our <code>docs/</code> directory now setup we&#39;re going to build our first document. It&#39;ll just be a single empty file at the moment, but we&#39;ll be adding to it later on.</p><p>Add the following to your <code>make.jl</code> file</p><code>using Documenter, Example
-
-makedocs()</code><p>This assumes you&#39;ve installed Documenter as discussed in <a href="guide.html#Installation-1">Installation</a> and that your Examples package can be found by Julia.</p><p>Now add an <code>index.md</code> file to the <code>src/</code> directory. The name has no particular significance though and you may name it whatever you like. We&#39;ll stick to <code>index.md</code> for this guide.</p><p>Leave the newly added file empty and then run the following command from the <code>docs/</code> directory</p><code>$ julia make.jl</code><p>Note that <code>$</code> just represents the prompt character. You don&#39;t need to type that.</p><p>If you&#39;d like to see the output from this command in color use</p><code>$ julia --color=yes make.jl</code><p>When you run that you should see the following output</p><code>Documenter: setting up build directory.
+    make.jl</pre></code><a id="Building-an-empty-document-1"></a><p>With our <code class="asdf">docs/</code> directory now setup we&#39;re going to build our first document. It&#39;ll just be a single empty file at the moment, but we&#39;ll be adding to it later on.</p><p>Add the following to your <code class="asdf">make.jl</code> file</p><code class="language-julia"><pre><span class="k">using</span><span> </span><span class="n">Documenter</span><span class="p">,</span><span> </span><span class="n">Example</span><span>
+</span><span>
+</span><span class="n">makedocs</span><span class="p">(</span><span class="p">)</span><span>
+</span></pre></code><p>This assumes you&#39;ve installed Documenter as discussed in <a href="guide.html#Installation-1">Installation</a> and that your Examples package can be found by Julia.</p><p>Now add an <code class="asdf">index.md</code> file to the <code class="asdf">src/</code> directory. The name has no particular significance though and you may name it whatever you like. We&#39;ll stick to <code class="asdf">index.md</code> for this guide.</p><p>Leave the newly added file empty and then run the following command from the <code class="asdf">docs/</code> directory</p><code class="language-sh"><pre><span>$</span><span> </span><span>julia</span><span> </span><span>make.jl</span><span>
+</span></pre></code><p>Note that <code class="asdf">$</code> just represents the prompt character. You don&#39;t need to type that.</p><p>If you&#39;d like to see the output from this command in color use</p><code class="language-sh"><pre><span>$</span><span> </span><span>julia</span><span> </span><span>--color</span><span class="o">=</span><span>yes</span><span> </span><span>make.jl</span><span>
+</span></pre></code><p>When you run that you should see the following output</p><code class="language-none"><pre>Documenter: setting up build directory.
 Documenter: redirecting output streams.
 Documenter: expanding markdown templates.
 Documenter: building cross-references.
 Documenter: running document checks.
 Documenter: restoring output streams.
 Documenter: rendering document.
-Documenter: copying assets to build directory.</code><p>The <code>docs/</code> folder should contain a new directory – called <code>build/</code>. It&#39;s structure should look like the following</p><code>build/
+Documenter: copying assets to build directory.</pre></code><p>The <code class="asdf">docs/</code> folder should contain a new directory – called <code class="asdf">build/</code>. It&#39;s structure should look like the following</p><code class="language-none"><pre>build/
     assets/
         Documenter.css
         mathjaxhelper.js
-    index.md</code><p>At the moment <code>build/index.md</code> should be empty since <code>src/index.md</code> is empty.</p><p>At this point you can add some text to <code>src/index.md</code> and rerun the <code>make.jl</code> file to see the changes if you&#39;d like to.</p><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>Next we&#39;ll splice a docstring defined in the <code>Example</code> module into the <code>index.md</code> file. To do this first document a function in that module:</p><code>module Example
-
-export func
-
-&quot;&quot;&quot;
+    index.md</pre></code><p>At the moment <code class="asdf">build/index.md</code> should be empty since <code class="asdf">src/index.md</code> is empty.</p><p>At this point you can add some text to <code class="asdf">src/index.md</code> and rerun the <code class="asdf">make.jl</code> file to see the changes if you&#39;d like to.</p><a id="Adding-some-docstrings-1"></a><p>Next we&#39;ll splice a docstring defined in the <code class="asdf">Example</code> module into the <code class="asdf">index.md</code> file. To do this first document a function in that module:</p><code class="language-julia"><pre><span class="k">module</span><span> </span><span class="n">Example</span><span>
+</span><span>
+</span><span class="k">export</span><span> </span><span class="n">func</span><span>
+</span><span>
+</span><span class="s">&quot;</span><span class="s">&quot;</span><span class="s">&quot;</span><span class="s">
     func(x)
 
 Returns double the number `x` plus `1`.
-&quot;&quot;&quot;
-func(x) = 2x + 1
-
-end</code><p>Then in the <code>src/index.md</code> file add the following</p><code># Example.jl Documentation
+</span><span class="s">&quot;</span><span class="s">&quot;</span><span class="s">&quot;</span><span>
+</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span> </span><span class="o">=</span><span> </span><span class="mi">2</span><span class="n">x</span><span> </span><span class="o">+</span><span> </span><span class="mi">1</span><span>
+</span><span>
+</span><span class="k">end</span><span>
+</span></pre></code><p>Then in the <code class="asdf">src/index.md</code> file add the following</p><code class="language-markdown"><pre># Example.jl Documentation
 
 ```@docs
 func(x)
-```</code><p>When we next run <code>make.jl</code> the docstring for <code>Example.func(x)</code> should appear in place of the <code>@docs</code> block in <code>build/index.md</code>. Note that <em>more than one</em> object can be referenced inside a <code>@docs</code> block – just place each one on a separate line.</p><p>Note that the module in which a <code>@docs</code> block is evaluated is determined by <code>current_module()</code> and so will more than likely be <code>Main</code>. This means that each object listed in the block must be visible there. The module can be changed to something else on a per-page basis with a <code>@meta</code> block as in the following</p><code># Example.jl Documentation
+```</pre></code><p>When we next run <code class="asdf">make.jl</code> the docstring for <code class="asdf">Example.func(x)</code> should appear in place of the <code class="asdf">@docs</code> block in <code class="asdf">build/index.md</code>. Note that <em>more than one</em> object can be referenced inside a <code class="asdf">@docs</code> block – just place each one on a separate line.</p><p>Note that the module in which a <code class="asdf">@docs</code> block is evaluated is determined by <code class="asdf">current_module()</code> and so will more than likely be <code class="asdf">Main</code>. This means that each object listed in the block must be visible there. The module can be changed to something else on a per-page basis with a <code class="asdf">@meta</code> block as in the following</p><code class="language-markdown"><pre># Example.jl Documentation
 
 ```@meta
 CurrentModule = Documenter
@@ -44,28 +49,30 @@ CurrentModule = Documenter
 
 ```@docs
 func(x)
-```</code><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>In some cases you may want to include a docstring for a <code>Method</code> that extends a <code>Function</code> from a different module – such as <code>Base</code>. In the following example we extend <code>Base.length</code> with a new definition for type <code>T</code> and also add a docstring:</p><code>type T
-    # ...
-end
-
-&quot;&quot;&quot;
+```</pre></code><a id="Filtering-Included-Docstrings-1"></a><p>In some cases you may want to include a docstring for a <code class="asdf">Method</code> that extends a <code class="asdf">Function</code> from a different module – such as <code class="asdf">Base</code>. In the following example we extend <code class="asdf">Base.length</code> with a new definition for type <code class="asdf">T</code> and also add a docstring:</p><code class="language-julia"><pre><span class="k">type</span><span class="nc"> </span><span class="nc">T</span><span>
+</span><span>    </span><span class="c"># ...</span><span>
+</span><span class="k">end</span><span>
+</span><span>
+</span><span class="s">&quot;</span><span class="s">&quot;</span><span class="s">&quot;</span><span class="s">
 Custom `length` docs for `T`.
-&quot;&quot;&quot;
-Base.length(::T) = 1</code><p>When trying to include this docstring with</p><code>```@docs
+</span><span class="s">&quot;</span><span class="s">&quot;</span><span class="s">&quot;</span><span>
+</span><span class="n">Base</span><span class="o">.</span><span class="n">length</span><span class="p">(</span><span class="p">:</span><span class="p">:</span><span class="n">T</span><span class="p">)</span><span> </span><span class="o">=</span><span> </span><span class="mi">1</span><span>
+</span></pre></code><p>When trying to include this docstring with</p><code class="language-markdown"><pre>```@docs
 length
-```</code><p>all the docs for <code>length</code> will be included – even those from other modules. There are two ways to solve this problem. Either include the type in the signature with</p><code>```@docs
+```</pre></code><p>all the docs for <code class="asdf">length</code> will be included – even those from other modules. There are two ways to solve this problem. Either include the type in the signature with</p><code class="language-markdown"><pre>```@docs
 length(::T)
-```</code><p>or declare the specific modules that <a href="../lib/public.html#Documenter.makedocs"><code>makedocs</code></a> should include with</p><code>makedocs(
-    # options
-    modules = [MyModule]
-)</code><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>It may be necessary to refer to a particular docstring or section of your document from elsewhere in the document. To do this we can make use of Documenter&#39;s cross-referencing syntax which looks pretty similar to normal markdown link syntax. Replace the contents of <code>src/index.md</code> with the following</p><code># Example.jl Documentation
+```</pre></code><p>or declare the specific modules that <a href="../lib/public.html#Documenter.makedocs"><code class="asdf">makedocs</code></a> should include with</p><code class="language-julia"><pre><span class="n">makedocs</span><span class="p">(</span><span>
+</span><span>    </span><span class="c"># options</span><span>
+</span><span>    </span><span class="n">modules</span><span> </span><span class="o">=</span><span> </span><span class="p">[</span><span class="n">MyModule</span><span class="p">]</span><span>
+</span><span class="p">)</span><span>
+</span></pre></code><a id="Cross-Referencing-1"></a><p>It may be necessary to refer to a particular docstring or section of your document from elsewhere in the document. To do this we can make use of Documenter&#39;s cross-referencing syntax which looks pretty similar to normal markdown link syntax. Replace the contents of <code class="asdf">src/index.md</code> with the following</p><code class="language-markdown"><pre># Example.jl Documentation
 
 ```@docs
 func(x)
 ```
 
 - link to [Example.jl Documentation](@ref)
-- link to [`func(x)`](@ref)</code><p>So we just have to replace each link&#39;s url with <code>@ref</code> and write the name of the thing we&#39;d link to cross-reference. For document headers it&#39;s just plain text that matches the name of the header and for docstrings enclose the object in backticks.</p><p>This also works across different pages in the same way. Note that these sections and docstrings must be unique within a document.</p><pre class="ukwnode">Documenter.Anchors.Anchor</pre><p>Documenter can auto-generate tables of contents and docstring indexes for your document with the following syntax. We&#39;ll illustrate these features using our <code>index.md</code> file from the previous sections. Add the following to that file</p><code># Example.jl Documentation
+- link to [`func(x)`](@ref)</pre></code><p>So we just have to replace each link&#39;s url with <code class="asdf">@ref</code> and write the name of the thing we&#39;d link to cross-reference. For document headers it&#39;s just plain text that matches the name of the header and for docstrings enclose the object in backticks.</p><p>This also works across different pages in the same way. Note that these sections and docstrings must be unique within a document.</p><a id="Navigation-1"></a><p>Documenter can auto-generate tables of contents and docstring indexes for your document with the following syntax. We&#39;ll illustrate these features using our <code class="asdf">index.md</code> file from the previous sections. Add the following to that file</p><code class="language-markdown"><pre># Example.jl Documentation
 
 ```@contents
 ```
@@ -79,7 +86,7 @@ func(x)
 ## Index
 
 ```@index
-```</code><p>The <code>@contents</code> block will generate a nested list of links to all the section headers in the document. By default it will gather all the level 1 and 2 headers from every page in the document, but this can be adjusted using <code>Pages</code> and <code>Depth</code> settings as in the following</p><code>```@contents
+```</pre></code><p>The <code class="asdf">@contents</code> block will generate a nested list of links to all the section headers in the document. By default it will gather all the level 1 and 2 headers from every page in the document, but this can be adjusted using <code class="asdf">Pages</code> and <code class="asdf">Depth</code> settings as in the following</p><code class="language-markdown"><pre>```@contents
 Pages = [&quot;foo.md&quot;, &quot;bar.md&quot;]
 Depth = 3
-```</code><p>The <code>@index</code> block will generate a flat list of links to all the docs that that have been spliced into the document using <code>@docs</code> blocks. As with the <code>@contents</code> block the pages to be included can be set with a <code>Pages = [...]</code> line. Since the list is not nested <code>Depth</code> is not supported for <code>@index</code>.</p><footer>Footer stuff</footer></article></body></html>
+```</pre></code><p>The <code class="asdf">@index</code> block will generate a flat list of links to all the docs that that have been spliced into the document using <code class="asdf">@docs</code> blocks. As with the <code class="asdf">@contents</code> block the pages to be included can be set with a <code class="asdf">Pages = [...]</code> line. Since the list is not nested <code class="asdf">Depth</code> is not supported for <code class="asdf">@index</code>.</p><footer>Footer stuff</footer></article></body></html>
