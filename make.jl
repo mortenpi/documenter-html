@@ -3,7 +3,7 @@ import Documenter: Builder, Selectors, Formats
 import Documenter.Builder: SetupBuildDirectory
 import Documenter: Selectors
 
-include("lib/HTMLWriter.jl")
+#include("lib/HTMLWriter.jl")
 
 pages = [
     "index.md"
@@ -22,6 +22,7 @@ pages = [
     ]
 ]
 
+Documenter.Selectors.disable(::Type{Documenter.Builder.RenderDocument}) = true
 
 println("Creating the document...")
 ispath("build") && rm("build", recursive=true)
@@ -34,4 +35,11 @@ doc = Documenter.Documents.Document(
 @show doc.user.source
 cd(doc.user.root) do
     Selectors.dispatch(Builder.DocumentPipeline, doc)
+end
+
+macro build()
+    quote
+        include("lib/HTMLWriter.jl")
+        Documenter.Writers.render(doc)
+    end
 end
