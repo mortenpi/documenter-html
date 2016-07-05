@@ -1,902 +1,197 @@
-<html><head><title>Documenter.jl</title><link href="../style.css" rel="stylesheet" type="text/css"/><link href="../highlight.css" rel="stylesheet" type="text/css"/><script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script><script src="../mathjaxhelper.js"></script></head><body><nav><a href="http://julialang.org/"><img class="logo" src="http://docs.julialang.org/en/release-0.4/_static/julia-logo.svg"/></a><ul><li><a href="../index.html">index.md</a></li><li>Manual<ul><li><a href="../man/guide.html">man/guide.md</a></li><li><a href="../man/examples.html">man/examples.md</a></li><li><a href="../man/syntax.html">man/syntax.md</a></li><li><a href="../man/doctests.html">man/doctests.md</a></li><li><a href="../man/hosting.html">man/hosting.md</a></li><li><a href="../man/latex.html">man/latex.md</a></li><li><a href="../man/internals.html">man/internals.md</a></li></ul></li><li>Library<ul><li><a href="public.html">lib/public.md</a></li><li><a href="internals.html">lib/internals.md</a></li></ul></li></ul></nav><article><header>Header stuff</header><a id="Internal-Documentation-1"></a><a id="Contents-1"></a><pre class="info">- [Internal Documentation](internals.html#Internal-Documentation-1)
-- [Internal Documentation](internals.html#Internal-Documentation-1)
-- [Internal Documentation](internals.html#Internal-Documentation-1)
-- [Internal Documentation](internals.html#Internal-Documentation-1)
-- [Internal Documentation](internals.html#Internal-Documentation-1)
-- [Internal Documentation](internals.html#Internal-Documentation-1)
-- [Internal Documentation](internals.html#Internal-Documentation-1)
-- [Internal Documentation](internals.html#Internal-Documentation-1)
-    - [Contents](internals.html#Contents-1)
-    - [Contents](internals.html#Contents-1)
-    - [Contents](internals.html#Contents-1)
-    - [Contents](internals.html#Contents-1)
-    - [Contents](internals.html#Contents-1)
-    - [Contents](internals.html#Contents-1)
-    - [Contents](internals.html#Contents-1)
-    - [Contents](internals.html#Contents-1)
-    - [Index](internals.html#Index-1)
-    - [Index](internals.html#Index-1)
-    - [Index](internals.html#Index-1)
-    - [Index](internals.html#Index-1)
-    - [Index](internals.html#Index-1)
-    - [Index](internals.html#Index-1)
-    - [Index](internals.html#Index-1)
-    - [Index](internals.html#Index-1)
-    - [Anchors](internals.html#Anchors-1)
-    - [Anchors](internals.html#Anchors-1)
-    - [Anchors](internals.html#Anchors-1)
-    - [Anchors](internals.html#Anchors-1)
-    - [Anchors](internals.html#Anchors-1)
-    - [Anchors](internals.html#Anchors-1)
-    - [Anchors](internals.html#Anchors-1)
-    - [Anchors](internals.html#Anchors-1)
-    - [Builder](internals.html#Builder-1)
-    - [Builder](internals.html#Builder-1)
-    - [Builder](internals.html#Builder-1)
-    - [Builder](internals.html#Builder-1)
-    - [Builder](internals.html#Builder-1)
-    - [Builder](internals.html#Builder-1)
-    - [Builder](internals.html#Builder-1)
-    - [Builder](internals.html#Builder-1)
-    - [CrossReferences](internals.html#CrossReferences-1)
-    - [CrossReferences](internals.html#CrossReferences-1)
-    - [CrossReferences](internals.html#CrossReferences-1)
-    - [CrossReferences](internals.html#CrossReferences-1)
-    - [CrossReferences](internals.html#CrossReferences-1)
-    - [CrossReferences](internals.html#CrossReferences-1)
-    - [CrossReferences](internals.html#CrossReferences-1)
-    - [CrossReferences](internals.html#CrossReferences-1)
-    - [DocChecks](internals.html#DocChecks-1)
-    - [DocChecks](internals.html#DocChecks-1)
-    - [DocChecks](internals.html#DocChecks-1)
-    - [DocChecks](internals.html#DocChecks-1)
-    - [DocChecks](internals.html#DocChecks-1)
-    - [DocChecks](internals.html#DocChecks-1)
-    - [DocChecks](internals.html#DocChecks-1)
-    - [DocChecks](internals.html#DocChecks-1)
-    - [DocSystem](internals.html#DocSystem-1)
-    - [DocSystem](internals.html#DocSystem-1)
-    - [DocSystem](internals.html#DocSystem-1)
-    - [DocSystem](internals.html#DocSystem-1)
-    - [DocSystem](internals.html#DocSystem-1)
-    - [DocSystem](internals.html#DocSystem-1)
-    - [DocSystem](internals.html#DocSystem-1)
-    - [DocSystem](internals.html#DocSystem-1)
-    - [Documents](internals.html#Documents-1)
-    - [Documents](internals.html#Documents-1)
-    - [Documents](internals.html#Documents-1)
-    - [Documents](internals.html#Documents-1)
-    - [Documents](internals.html#Documents-1)
-    - [Documents](internals.html#Documents-1)
-    - [Documents](internals.html#Documents-1)
-    - [Documents](internals.html#Documents-1)
-    - [Expanders](internals.html#Expanders-1)
-    - [Expanders](internals.html#Expanders-1)
-    - [Expanders](internals.html#Expanders-1)
-    - [Expanders](internals.html#Expanders-1)
-    - [Expanders](internals.html#Expanders-1)
-    - [Expanders](internals.html#Expanders-1)
-    - [Expanders](internals.html#Expanders-1)
-    - [Expanders](internals.html#Expanders-1)
-    - [Formats](internals.html#Formats-1)
-    - [Formats](internals.html#Formats-1)
-    - [Formats](internals.html#Formats-1)
-    - [Formats](internals.html#Formats-1)
-    - [Formats](internals.html#Formats-1)
-    - [Formats](internals.html#Formats-1)
-    - [Formats](internals.html#Formats-1)
-    - [Formats](internals.html#Formats-1)
-    - [Generator](internals.html#Generator-1)
-    - [Generator](internals.html#Generator-1)
-    - [Generator](internals.html#Generator-1)
-    - [Generator](internals.html#Generator-1)
-    - [Generator](internals.html#Generator-1)
-    - [Generator](internals.html#Generator-1)
-    - [Generator](internals.html#Generator-1)
-    - [Generator](internals.html#Generator-1)
-    - [Selectors](internals.html#Selectors-1)
-    - [Selectors](internals.html#Selectors-1)
-    - [Selectors](internals.html#Selectors-1)
-    - [Selectors](internals.html#Selectors-1)
-    - [Selectors](internals.html#Selectors-1)
-    - [Selectors](internals.html#Selectors-1)
-    - [Selectors](internals.html#Selectors-1)
-    - [Selectors](internals.html#Selectors-1)
-    - [Walkers](internals.html#Walkers-1)
-    - [Walkers](internals.html#Walkers-1)
-    - [Walkers](internals.html#Walkers-1)
-    - [Walkers](internals.html#Walkers-1)
-    - [Walkers](internals.html#Walkers-1)
-    - [Walkers](internals.html#Walkers-1)
-    - [Walkers](internals.html#Walkers-1)
-    - [Walkers](internals.html#Walkers-1)
-    - [Writers](internals.html#Writers-1)
-    - [Writers](internals.html#Writers-1)
-    - [Writers](internals.html#Writers-1)
-    - [Writers](internals.html#Writers-1)
-    - [Writers](internals.html#Writers-1)
-    - [Writers](internals.html#Writers-1)
-    - [Writers](internals.html#Writers-1)
-    - [Writers](internals.html#Writers-1)
-    - [Utilities](internals.html#Utilities-1)
-    - [Utilities](internals.html#Utilities-1)
-    - [Utilities](internals.html#Utilities-1)
-    - [Utilities](internals.html#Utilities-1)
-    - [Utilities](internals.html#Utilities-1)
-    - [Utilities](internals.html#Utilities-1)
-    - [Utilities](internals.html#Utilities-1)
-    - [Utilities](internals.html#Utilities-1)
-
-</pre><a id="Index-1"></a><div class="ukwnode"><h1>Documenter.Documents.IndexNode</h1><pre>- [`Documenter.Anchors`](internals.html#Documenter.Anchors)
-- [`Documenter.Anchors`](internals.html#Documenter.Anchors)
-- [`Documenter.Anchors`](internals.html#Documenter.Anchors)
-- [`Documenter.Anchors`](internals.html#Documenter.Anchors)
-- [`Documenter.Anchors`](internals.html#Documenter.Anchors)
-- [`Documenter.Anchors`](internals.html#Documenter.Anchors)
-- [`Documenter.Anchors`](internals.html#Documenter.Anchors)
+<html><head><title>Documenter.jl</title><link href="../style.css" rel="stylesheet" type="text/css"/><link href="../highlight.css" rel="stylesheet" type="text/css"/><script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script><script src="../mathjaxhelper.js"></script></head><body><nav><a href="http://julialang.org/"><img class="logo" src="http://docs.julialang.org/en/release-0.4/_static/julia-logo.svg"/></a><ul><li><a href="../index.html">index.md</a></li><li>Manual<ul><li><a href="../man/guide.html">man/guide.md</a></li><li><a href="../man/examples.html">man/examples.md</a></li><li><a href="../man/syntax.html">man/syntax.md</a></li><li><a href="../man/doctests.html">man/doctests.md</a></li><li><a href="../man/hosting.html">man/hosting.md</a></li><li><a href="../man/latex.html">man/latex.md</a></li><li><a href="../man/internals.html">man/internals.md</a></li></ul></li><li>Library<ul><li><a href="public.html">lib/public.md</a></li><li><a href="internals.html">lib/internals.md</a></li></ul></li><li>Dynamic pages<ul><li><a href="../dynamic/code.html">dynamic/code.md</a></li></ul></li></ul></nav><article><header>Header stuff</header><a id="Internal-Documentation-1"></a><div class="mdnote">Base.Markdown.Header{1}</div><h1>Internal Documentation</h1><a id="Contents-1"></a><div class="mdnote">Base.Markdown.Header{2}</div><h2>Contents</h2><ul><li><a href="internals.html#Internal-Documentation-1">Internal Documentation</a></li><li><a href="internals.html#Internal-Documentation-1">Internal Documentation</a></li><ul><li><a href="internals.html#Contents-1">Contents</a></li><li><a href="internals.html#Contents-1">Contents</a></li><li><a href="internals.html#Index-1">Index</a></li><li><a href="internals.html#Index-1">Index</a></li><li><a href="internals.html#Anchors-1">Anchors</a></li><li><a href="internals.html#Anchors-1">Anchors</a></li><li><a href="internals.html#Builder-1">Builder</a></li><li><a href="internals.html#Builder-1">Builder</a></li><li><a href="internals.html#CrossReferences-1">CrossReferences</a></li><li><a href="internals.html#CrossReferences-1">CrossReferences</a></li><li><a href="internals.html#DocChecks-1">DocChecks</a></li><li><a href="internals.html#DocChecks-1">DocChecks</a></li><li><a href="internals.html#DocSystem-1">DocSystem</a></li><li><a href="internals.html#DocSystem-1">DocSystem</a></li><li><a href="internals.html#Documents-1">Documents</a></li><li><a href="internals.html#Documents-1">Documents</a></li><li><a href="internals.html#Expanders-1">Expanders</a></li><li><a href="internals.html#Expanders-1">Expanders</a></li><li><a href="internals.html#Formats-1">Formats</a></li><li><a href="internals.html#Formats-1">Formats</a></li><li><a href="internals.html#Generator-1">Generator</a></li><li><a href="internals.html#Generator-1">Generator</a></li><li><a href="internals.html#Selectors-1">Selectors</a></li><li><a href="internals.html#Selectors-1">Selectors</a></li><li><a href="internals.html#Walkers-1">Walkers</a></li><li><a href="internals.html#Walkers-1">Walkers</a></li><li><a href="internals.html#Writers-1">Writers</a></li><li><a href="internals.html#Writers-1">Writers</a></li><li><a href="internals.html#Utilities-1">Utilities</a></li><li><a href="internals.html#Utilities-1">Utilities</a></li></ul></ul><a id="Index-1"></a><div class="mdnote">Base.Markdown.Header{2}</div><h2>Index</h2><div class="ukwnode"><h1>Documenter.Documents.IndexNode</h1><pre>- [`Documenter.Anchors`](internals.html#Documenter.Anchors)
 - [`Documenter.Anchors`](internals.html#Documenter.Anchors)
 - [`Documenter.Builder`](internals.html#Documenter.Builder)
 - [`Documenter.Builder`](internals.html#Documenter.Builder)
-- [`Documenter.Builder`](internals.html#Documenter.Builder)
-- [`Documenter.Builder`](internals.html#Documenter.Builder)
-- [`Documenter.Builder`](internals.html#Documenter.Builder)
-- [`Documenter.Builder`](internals.html#Documenter.Builder)
-- [`Documenter.Builder`](internals.html#Documenter.Builder)
-- [`Documenter.Builder`](internals.html#Documenter.Builder)
-- [`Documenter.CrossReferences`](internals.html#Documenter.CrossReferences)
-- [`Documenter.CrossReferences`](internals.html#Documenter.CrossReferences)
-- [`Documenter.CrossReferences`](internals.html#Documenter.CrossReferences)
-- [`Documenter.CrossReferences`](internals.html#Documenter.CrossReferences)
-- [`Documenter.CrossReferences`](internals.html#Documenter.CrossReferences)
-- [`Documenter.CrossReferences`](internals.html#Documenter.CrossReferences)
 - [`Documenter.CrossReferences`](internals.html#Documenter.CrossReferences)
 - [`Documenter.CrossReferences`](internals.html#Documenter.CrossReferences)
 - [`Documenter.DocChecks`](internals.html#Documenter.DocChecks)
 - [`Documenter.DocChecks`](internals.html#Documenter.DocChecks)
-- [`Documenter.DocChecks`](internals.html#Documenter.DocChecks)
-- [`Documenter.DocChecks`](internals.html#Documenter.DocChecks)
-- [`Documenter.DocChecks`](internals.html#Documenter.DocChecks)
-- [`Documenter.DocChecks`](internals.html#Documenter.DocChecks)
-- [`Documenter.DocChecks`](internals.html#Documenter.DocChecks)
-- [`Documenter.DocChecks`](internals.html#Documenter.DocChecks)
-- [`Documenter.DocSystem`](internals.html#Documenter.DocSystem)
-- [`Documenter.DocSystem`](internals.html#Documenter.DocSystem)
-- [`Documenter.DocSystem`](internals.html#Documenter.DocSystem)
-- [`Documenter.DocSystem`](internals.html#Documenter.DocSystem)
-- [`Documenter.DocSystem`](internals.html#Documenter.DocSystem)
-- [`Documenter.DocSystem`](internals.html#Documenter.DocSystem)
 - [`Documenter.DocSystem`](internals.html#Documenter.DocSystem)
 - [`Documenter.DocSystem`](internals.html#Documenter.DocSystem)
 - [`Documenter.Documents`](internals.html#Documenter.Documents)
 - [`Documenter.Documents`](internals.html#Documenter.Documents)
-- [`Documenter.Documents`](internals.html#Documenter.Documents)
-- [`Documenter.Documents`](internals.html#Documenter.Documents)
-- [`Documenter.Documents`](internals.html#Documenter.Documents)
-- [`Documenter.Documents`](internals.html#Documenter.Documents)
-- [`Documenter.Documents`](internals.html#Documenter.Documents)
-- [`Documenter.Documents`](internals.html#Documenter.Documents)
-- [`Documenter.Expanders`](internals.html#Documenter.Expanders)
-- [`Documenter.Expanders`](internals.html#Documenter.Expanders)
-- [`Documenter.Expanders`](internals.html#Documenter.Expanders)
-- [`Documenter.Expanders`](internals.html#Documenter.Expanders)
-- [`Documenter.Expanders`](internals.html#Documenter.Expanders)
-- [`Documenter.Expanders`](internals.html#Documenter.Expanders)
 - [`Documenter.Expanders`](internals.html#Documenter.Expanders)
 - [`Documenter.Expanders`](internals.html#Documenter.Expanders)
 - [`Documenter.Formats`](internals.html#Documenter.Formats)
 - [`Documenter.Formats`](internals.html#Documenter.Formats)
-- [`Documenter.Formats`](internals.html#Documenter.Formats)
-- [`Documenter.Formats`](internals.html#Documenter.Formats)
-- [`Documenter.Formats`](internals.html#Documenter.Formats)
-- [`Documenter.Formats`](internals.html#Documenter.Formats)
-- [`Documenter.Formats`](internals.html#Documenter.Formats)
-- [`Documenter.Formats`](internals.html#Documenter.Formats)
-- [`Documenter.Generator`](internals.html#Documenter.Generator)
-- [`Documenter.Generator`](internals.html#Documenter.Generator)
-- [`Documenter.Generator`](internals.html#Documenter.Generator)
-- [`Documenter.Generator`](internals.html#Documenter.Generator)
-- [`Documenter.Generator`](internals.html#Documenter.Generator)
-- [`Documenter.Generator`](internals.html#Documenter.Generator)
 - [`Documenter.Generator`](internals.html#Documenter.Generator)
 - [`Documenter.Generator`](internals.html#Documenter.Generator)
 - [`Documenter.Selectors`](internals.html#Documenter.Selectors)
 - [`Documenter.Selectors`](internals.html#Documenter.Selectors)
-- [`Documenter.Selectors`](internals.html#Documenter.Selectors)
-- [`Documenter.Selectors`](internals.html#Documenter.Selectors)
-- [`Documenter.Selectors`](internals.html#Documenter.Selectors)
-- [`Documenter.Selectors`](internals.html#Documenter.Selectors)
-- [`Documenter.Selectors`](internals.html#Documenter.Selectors)
-- [`Documenter.Selectors`](internals.html#Documenter.Selectors)
-- [`Documenter.Utilities`](internals.html#Documenter.Utilities)
-- [`Documenter.Utilities`](internals.html#Documenter.Utilities)
-- [`Documenter.Utilities`](internals.html#Documenter.Utilities)
-- [`Documenter.Utilities`](internals.html#Documenter.Utilities)
-- [`Documenter.Utilities`](internals.html#Documenter.Utilities)
-- [`Documenter.Utilities`](internals.html#Documenter.Utilities)
 - [`Documenter.Utilities`](internals.html#Documenter.Utilities)
 - [`Documenter.Utilities`](internals.html#Documenter.Utilities)
 - [`Documenter.Utilities.DOM`](internals.html#Documenter.Utilities.DOM)
 - [`Documenter.Utilities.DOM`](internals.html#Documenter.Utilities.DOM)
-- [`Documenter.Utilities.DOM`](internals.html#Documenter.Utilities.DOM)
-- [`Documenter.Utilities.DOM`](internals.html#Documenter.Utilities.DOM)
-- [`Documenter.Utilities.DOM`](internals.html#Documenter.Utilities.DOM)
-- [`Documenter.Utilities.DOM`](internals.html#Documenter.Utilities.DOM)
-- [`Documenter.Utilities.DOM`](internals.html#Documenter.Utilities.DOM)
-- [`Documenter.Utilities.DOM`](internals.html#Documenter.Utilities.DOM)
-- [`Documenter.Utilities.DOM.MarkdownConverter`](internals.html#Documenter.Utilities.DOM.MarkdownConverter)
-- [`Documenter.Utilities.DOM.MarkdownConverter`](internals.html#Documenter.Utilities.DOM.MarkdownConverter)
-- [`Documenter.Utilities.DOM.MarkdownConverter`](internals.html#Documenter.Utilities.DOM.MarkdownConverter)
-- [`Documenter.Utilities.DOM.MarkdownConverter`](internals.html#Documenter.Utilities.DOM.MarkdownConverter)
-- [`Documenter.Utilities.DOM.MarkdownConverter`](internals.html#Documenter.Utilities.DOM.MarkdownConverter)
-- [`Documenter.Utilities.DOM.MarkdownConverter`](internals.html#Documenter.Utilities.DOM.MarkdownConverter)
 - [`Documenter.Utilities.DOM.MarkdownConverter`](internals.html#Documenter.Utilities.DOM.MarkdownConverter)
 - [`Documenter.Utilities.DOM.MarkdownConverter`](internals.html#Documenter.Utilities.DOM.MarkdownConverter)
 - [`Documenter.Walkers`](internals.html#Documenter.Walkers)
 - [`Documenter.Walkers`](internals.html#Documenter.Walkers)
-- [`Documenter.Walkers`](internals.html#Documenter.Walkers)
-- [`Documenter.Walkers`](internals.html#Documenter.Walkers)
-- [`Documenter.Walkers`](internals.html#Documenter.Walkers)
-- [`Documenter.Walkers`](internals.html#Documenter.Walkers)
-- [`Documenter.Walkers`](internals.html#Documenter.Walkers)
-- [`Documenter.Walkers`](internals.html#Documenter.Walkers)
-- [`Documenter.Writers`](internals.html#Documenter.Writers)
-- [`Documenter.Writers`](internals.html#Documenter.Writers)
-- [`Documenter.Writers`](internals.html#Documenter.Writers)
-- [`Documenter.Writers`](internals.html#Documenter.Writers)
-- [`Documenter.Writers`](internals.html#Documenter.Writers)
-- [`Documenter.Writers`](internals.html#Documenter.Writers)
 - [`Documenter.Writers`](internals.html#Documenter.Writers)
 - [`Documenter.Writers`](internals.html#Documenter.Writers)
 - [`Documenter.Writers.HTMLWriter`](internals.html#Documenter.Writers.HTMLWriter)
 - [`Documenter.Writers.HTMLWriter`](internals.html#Documenter.Writers.HTMLWriter)
-- [`Documenter.Writers.HTMLWriter`](internals.html#Documenter.Writers.HTMLWriter)
-- [`Documenter.Writers.HTMLWriter`](internals.html#Documenter.Writers.HTMLWriter)
-- [`Documenter.Writers.HTMLWriter`](internals.html#Documenter.Writers.HTMLWriter)
-- [`Documenter.Writers.HTMLWriter`](internals.html#Documenter.Writers.HTMLWriter)
-- [`Documenter.Writers.HTMLWriter`](internals.html#Documenter.Writers.HTMLWriter)
-- [`Documenter.Writers.HTMLWriter`](internals.html#Documenter.Writers.HTMLWriter)
-- [`Documenter.Writers.LaTeXWriter`](internals.html#Documenter.Writers.LaTeXWriter)
-- [`Documenter.Writers.LaTeXWriter`](internals.html#Documenter.Writers.LaTeXWriter)
-- [`Documenter.Writers.LaTeXWriter`](internals.html#Documenter.Writers.LaTeXWriter)
-- [`Documenter.Writers.LaTeXWriter`](internals.html#Documenter.Writers.LaTeXWriter)
-- [`Documenter.Writers.LaTeXWriter`](internals.html#Documenter.Writers.LaTeXWriter)
-- [`Documenter.Writers.LaTeXWriter`](internals.html#Documenter.Writers.LaTeXWriter)
 - [`Documenter.Writers.LaTeXWriter`](internals.html#Documenter.Writers.LaTeXWriter)
 - [`Documenter.Writers.LaTeXWriter`](internals.html#Documenter.Writers.LaTeXWriter)
 - [`Documenter.Writers.MarkdownWriter`](internals.html#Documenter.Writers.MarkdownWriter)
 - [`Documenter.Writers.MarkdownWriter`](internals.html#Documenter.Writers.MarkdownWriter)
-- [`Documenter.Writers.MarkdownWriter`](internals.html#Documenter.Writers.MarkdownWriter)
-- [`Documenter.Writers.MarkdownWriter`](internals.html#Documenter.Writers.MarkdownWriter)
-- [`Documenter.Writers.MarkdownWriter`](internals.html#Documenter.Writers.MarkdownWriter)
-- [`Documenter.Writers.MarkdownWriter`](internals.html#Documenter.Writers.MarkdownWriter)
-- [`Documenter.Writers.MarkdownWriter`](internals.html#Documenter.Writers.MarkdownWriter)
-- [`Documenter.Writers.MarkdownWriter`](internals.html#Documenter.Writers.MarkdownWriter)
-- [`Documenter.Anchors.Anchor`](internals.html#Documenter.Anchors.Anchor)
-- [`Documenter.Anchors.Anchor`](internals.html#Documenter.Anchors.Anchor)
-- [`Documenter.Anchors.Anchor`](internals.html#Documenter.Anchors.Anchor)
-- [`Documenter.Anchors.Anchor`](internals.html#Documenter.Anchors.Anchor)
-- [`Documenter.Anchors.Anchor`](internals.html#Documenter.Anchors.Anchor)
-- [`Documenter.Anchors.Anchor`](internals.html#Documenter.Anchors.Anchor)
 - [`Documenter.Anchors.Anchor`](internals.html#Documenter.Anchors.Anchor)
 - [`Documenter.Anchors.Anchor`](internals.html#Documenter.Anchors.Anchor)
 - [`Documenter.Anchors.AnchorMap`](internals.html#Documenter.Anchors.AnchorMap)
 - [`Documenter.Anchors.AnchorMap`](internals.html#Documenter.Anchors.AnchorMap)
-- [`Documenter.Anchors.AnchorMap`](internals.html#Documenter.Anchors.AnchorMap)
-- [`Documenter.Anchors.AnchorMap`](internals.html#Documenter.Anchors.AnchorMap)
-- [`Documenter.Anchors.AnchorMap`](internals.html#Documenter.Anchors.AnchorMap)
-- [`Documenter.Anchors.AnchorMap`](internals.html#Documenter.Anchors.AnchorMap)
-- [`Documenter.Anchors.AnchorMap`](internals.html#Documenter.Anchors.AnchorMap)
-- [`Documenter.Anchors.AnchorMap`](internals.html#Documenter.Anchors.AnchorMap)
-- [`Documenter.Builder.CheckDocument`](internals.html#Documenter.Builder.CheckDocument)
-- [`Documenter.Builder.CheckDocument`](internals.html#Documenter.Builder.CheckDocument)
-- [`Documenter.Builder.CheckDocument`](internals.html#Documenter.Builder.CheckDocument)
-- [`Documenter.Builder.CheckDocument`](internals.html#Documenter.Builder.CheckDocument)
-- [`Documenter.Builder.CheckDocument`](internals.html#Documenter.Builder.CheckDocument)
-- [`Documenter.Builder.CheckDocument`](internals.html#Documenter.Builder.CheckDocument)
 - [`Documenter.Builder.CheckDocument`](internals.html#Documenter.Builder.CheckDocument)
 - [`Documenter.Builder.CheckDocument`](internals.html#Documenter.Builder.CheckDocument)
 - [`Documenter.Builder.CrossReferences`](internals.html#Documenter.Builder.CrossReferences)
 - [`Documenter.Builder.CrossReferences`](internals.html#Documenter.Builder.CrossReferences)
-- [`Documenter.Builder.CrossReferences`](internals.html#Documenter.Builder.CrossReferences)
-- [`Documenter.Builder.CrossReferences`](internals.html#Documenter.Builder.CrossReferences)
-- [`Documenter.Builder.CrossReferences`](internals.html#Documenter.Builder.CrossReferences)
-- [`Documenter.Builder.CrossReferences`](internals.html#Documenter.Builder.CrossReferences)
-- [`Documenter.Builder.CrossReferences`](internals.html#Documenter.Builder.CrossReferences)
-- [`Documenter.Builder.CrossReferences`](internals.html#Documenter.Builder.CrossReferences)
-- [`Documenter.Builder.DocumentPipeline`](internals.html#Documenter.Builder.DocumentPipeline)
-- [`Documenter.Builder.DocumentPipeline`](internals.html#Documenter.Builder.DocumentPipeline)
-- [`Documenter.Builder.DocumentPipeline`](internals.html#Documenter.Builder.DocumentPipeline)
-- [`Documenter.Builder.DocumentPipeline`](internals.html#Documenter.Builder.DocumentPipeline)
-- [`Documenter.Builder.DocumentPipeline`](internals.html#Documenter.Builder.DocumentPipeline)
-- [`Documenter.Builder.DocumentPipeline`](internals.html#Documenter.Builder.DocumentPipeline)
 - [`Documenter.Builder.DocumentPipeline`](internals.html#Documenter.Builder.DocumentPipeline)
 - [`Documenter.Builder.DocumentPipeline`](internals.html#Documenter.Builder.DocumentPipeline)
 - [`Documenter.Builder.ExpandTemplates`](internals.html#Documenter.Builder.ExpandTemplates)
 - [`Documenter.Builder.ExpandTemplates`](internals.html#Documenter.Builder.ExpandTemplates)
-- [`Documenter.Builder.ExpandTemplates`](internals.html#Documenter.Builder.ExpandTemplates)
-- [`Documenter.Builder.ExpandTemplates`](internals.html#Documenter.Builder.ExpandTemplates)
-- [`Documenter.Builder.ExpandTemplates`](internals.html#Documenter.Builder.ExpandTemplates)
-- [`Documenter.Builder.ExpandTemplates`](internals.html#Documenter.Builder.ExpandTemplates)
-- [`Documenter.Builder.ExpandTemplates`](internals.html#Documenter.Builder.ExpandTemplates)
-- [`Documenter.Builder.ExpandTemplates`](internals.html#Documenter.Builder.ExpandTemplates)
-- [`Documenter.Builder.RedirectOutputStreams`](internals.html#Documenter.Builder.RedirectOutputStreams)
-- [`Documenter.Builder.RedirectOutputStreams`](internals.html#Documenter.Builder.RedirectOutputStreams)
-- [`Documenter.Builder.RedirectOutputStreams`](internals.html#Documenter.Builder.RedirectOutputStreams)
-- [`Documenter.Builder.RedirectOutputStreams`](internals.html#Documenter.Builder.RedirectOutputStreams)
-- [`Documenter.Builder.RedirectOutputStreams`](internals.html#Documenter.Builder.RedirectOutputStreams)
-- [`Documenter.Builder.RedirectOutputStreams`](internals.html#Documenter.Builder.RedirectOutputStreams)
 - [`Documenter.Builder.RedirectOutputStreams`](internals.html#Documenter.Builder.RedirectOutputStreams)
 - [`Documenter.Builder.RedirectOutputStreams`](internals.html#Documenter.Builder.RedirectOutputStreams)
 - [`Documenter.Builder.RenderDocument`](internals.html#Documenter.Builder.RenderDocument)
 - [`Documenter.Builder.RenderDocument`](internals.html#Documenter.Builder.RenderDocument)
-- [`Documenter.Builder.RenderDocument`](internals.html#Documenter.Builder.RenderDocument)
-- [`Documenter.Builder.RenderDocument`](internals.html#Documenter.Builder.RenderDocument)
-- [`Documenter.Builder.RenderDocument`](internals.html#Documenter.Builder.RenderDocument)
-- [`Documenter.Builder.RenderDocument`](internals.html#Documenter.Builder.RenderDocument)
-- [`Documenter.Builder.RenderDocument`](internals.html#Documenter.Builder.RenderDocument)
-- [`Documenter.Builder.RenderDocument`](internals.html#Documenter.Builder.RenderDocument)
-- [`Documenter.Builder.RestoreOutputStreams`](internals.html#Documenter.Builder.RestoreOutputStreams)
-- [`Documenter.Builder.RestoreOutputStreams`](internals.html#Documenter.Builder.RestoreOutputStreams)
-- [`Documenter.Builder.RestoreOutputStreams`](internals.html#Documenter.Builder.RestoreOutputStreams)
-- [`Documenter.Builder.RestoreOutputStreams`](internals.html#Documenter.Builder.RestoreOutputStreams)
-- [`Documenter.Builder.RestoreOutputStreams`](internals.html#Documenter.Builder.RestoreOutputStreams)
-- [`Documenter.Builder.RestoreOutputStreams`](internals.html#Documenter.Builder.RestoreOutputStreams)
 - [`Documenter.Builder.RestoreOutputStreams`](internals.html#Documenter.Builder.RestoreOutputStreams)
 - [`Documenter.Builder.RestoreOutputStreams`](internals.html#Documenter.Builder.RestoreOutputStreams)
 - [`Documenter.Builder.SetupBuildDirectory`](internals.html#Documenter.Builder.SetupBuildDirectory)
 - [`Documenter.Builder.SetupBuildDirectory`](internals.html#Documenter.Builder.SetupBuildDirectory)
-- [`Documenter.Builder.SetupBuildDirectory`](internals.html#Documenter.Builder.SetupBuildDirectory)
-- [`Documenter.Builder.SetupBuildDirectory`](internals.html#Documenter.Builder.SetupBuildDirectory)
-- [`Documenter.Builder.SetupBuildDirectory`](internals.html#Documenter.Builder.SetupBuildDirectory)
-- [`Documenter.Builder.SetupBuildDirectory`](internals.html#Documenter.Builder.SetupBuildDirectory)
-- [`Documenter.Builder.SetupBuildDirectory`](internals.html#Documenter.Builder.SetupBuildDirectory)
-- [`Documenter.Builder.SetupBuildDirectory`](internals.html#Documenter.Builder.SetupBuildDirectory)
-- [`Documenter.Documents.Document`](internals.html#Documenter.Documents.Document)
-- [`Documenter.Documents.Document`](internals.html#Documenter.Documents.Document)
-- [`Documenter.Documents.Document`](internals.html#Documenter.Documents.Document)
-- [`Documenter.Documents.Document`](internals.html#Documenter.Documents.Document)
-- [`Documenter.Documents.Document`](internals.html#Documenter.Documents.Document)
-- [`Documenter.Documents.Document`](internals.html#Documenter.Documents.Document)
 - [`Documenter.Documents.Document`](internals.html#Documenter.Documents.Document)
 - [`Documenter.Documents.Document`](internals.html#Documenter.Documents.Document)
 - [`Documenter.Documents.Globals`](internals.html#Documenter.Documents.Globals)
 - [`Documenter.Documents.Globals`](internals.html#Documenter.Documents.Globals)
-- [`Documenter.Documents.Globals`](internals.html#Documenter.Documents.Globals)
-- [`Documenter.Documents.Globals`](internals.html#Documenter.Documents.Globals)
-- [`Documenter.Documents.Globals`](internals.html#Documenter.Documents.Globals)
-- [`Documenter.Documents.Globals`](internals.html#Documenter.Documents.Globals)
-- [`Documenter.Documents.Globals`](internals.html#Documenter.Documents.Globals)
-- [`Documenter.Documents.Globals`](internals.html#Documenter.Documents.Globals)
-- [`Documenter.Documents.Internal`](internals.html#Documenter.Documents.Internal)
-- [`Documenter.Documents.Internal`](internals.html#Documenter.Documents.Internal)
-- [`Documenter.Documents.Internal`](internals.html#Documenter.Documents.Internal)
-- [`Documenter.Documents.Internal`](internals.html#Documenter.Documents.Internal)
-- [`Documenter.Documents.Internal`](internals.html#Documenter.Documents.Internal)
-- [`Documenter.Documents.Internal`](internals.html#Documenter.Documents.Internal)
 - [`Documenter.Documents.Internal`](internals.html#Documenter.Documents.Internal)
 - [`Documenter.Documents.Internal`](internals.html#Documenter.Documents.Internal)
 - [`Documenter.Documents.Page`](internals.html#Documenter.Documents.Page)
 - [`Documenter.Documents.Page`](internals.html#Documenter.Documents.Page)
-- [`Documenter.Documents.Page`](internals.html#Documenter.Documents.Page)
-- [`Documenter.Documents.Page`](internals.html#Documenter.Documents.Page)
-- [`Documenter.Documents.Page`](internals.html#Documenter.Documents.Page)
-- [`Documenter.Documents.Page`](internals.html#Documenter.Documents.Page)
-- [`Documenter.Documents.Page`](internals.html#Documenter.Documents.Page)
-- [`Documenter.Documents.Page`](internals.html#Documenter.Documents.Page)
-- [`Documenter.Documents.User`](internals.html#Documenter.Documents.User)
-- [`Documenter.Documents.User`](internals.html#Documenter.Documents.User)
-- [`Documenter.Documents.User`](internals.html#Documenter.Documents.User)
-- [`Documenter.Documents.User`](internals.html#Documenter.Documents.User)
-- [`Documenter.Documents.User`](internals.html#Documenter.Documents.User)
-- [`Documenter.Documents.User`](internals.html#Documenter.Documents.User)
 - [`Documenter.Documents.User`](internals.html#Documenter.Documents.User)
 - [`Documenter.Documents.User`](internals.html#Documenter.Documents.User)
 - [`Documenter.Expanders.AutoDocsBlocks`](internals.html#Documenter.Expanders.AutoDocsBlocks)
 - [`Documenter.Expanders.AutoDocsBlocks`](internals.html#Documenter.Expanders.AutoDocsBlocks)
-- [`Documenter.Expanders.AutoDocsBlocks`](internals.html#Documenter.Expanders.AutoDocsBlocks)
-- [`Documenter.Expanders.AutoDocsBlocks`](internals.html#Documenter.Expanders.AutoDocsBlocks)
-- [`Documenter.Expanders.AutoDocsBlocks`](internals.html#Documenter.Expanders.AutoDocsBlocks)
-- [`Documenter.Expanders.AutoDocsBlocks`](internals.html#Documenter.Expanders.AutoDocsBlocks)
-- [`Documenter.Expanders.AutoDocsBlocks`](internals.html#Documenter.Expanders.AutoDocsBlocks)
-- [`Documenter.Expanders.AutoDocsBlocks`](internals.html#Documenter.Expanders.AutoDocsBlocks)
-- [`Documenter.Expanders.ContentsBlocks`](internals.html#Documenter.Expanders.ContentsBlocks)
-- [`Documenter.Expanders.ContentsBlocks`](internals.html#Documenter.Expanders.ContentsBlocks)
-- [`Documenter.Expanders.ContentsBlocks`](internals.html#Documenter.Expanders.ContentsBlocks)
-- [`Documenter.Expanders.ContentsBlocks`](internals.html#Documenter.Expanders.ContentsBlocks)
-- [`Documenter.Expanders.ContentsBlocks`](internals.html#Documenter.Expanders.ContentsBlocks)
-- [`Documenter.Expanders.ContentsBlocks`](internals.html#Documenter.Expanders.ContentsBlocks)
 - [`Documenter.Expanders.ContentsBlocks`](internals.html#Documenter.Expanders.ContentsBlocks)
 - [`Documenter.Expanders.ContentsBlocks`](internals.html#Documenter.Expanders.ContentsBlocks)
 - [`Documenter.Expanders.DocsBlocks`](internals.html#Documenter.Expanders.DocsBlocks)
 - [`Documenter.Expanders.DocsBlocks`](internals.html#Documenter.Expanders.DocsBlocks)
-- [`Documenter.Expanders.DocsBlocks`](internals.html#Documenter.Expanders.DocsBlocks)
-- [`Documenter.Expanders.DocsBlocks`](internals.html#Documenter.Expanders.DocsBlocks)
-- [`Documenter.Expanders.DocsBlocks`](internals.html#Documenter.Expanders.DocsBlocks)
-- [`Documenter.Expanders.DocsBlocks`](internals.html#Documenter.Expanders.DocsBlocks)
-- [`Documenter.Expanders.DocsBlocks`](internals.html#Documenter.Expanders.DocsBlocks)
-- [`Documenter.Expanders.DocsBlocks`](internals.html#Documenter.Expanders.DocsBlocks)
-- [`Documenter.Expanders.EvalBlocks`](internals.html#Documenter.Expanders.EvalBlocks)
-- [`Documenter.Expanders.EvalBlocks`](internals.html#Documenter.Expanders.EvalBlocks)
-- [`Documenter.Expanders.EvalBlocks`](internals.html#Documenter.Expanders.EvalBlocks)
-- [`Documenter.Expanders.EvalBlocks`](internals.html#Documenter.Expanders.EvalBlocks)
-- [`Documenter.Expanders.EvalBlocks`](internals.html#Documenter.Expanders.EvalBlocks)
-- [`Documenter.Expanders.EvalBlocks`](internals.html#Documenter.Expanders.EvalBlocks)
 - [`Documenter.Expanders.EvalBlocks`](internals.html#Documenter.Expanders.EvalBlocks)
 - [`Documenter.Expanders.EvalBlocks`](internals.html#Documenter.Expanders.EvalBlocks)
 - [`Documenter.Expanders.ExampleBlocks`](internals.html#Documenter.Expanders.ExampleBlocks)
 - [`Documenter.Expanders.ExampleBlocks`](internals.html#Documenter.Expanders.ExampleBlocks)
-- [`Documenter.Expanders.ExampleBlocks`](internals.html#Documenter.Expanders.ExampleBlocks)
-- [`Documenter.Expanders.ExampleBlocks`](internals.html#Documenter.Expanders.ExampleBlocks)
-- [`Documenter.Expanders.ExampleBlocks`](internals.html#Documenter.Expanders.ExampleBlocks)
-- [`Documenter.Expanders.ExampleBlocks`](internals.html#Documenter.Expanders.ExampleBlocks)
-- [`Documenter.Expanders.ExampleBlocks`](internals.html#Documenter.Expanders.ExampleBlocks)
-- [`Documenter.Expanders.ExampleBlocks`](internals.html#Documenter.Expanders.ExampleBlocks)
-- [`Documenter.Expanders.ExpanderPipeline`](internals.html#Documenter.Expanders.ExpanderPipeline)
-- [`Documenter.Expanders.ExpanderPipeline`](internals.html#Documenter.Expanders.ExpanderPipeline)
-- [`Documenter.Expanders.ExpanderPipeline`](internals.html#Documenter.Expanders.ExpanderPipeline)
-- [`Documenter.Expanders.ExpanderPipeline`](internals.html#Documenter.Expanders.ExpanderPipeline)
-- [`Documenter.Expanders.ExpanderPipeline`](internals.html#Documenter.Expanders.ExpanderPipeline)
-- [`Documenter.Expanders.ExpanderPipeline`](internals.html#Documenter.Expanders.ExpanderPipeline)
 - [`Documenter.Expanders.ExpanderPipeline`](internals.html#Documenter.Expanders.ExpanderPipeline)
 - [`Documenter.Expanders.ExpanderPipeline`](internals.html#Documenter.Expanders.ExpanderPipeline)
 - [`Documenter.Expanders.IndexBlocks`](internals.html#Documenter.Expanders.IndexBlocks)
 - [`Documenter.Expanders.IndexBlocks`](internals.html#Documenter.Expanders.IndexBlocks)
-- [`Documenter.Expanders.IndexBlocks`](internals.html#Documenter.Expanders.IndexBlocks)
-- [`Documenter.Expanders.IndexBlocks`](internals.html#Documenter.Expanders.IndexBlocks)
-- [`Documenter.Expanders.IndexBlocks`](internals.html#Documenter.Expanders.IndexBlocks)
-- [`Documenter.Expanders.IndexBlocks`](internals.html#Documenter.Expanders.IndexBlocks)
-- [`Documenter.Expanders.IndexBlocks`](internals.html#Documenter.Expanders.IndexBlocks)
-- [`Documenter.Expanders.IndexBlocks`](internals.html#Documenter.Expanders.IndexBlocks)
-- [`Documenter.Expanders.MetaBlocks`](internals.html#Documenter.Expanders.MetaBlocks)
-- [`Documenter.Expanders.MetaBlocks`](internals.html#Documenter.Expanders.MetaBlocks)
-- [`Documenter.Expanders.MetaBlocks`](internals.html#Documenter.Expanders.MetaBlocks)
-- [`Documenter.Expanders.MetaBlocks`](internals.html#Documenter.Expanders.MetaBlocks)
-- [`Documenter.Expanders.MetaBlocks`](internals.html#Documenter.Expanders.MetaBlocks)
-- [`Documenter.Expanders.MetaBlocks`](internals.html#Documenter.Expanders.MetaBlocks)
 - [`Documenter.Expanders.MetaBlocks`](internals.html#Documenter.Expanders.MetaBlocks)
 - [`Documenter.Expanders.MetaBlocks`](internals.html#Documenter.Expanders.MetaBlocks)
 - [`Documenter.Expanders.REPLBlocks`](internals.html#Documenter.Expanders.REPLBlocks)
 - [`Documenter.Expanders.REPLBlocks`](internals.html#Documenter.Expanders.REPLBlocks)
-- [`Documenter.Expanders.REPLBlocks`](internals.html#Documenter.Expanders.REPLBlocks)
-- [`Documenter.Expanders.REPLBlocks`](internals.html#Documenter.Expanders.REPLBlocks)
-- [`Documenter.Expanders.REPLBlocks`](internals.html#Documenter.Expanders.REPLBlocks)
-- [`Documenter.Expanders.REPLBlocks`](internals.html#Documenter.Expanders.REPLBlocks)
-- [`Documenter.Expanders.REPLBlocks`](internals.html#Documenter.Expanders.REPLBlocks)
-- [`Documenter.Expanders.REPLBlocks`](internals.html#Documenter.Expanders.REPLBlocks)
-- [`Documenter.Expanders.TrackHeaders`](internals.html#Documenter.Expanders.TrackHeaders)
-- [`Documenter.Expanders.TrackHeaders`](internals.html#Documenter.Expanders.TrackHeaders)
-- [`Documenter.Expanders.TrackHeaders`](internals.html#Documenter.Expanders.TrackHeaders)
-- [`Documenter.Expanders.TrackHeaders`](internals.html#Documenter.Expanders.TrackHeaders)
-- [`Documenter.Expanders.TrackHeaders`](internals.html#Documenter.Expanders.TrackHeaders)
-- [`Documenter.Expanders.TrackHeaders`](internals.html#Documenter.Expanders.TrackHeaders)
 - [`Documenter.Expanders.TrackHeaders`](internals.html#Documenter.Expanders.TrackHeaders)
 - [`Documenter.Expanders.TrackHeaders`](internals.html#Documenter.Expanders.TrackHeaders)
 - [`Documenter.Formats.Format`](internals.html#Documenter.Formats.Format)
 - [`Documenter.Formats.Format`](internals.html#Documenter.Formats.Format)
-- [`Documenter.Formats.Format`](internals.html#Documenter.Formats.Format)
-- [`Documenter.Formats.Format`](internals.html#Documenter.Formats.Format)
-- [`Documenter.Formats.Format`](internals.html#Documenter.Formats.Format)
-- [`Documenter.Formats.Format`](internals.html#Documenter.Formats.Format)
-- [`Documenter.Formats.Format`](internals.html#Documenter.Formats.Format)
-- [`Documenter.Formats.Format`](internals.html#Documenter.Formats.Format)
-- [`Documenter.Selectors.AbstractSelector`](internals.html#Documenter.Selectors.AbstractSelector)
-- [`Documenter.Selectors.AbstractSelector`](internals.html#Documenter.Selectors.AbstractSelector)
-- [`Documenter.Selectors.AbstractSelector`](internals.html#Documenter.Selectors.AbstractSelector)
-- [`Documenter.Selectors.AbstractSelector`](internals.html#Documenter.Selectors.AbstractSelector)
-- [`Documenter.Selectors.AbstractSelector`](internals.html#Documenter.Selectors.AbstractSelector)
-- [`Documenter.Selectors.AbstractSelector`](internals.html#Documenter.Selectors.AbstractSelector)
 - [`Documenter.Selectors.AbstractSelector`](internals.html#Documenter.Selectors.AbstractSelector)
 - [`Documenter.Selectors.AbstractSelector`](internals.html#Documenter.Selectors.AbstractSelector)
 - [`Documenter.Utilities.DOM.Node`](internals.html#Documenter.Utilities.DOM.Node)
 - [`Documenter.Utilities.DOM.Node`](internals.html#Documenter.Utilities.DOM.Node)
-- [`Documenter.Utilities.DOM.Node`](internals.html#Documenter.Utilities.DOM.Node)
-- [`Documenter.Utilities.DOM.Node`](internals.html#Documenter.Utilities.DOM.Node)
-- [`Documenter.Utilities.DOM.Node`](internals.html#Documenter.Utilities.DOM.Node)
-- [`Documenter.Utilities.DOM.Node`](internals.html#Documenter.Utilities.DOM.Node)
-- [`Documenter.Utilities.DOM.Node`](internals.html#Documenter.Utilities.DOM.Node)
-- [`Documenter.Utilities.DOM.Node`](internals.html#Documenter.Utilities.DOM.Node)
-- [`Documenter.Utilities.DOM.Tag`](internals.html#Documenter.Utilities.DOM.Tag)
-- [`Documenter.Utilities.DOM.Tag`](internals.html#Documenter.Utilities.DOM.Tag)
-- [`Documenter.Utilities.DOM.Tag`](internals.html#Documenter.Utilities.DOM.Tag)
-- [`Documenter.Utilities.DOM.Tag`](internals.html#Documenter.Utilities.DOM.Tag)
-- [`Documenter.Utilities.DOM.Tag`](internals.html#Documenter.Utilities.DOM.Tag)
-- [`Documenter.Utilities.DOM.Tag`](internals.html#Documenter.Utilities.DOM.Tag)
 - [`Documenter.Utilities.DOM.Tag`](internals.html#Documenter.Utilities.DOM.Tag)
 - [`Documenter.Utilities.DOM.Tag`](internals.html#Documenter.Utilities.DOM.Tag)
 - [`Documenter.Utilities.Object`](internals.html#Documenter.Utilities.Object)
 - [`Documenter.Utilities.Object`](internals.html#Documenter.Utilities.Object)
-- [`Documenter.Utilities.Object`](internals.html#Documenter.Utilities.Object)
-- [`Documenter.Utilities.Object`](internals.html#Documenter.Utilities.Object)
-- [`Documenter.Utilities.Object`](internals.html#Documenter.Utilities.Object)
-- [`Documenter.Utilities.Object`](internals.html#Documenter.Utilities.Object)
-- [`Documenter.Utilities.Object`](internals.html#Documenter.Utilities.Object)
-- [`Documenter.Utilities.Object`](internals.html#Documenter.Utilities.Object)
-- [`Documenter.Writers.Writer`](internals.html#Documenter.Writers.Writer)
-- [`Documenter.Writers.Writer`](internals.html#Documenter.Writers.Writer)
-- [`Documenter.Writers.Writer`](internals.html#Documenter.Writers.Writer)
-- [`Documenter.Writers.Writer`](internals.html#Documenter.Writers.Writer)
-- [`Documenter.Writers.Writer`](internals.html#Documenter.Writers.Writer)
-- [`Documenter.Writers.Writer`](internals.html#Documenter.Writers.Writer)
 - [`Documenter.Writers.Writer`](internals.html#Documenter.Writers.Writer)
 - [`Documenter.Writers.Writer`](internals.html#Documenter.Writers.Writer)
 - [`Documenter.Anchors.add!`](internals.html#Documenter.Anchors.add!)
 - [`Documenter.Anchors.add!`](internals.html#Documenter.Anchors.add!)
-- [`Documenter.Anchors.add!`](internals.html#Documenter.Anchors.add!)
-- [`Documenter.Anchors.add!`](internals.html#Documenter.Anchors.add!)
-- [`Documenter.Anchors.add!`](internals.html#Documenter.Anchors.add!)
-- [`Documenter.Anchors.add!`](internals.html#Documenter.Anchors.add!)
-- [`Documenter.Anchors.add!`](internals.html#Documenter.Anchors.add!)
-- [`Documenter.Anchors.add!`](internals.html#Documenter.Anchors.add!)
-- [`Documenter.Anchors.anchor`](internals.html#Documenter.Anchors.anchor)
-- [`Documenter.Anchors.anchor`](internals.html#Documenter.Anchors.anchor)
-- [`Documenter.Anchors.anchor`](internals.html#Documenter.Anchors.anchor)
-- [`Documenter.Anchors.anchor`](internals.html#Documenter.Anchors.anchor)
-- [`Documenter.Anchors.anchor`](internals.html#Documenter.Anchors.anchor)
-- [`Documenter.Anchors.anchor`](internals.html#Documenter.Anchors.anchor)
 - [`Documenter.Anchors.anchor`](internals.html#Documenter.Anchors.anchor)
 - [`Documenter.Anchors.anchor`](internals.html#Documenter.Anchors.anchor)
 - [`Documenter.Anchors.exists`](internals.html#Documenter.Anchors.exists)
 - [`Documenter.Anchors.exists`](internals.html#Documenter.Anchors.exists)
-- [`Documenter.Anchors.exists`](internals.html#Documenter.Anchors.exists)
-- [`Documenter.Anchors.exists`](internals.html#Documenter.Anchors.exists)
-- [`Documenter.Anchors.exists`](internals.html#Documenter.Anchors.exists)
-- [`Documenter.Anchors.exists`](internals.html#Documenter.Anchors.exists)
-- [`Documenter.Anchors.exists`](internals.html#Documenter.Anchors.exists)
-- [`Documenter.Anchors.exists`](internals.html#Documenter.Anchors.exists)
-- [`Documenter.Anchors.isunique`](internals.html#Documenter.Anchors.isunique)
-- [`Documenter.Anchors.isunique`](internals.html#Documenter.Anchors.isunique)
-- [`Documenter.Anchors.isunique`](internals.html#Documenter.Anchors.isunique)
-- [`Documenter.Anchors.isunique`](internals.html#Documenter.Anchors.isunique)
-- [`Documenter.Anchors.isunique`](internals.html#Documenter.Anchors.isunique)
-- [`Documenter.Anchors.isunique`](internals.html#Documenter.Anchors.isunique)
 - [`Documenter.Anchors.isunique`](internals.html#Documenter.Anchors.isunique)
 - [`Documenter.Anchors.isunique`](internals.html#Documenter.Anchors.isunique)
 - [`Documenter.CrossReferences.crossref`](internals.html#Documenter.CrossReferences.crossref)
 - [`Documenter.CrossReferences.crossref`](internals.html#Documenter.CrossReferences.crossref)
-- [`Documenter.CrossReferences.crossref`](internals.html#Documenter.CrossReferences.crossref)
-- [`Documenter.CrossReferences.crossref`](internals.html#Documenter.CrossReferences.crossref)
-- [`Documenter.CrossReferences.crossref`](internals.html#Documenter.CrossReferences.crossref)
-- [`Documenter.CrossReferences.crossref`](internals.html#Documenter.CrossReferences.crossref)
-- [`Documenter.CrossReferences.crossref`](internals.html#Documenter.CrossReferences.crossref)
-- [`Documenter.CrossReferences.crossref`](internals.html#Documenter.CrossReferences.crossref)
-- [`Documenter.DocChecks.doctest`](internals.html#Documenter.DocChecks.doctest)
-- [`Documenter.DocChecks.doctest`](internals.html#Documenter.DocChecks.doctest)
-- [`Documenter.DocChecks.doctest`](internals.html#Documenter.DocChecks.doctest)
-- [`Documenter.DocChecks.doctest`](internals.html#Documenter.DocChecks.doctest)
-- [`Documenter.DocChecks.doctest`](internals.html#Documenter.DocChecks.doctest)
-- [`Documenter.DocChecks.doctest`](internals.html#Documenter.DocChecks.doctest)
 - [`Documenter.DocChecks.doctest`](internals.html#Documenter.DocChecks.doctest)
 - [`Documenter.DocChecks.doctest`](internals.html#Documenter.DocChecks.doctest)
 - [`Documenter.DocChecks.missingdocs`](internals.html#Documenter.DocChecks.missingdocs)
 - [`Documenter.DocChecks.missingdocs`](internals.html#Documenter.DocChecks.missingdocs)
-- [`Documenter.DocChecks.missingdocs`](internals.html#Documenter.DocChecks.missingdocs)
-- [`Documenter.DocChecks.missingdocs`](internals.html#Documenter.DocChecks.missingdocs)
-- [`Documenter.DocChecks.missingdocs`](internals.html#Documenter.DocChecks.missingdocs)
-- [`Documenter.DocChecks.missingdocs`](internals.html#Documenter.DocChecks.missingdocs)
-- [`Documenter.DocChecks.missingdocs`](internals.html#Documenter.DocChecks.missingdocs)
-- [`Documenter.DocChecks.missingdocs`](internals.html#Documenter.DocChecks.missingdocs)
-- [`Documenter.DocSystem.binding`](internals.html#Documenter.DocSystem.binding)
-- [`Documenter.DocSystem.binding`](internals.html#Documenter.DocSystem.binding)
-- [`Documenter.DocSystem.binding`](internals.html#Documenter.DocSystem.binding)
-- [`Documenter.DocSystem.binding`](internals.html#Documenter.DocSystem.binding)
-- [`Documenter.DocSystem.binding`](internals.html#Documenter.DocSystem.binding)
-- [`Documenter.DocSystem.binding`](internals.html#Documenter.DocSystem.binding)
 - [`Documenter.DocSystem.binding`](internals.html#Documenter.DocSystem.binding)
 - [`Documenter.DocSystem.binding`](internals.html#Documenter.DocSystem.binding)
 - [`Documenter.DocSystem.convertmeta`](internals.html#Documenter.DocSystem.convertmeta)
 - [`Documenter.DocSystem.convertmeta`](internals.html#Documenter.DocSystem.convertmeta)
-- [`Documenter.DocSystem.convertmeta`](internals.html#Documenter.DocSystem.convertmeta)
-- [`Documenter.DocSystem.convertmeta`](internals.html#Documenter.DocSystem.convertmeta)
-- [`Documenter.DocSystem.convertmeta`](internals.html#Documenter.DocSystem.convertmeta)
-- [`Documenter.DocSystem.convertmeta`](internals.html#Documenter.DocSystem.convertmeta)
-- [`Documenter.DocSystem.convertmeta`](internals.html#Documenter.DocSystem.convertmeta)
-- [`Documenter.DocSystem.convertmeta`](internals.html#Documenter.DocSystem.convertmeta)
-- [`Documenter.DocSystem.docstr`](internals.html#Documenter.DocSystem.docstr)
-- [`Documenter.DocSystem.docstr`](internals.html#Documenter.DocSystem.docstr)
-- [`Documenter.DocSystem.docstr`](internals.html#Documenter.DocSystem.docstr)
-- [`Documenter.DocSystem.docstr`](internals.html#Documenter.DocSystem.docstr)
-- [`Documenter.DocSystem.docstr`](internals.html#Documenter.DocSystem.docstr)
-- [`Documenter.DocSystem.docstr`](internals.html#Documenter.DocSystem.docstr)
 - [`Documenter.DocSystem.docstr`](internals.html#Documenter.DocSystem.docstr)
 - [`Documenter.DocSystem.docstr`](internals.html#Documenter.DocSystem.docstr)
 - [`Documenter.DocSystem.getdocs`](internals.html#Documenter.DocSystem.getdocs)
 - [`Documenter.DocSystem.getdocs`](internals.html#Documenter.DocSystem.getdocs)
-- [`Documenter.DocSystem.getdocs`](internals.html#Documenter.DocSystem.getdocs)
-- [`Documenter.DocSystem.getdocs`](internals.html#Documenter.DocSystem.getdocs)
-- [`Documenter.DocSystem.getdocs`](internals.html#Documenter.DocSystem.getdocs)
-- [`Documenter.DocSystem.getdocs`](internals.html#Documenter.DocSystem.getdocs)
-- [`Documenter.DocSystem.getdocs`](internals.html#Documenter.DocSystem.getdocs)
-- [`Documenter.DocSystem.getdocs`](internals.html#Documenter.DocSystem.getdocs)
-- [`Documenter.DocSystem.multidoc`](internals.html#Documenter.DocSystem.multidoc)
-- [`Documenter.DocSystem.multidoc`](internals.html#Documenter.DocSystem.multidoc)
-- [`Documenter.DocSystem.multidoc`](internals.html#Documenter.DocSystem.multidoc)
-- [`Documenter.DocSystem.multidoc`](internals.html#Documenter.DocSystem.multidoc)
-- [`Documenter.DocSystem.multidoc`](internals.html#Documenter.DocSystem.multidoc)
-- [`Documenter.DocSystem.multidoc`](internals.html#Documenter.DocSystem.multidoc)
 - [`Documenter.DocSystem.multidoc`](internals.html#Documenter.DocSystem.multidoc)
 - [`Documenter.DocSystem.multidoc`](internals.html#Documenter.DocSystem.multidoc)
 - [`Documenter.Expanders.docsnode_methodlist`](internals.html#Documenter.Expanders.docsnode_methodlist)
 - [`Documenter.Expanders.docsnode_methodlist`](internals.html#Documenter.Expanders.docsnode_methodlist)
-- [`Documenter.Expanders.docsnode_methodlist`](internals.html#Documenter.Expanders.docsnode_methodlist)
-- [`Documenter.Expanders.docsnode_methodlist`](internals.html#Documenter.Expanders.docsnode_methodlist)
-- [`Documenter.Expanders.docsnode_methodlist`](internals.html#Documenter.Expanders.docsnode_methodlist)
-- [`Documenter.Expanders.docsnode_methodlist`](internals.html#Documenter.Expanders.docsnode_methodlist)
-- [`Documenter.Expanders.docsnode_methodlist`](internals.html#Documenter.Expanders.docsnode_methodlist)
-- [`Documenter.Expanders.docsnode_methodlist`](internals.html#Documenter.Expanders.docsnode_methodlist)
-- [`Documenter.Formats.mimetype`](internals.html#Documenter.Formats.mimetype)
-- [`Documenter.Formats.mimetype`](internals.html#Documenter.Formats.mimetype)
-- [`Documenter.Formats.mimetype`](internals.html#Documenter.Formats.mimetype)
-- [`Documenter.Formats.mimetype`](internals.html#Documenter.Formats.mimetype)
-- [`Documenter.Formats.mimetype`](internals.html#Documenter.Formats.mimetype)
-- [`Documenter.Formats.mimetype`](internals.html#Documenter.Formats.mimetype)
 - [`Documenter.Formats.mimetype`](internals.html#Documenter.Formats.mimetype)
 - [`Documenter.Formats.mimetype`](internals.html#Documenter.Formats.mimetype)
 - [`Documenter.Generator.gitignore`](internals.html#Documenter.Generator.gitignore)
 - [`Documenter.Generator.gitignore`](internals.html#Documenter.Generator.gitignore)
-- [`Documenter.Generator.gitignore`](internals.html#Documenter.Generator.gitignore)
-- [`Documenter.Generator.gitignore`](internals.html#Documenter.Generator.gitignore)
-- [`Documenter.Generator.gitignore`](internals.html#Documenter.Generator.gitignore)
-- [`Documenter.Generator.gitignore`](internals.html#Documenter.Generator.gitignore)
-- [`Documenter.Generator.gitignore`](internals.html#Documenter.Generator.gitignore)
-- [`Documenter.Generator.gitignore`](internals.html#Documenter.Generator.gitignore)
-- [`Documenter.Generator.index`](internals.html#Documenter.Generator.index)
-- [`Documenter.Generator.index`](internals.html#Documenter.Generator.index)
-- [`Documenter.Generator.index`](internals.html#Documenter.Generator.index)
-- [`Documenter.Generator.index`](internals.html#Documenter.Generator.index)
-- [`Documenter.Generator.index`](internals.html#Documenter.Generator.index)
-- [`Documenter.Generator.index`](internals.html#Documenter.Generator.index)
 - [`Documenter.Generator.index`](internals.html#Documenter.Generator.index)
 - [`Documenter.Generator.index`](internals.html#Documenter.Generator.index)
 - [`Documenter.Generator.make`](internals.html#Documenter.Generator.make)
 - [`Documenter.Generator.make`](internals.html#Documenter.Generator.make)
-- [`Documenter.Generator.make`](internals.html#Documenter.Generator.make)
-- [`Documenter.Generator.make`](internals.html#Documenter.Generator.make)
-- [`Documenter.Generator.make`](internals.html#Documenter.Generator.make)
-- [`Documenter.Generator.make`](internals.html#Documenter.Generator.make)
-- [`Documenter.Generator.make`](internals.html#Documenter.Generator.make)
-- [`Documenter.Generator.make`](internals.html#Documenter.Generator.make)
-- [`Documenter.Generator.mkdocs`](internals.html#Documenter.Generator.mkdocs)
-- [`Documenter.Generator.mkdocs`](internals.html#Documenter.Generator.mkdocs)
-- [`Documenter.Generator.mkdocs`](internals.html#Documenter.Generator.mkdocs)
-- [`Documenter.Generator.mkdocs`](internals.html#Documenter.Generator.mkdocs)
-- [`Documenter.Generator.mkdocs`](internals.html#Documenter.Generator.mkdocs)
-- [`Documenter.Generator.mkdocs`](internals.html#Documenter.Generator.mkdocs)
 - [`Documenter.Generator.mkdocs`](internals.html#Documenter.Generator.mkdocs)
 - [`Documenter.Generator.mkdocs`](internals.html#Documenter.Generator.mkdocs)
 - [`Documenter.Generator.savefile`](internals.html#Documenter.Generator.savefile)
 - [`Documenter.Generator.savefile`](internals.html#Documenter.Generator.savefile)
-- [`Documenter.Generator.savefile`](internals.html#Documenter.Generator.savefile)
-- [`Documenter.Generator.savefile`](internals.html#Documenter.Generator.savefile)
-- [`Documenter.Generator.savefile`](internals.html#Documenter.Generator.savefile)
-- [`Documenter.Generator.savefile`](internals.html#Documenter.Generator.savefile)
-- [`Documenter.Generator.savefile`](internals.html#Documenter.Generator.savefile)
-- [`Documenter.Generator.savefile`](internals.html#Documenter.Generator.savefile)
-- [`Documenter.Selectors.disable`](internals.html#Documenter.Selectors.disable)
-- [`Documenter.Selectors.disable`](internals.html#Documenter.Selectors.disable)
-- [`Documenter.Selectors.disable`](internals.html#Documenter.Selectors.disable)
-- [`Documenter.Selectors.disable`](internals.html#Documenter.Selectors.disable)
-- [`Documenter.Selectors.disable`](internals.html#Documenter.Selectors.disable)
-- [`Documenter.Selectors.disable`](internals.html#Documenter.Selectors.disable)
 - [`Documenter.Selectors.disable`](internals.html#Documenter.Selectors.disable)
 - [`Documenter.Selectors.disable`](internals.html#Documenter.Selectors.disable)
 - [`Documenter.Selectors.dispatch`](internals.html#Documenter.Selectors.dispatch)
 - [`Documenter.Selectors.dispatch`](internals.html#Documenter.Selectors.dispatch)
-- [`Documenter.Selectors.dispatch`](internals.html#Documenter.Selectors.dispatch)
-- [`Documenter.Selectors.dispatch`](internals.html#Documenter.Selectors.dispatch)
-- [`Documenter.Selectors.dispatch`](internals.html#Documenter.Selectors.dispatch)
-- [`Documenter.Selectors.dispatch`](internals.html#Documenter.Selectors.dispatch)
-- [`Documenter.Selectors.dispatch`](internals.html#Documenter.Selectors.dispatch)
-- [`Documenter.Selectors.dispatch`](internals.html#Documenter.Selectors.dispatch)
-- [`Documenter.Selectors.matcher`](internals.html#Documenter.Selectors.matcher)
-- [`Documenter.Selectors.matcher`](internals.html#Documenter.Selectors.matcher)
-- [`Documenter.Selectors.matcher`](internals.html#Documenter.Selectors.matcher)
-- [`Documenter.Selectors.matcher`](internals.html#Documenter.Selectors.matcher)
-- [`Documenter.Selectors.matcher`](internals.html#Documenter.Selectors.matcher)
-- [`Documenter.Selectors.matcher`](internals.html#Documenter.Selectors.matcher)
 - [`Documenter.Selectors.matcher`](internals.html#Documenter.Selectors.matcher)
 - [`Documenter.Selectors.matcher`](internals.html#Documenter.Selectors.matcher)
 - [`Documenter.Selectors.order`](internals.html#Documenter.Selectors.order)
 - [`Documenter.Selectors.order`](internals.html#Documenter.Selectors.order)
-- [`Documenter.Selectors.order`](internals.html#Documenter.Selectors.order)
-- [`Documenter.Selectors.order`](internals.html#Documenter.Selectors.order)
-- [`Documenter.Selectors.order`](internals.html#Documenter.Selectors.order)
-- [`Documenter.Selectors.order`](internals.html#Documenter.Selectors.order)
-- [`Documenter.Selectors.order`](internals.html#Documenter.Selectors.order)
-- [`Documenter.Selectors.order`](internals.html#Documenter.Selectors.order)
-- [`Documenter.Selectors.runner`](internals.html#Documenter.Selectors.runner)
-- [`Documenter.Selectors.runner`](internals.html#Documenter.Selectors.runner)
-- [`Documenter.Selectors.runner`](internals.html#Documenter.Selectors.runner)
-- [`Documenter.Selectors.runner`](internals.html#Documenter.Selectors.runner)
-- [`Documenter.Selectors.runner`](internals.html#Documenter.Selectors.runner)
-- [`Documenter.Selectors.runner`](internals.html#Documenter.Selectors.runner)
 - [`Documenter.Selectors.runner`](internals.html#Documenter.Selectors.runner)
 - [`Documenter.Selectors.runner`](internals.html#Documenter.Selectors.runner)
 - [`Documenter.Selectors.strict`](internals.html#Documenter.Selectors.strict)
 - [`Documenter.Selectors.strict`](internals.html#Documenter.Selectors.strict)
-- [`Documenter.Selectors.strict`](internals.html#Documenter.Selectors.strict)
-- [`Documenter.Selectors.strict`](internals.html#Documenter.Selectors.strict)
-- [`Documenter.Selectors.strict`](internals.html#Documenter.Selectors.strict)
-- [`Documenter.Selectors.strict`](internals.html#Documenter.Selectors.strict)
-- [`Documenter.Selectors.strict`](internals.html#Documenter.Selectors.strict)
-- [`Documenter.Selectors.strict`](internals.html#Documenter.Selectors.strict)
-- [`Documenter.Utilities.DOM.escapehtml`](internals.html#Documenter.Utilities.DOM.escapehtml)
-- [`Documenter.Utilities.DOM.escapehtml`](internals.html#Documenter.Utilities.DOM.escapehtml)
-- [`Documenter.Utilities.DOM.escapehtml`](internals.html#Documenter.Utilities.DOM.escapehtml)
-- [`Documenter.Utilities.DOM.escapehtml`](internals.html#Documenter.Utilities.DOM.escapehtml)
-- [`Documenter.Utilities.DOM.escapehtml`](internals.html#Documenter.Utilities.DOM.escapehtml)
-- [`Documenter.Utilities.DOM.escapehtml`](internals.html#Documenter.Utilities.DOM.escapehtml)
 - [`Documenter.Utilities.DOM.escapehtml`](internals.html#Documenter.Utilities.DOM.escapehtml)
 - [`Documenter.Utilities.DOM.escapehtml`](internals.html#Documenter.Utilities.DOM.escapehtml)
 - [`Documenter.Utilities.DOM.flatten!`](internals.html#Documenter.Utilities.DOM.flatten!)
 - [`Documenter.Utilities.DOM.flatten!`](internals.html#Documenter.Utilities.DOM.flatten!)
-- [`Documenter.Utilities.DOM.flatten!`](internals.html#Documenter.Utilities.DOM.flatten!)
-- [`Documenter.Utilities.DOM.flatten!`](internals.html#Documenter.Utilities.DOM.flatten!)
-- [`Documenter.Utilities.DOM.flatten!`](internals.html#Documenter.Utilities.DOM.flatten!)
-- [`Documenter.Utilities.DOM.flatten!`](internals.html#Documenter.Utilities.DOM.flatten!)
-- [`Documenter.Utilities.DOM.flatten!`](internals.html#Documenter.Utilities.DOM.flatten!)
-- [`Documenter.Utilities.DOM.flatten!`](internals.html#Documenter.Utilities.DOM.flatten!)
-- [`Documenter.Utilities.assetsdir`](internals.html#Documenter.Utilities.assetsdir)
-- [`Documenter.Utilities.assetsdir`](internals.html#Documenter.Utilities.assetsdir)
-- [`Documenter.Utilities.assetsdir`](internals.html#Documenter.Utilities.assetsdir)
-- [`Documenter.Utilities.assetsdir`](internals.html#Documenter.Utilities.assetsdir)
-- [`Documenter.Utilities.assetsdir`](internals.html#Documenter.Utilities.assetsdir)
-- [`Documenter.Utilities.assetsdir`](internals.html#Documenter.Utilities.assetsdir)
 - [`Documenter.Utilities.assetsdir`](internals.html#Documenter.Utilities.assetsdir)
 - [`Documenter.Utilities.assetsdir`](internals.html#Documenter.Utilities.assetsdir)
 - [`Documenter.Utilities.check_kwargs`](internals.html#Documenter.Utilities.check_kwargs)
 - [`Documenter.Utilities.check_kwargs`](internals.html#Documenter.Utilities.check_kwargs)
-- [`Documenter.Utilities.check_kwargs`](internals.html#Documenter.Utilities.check_kwargs)
-- [`Documenter.Utilities.check_kwargs`](internals.html#Documenter.Utilities.check_kwargs)
-- [`Documenter.Utilities.check_kwargs`](internals.html#Documenter.Utilities.check_kwargs)
-- [`Documenter.Utilities.check_kwargs`](internals.html#Documenter.Utilities.check_kwargs)
-- [`Documenter.Utilities.check_kwargs`](internals.html#Documenter.Utilities.check_kwargs)
-- [`Documenter.Utilities.check_kwargs`](internals.html#Documenter.Utilities.check_kwargs)
-- [`Documenter.Utilities.currentdir`](internals.html#Documenter.Utilities.currentdir)
-- [`Documenter.Utilities.currentdir`](internals.html#Documenter.Utilities.currentdir)
-- [`Documenter.Utilities.currentdir`](internals.html#Documenter.Utilities.currentdir)
-- [`Documenter.Utilities.currentdir`](internals.html#Documenter.Utilities.currentdir)
-- [`Documenter.Utilities.currentdir`](internals.html#Documenter.Utilities.currentdir)
-- [`Documenter.Utilities.currentdir`](internals.html#Documenter.Utilities.currentdir)
 - [`Documenter.Utilities.currentdir`](internals.html#Documenter.Utilities.currentdir)
 - [`Documenter.Utilities.currentdir`](internals.html#Documenter.Utilities.currentdir)
 - [`Documenter.Utilities.doccat`](internals.html#Documenter.Utilities.doccat)
 - [`Documenter.Utilities.doccat`](internals.html#Documenter.Utilities.doccat)
-- [`Documenter.Utilities.doccat`](internals.html#Documenter.Utilities.doccat)
-- [`Documenter.Utilities.doccat`](internals.html#Documenter.Utilities.doccat)
-- [`Documenter.Utilities.doccat`](internals.html#Documenter.Utilities.doccat)
-- [`Documenter.Utilities.doccat`](internals.html#Documenter.Utilities.doccat)
-- [`Documenter.Utilities.doccat`](internals.html#Documenter.Utilities.doccat)
-- [`Documenter.Utilities.doccat`](internals.html#Documenter.Utilities.doccat)
-- [`Documenter.Utilities.docs`](internals.html#Documenter.Utilities.docs)
-- [`Documenter.Utilities.docs`](internals.html#Documenter.Utilities.docs)
-- [`Documenter.Utilities.docs`](internals.html#Documenter.Utilities.docs)
-- [`Documenter.Utilities.docs`](internals.html#Documenter.Utilities.docs)
-- [`Documenter.Utilities.docs`](internals.html#Documenter.Utilities.docs)
-- [`Documenter.Utilities.docs`](internals.html#Documenter.Utilities.docs)
 - [`Documenter.Utilities.docs`](internals.html#Documenter.Utilities.docs)
 - [`Documenter.Utilities.docs`](internals.html#Documenter.Utilities.docs)
 - [`Documenter.Utilities.filterdocs`](internals.html#Documenter.Utilities.filterdocs)
 - [`Documenter.Utilities.filterdocs`](internals.html#Documenter.Utilities.filterdocs)
-- [`Documenter.Utilities.filterdocs`](internals.html#Documenter.Utilities.filterdocs)
-- [`Documenter.Utilities.filterdocs`](internals.html#Documenter.Utilities.filterdocs)
-- [`Documenter.Utilities.filterdocs`](internals.html#Documenter.Utilities.filterdocs)
-- [`Documenter.Utilities.filterdocs`](internals.html#Documenter.Utilities.filterdocs)
-- [`Documenter.Utilities.filterdocs`](internals.html#Documenter.Utilities.filterdocs)
-- [`Documenter.Utilities.filterdocs`](internals.html#Documenter.Utilities.filterdocs)
-- [`Documenter.Utilities.issubmodule`](internals.html#Documenter.Utilities.issubmodule)
-- [`Documenter.Utilities.issubmodule`](internals.html#Documenter.Utilities.issubmodule)
-- [`Documenter.Utilities.issubmodule`](internals.html#Documenter.Utilities.issubmodule)
-- [`Documenter.Utilities.issubmodule`](internals.html#Documenter.Utilities.issubmodule)
-- [`Documenter.Utilities.issubmodule`](internals.html#Documenter.Utilities.issubmodule)
-- [`Documenter.Utilities.issubmodule`](internals.html#Documenter.Utilities.issubmodule)
 - [`Documenter.Utilities.issubmodule`](internals.html#Documenter.Utilities.issubmodule)
 - [`Documenter.Utilities.issubmodule`](internals.html#Documenter.Utilities.issubmodule)
 - [`Documenter.Utilities.log`](internals.html#Documenter.Utilities.log)
 - [`Documenter.Utilities.log`](internals.html#Documenter.Utilities.log)
-- [`Documenter.Utilities.log`](internals.html#Documenter.Utilities.log)
-- [`Documenter.Utilities.log`](internals.html#Documenter.Utilities.log)
-- [`Documenter.Utilities.log`](internals.html#Documenter.Utilities.log)
-- [`Documenter.Utilities.log`](internals.html#Documenter.Utilities.log)
-- [`Documenter.Utilities.log`](internals.html#Documenter.Utilities.log)
-- [`Documenter.Utilities.log`](internals.html#Documenter.Utilities.log)
-- [`Documenter.Utilities.logging`](internals.html#Documenter.Utilities.logging)
-- [`Documenter.Utilities.logging`](internals.html#Documenter.Utilities.logging)
-- [`Documenter.Utilities.logging`](internals.html#Documenter.Utilities.logging)
-- [`Documenter.Utilities.logging`](internals.html#Documenter.Utilities.logging)
-- [`Documenter.Utilities.logging`](internals.html#Documenter.Utilities.logging)
-- [`Documenter.Utilities.logging`](internals.html#Documenter.Utilities.logging)
 - [`Documenter.Utilities.logging`](internals.html#Documenter.Utilities.logging)
 - [`Documenter.Utilities.logging`](internals.html#Documenter.Utilities.logging)
 - [`Documenter.Utilities.nodocs`](internals.html#Documenter.Utilities.nodocs)
 - [`Documenter.Utilities.nodocs`](internals.html#Documenter.Utilities.nodocs)
-- [`Documenter.Utilities.nodocs`](internals.html#Documenter.Utilities.nodocs)
-- [`Documenter.Utilities.nodocs`](internals.html#Documenter.Utilities.nodocs)
-- [`Documenter.Utilities.nodocs`](internals.html#Documenter.Utilities.nodocs)
-- [`Documenter.Utilities.nodocs`](internals.html#Documenter.Utilities.nodocs)
-- [`Documenter.Utilities.nodocs`](internals.html#Documenter.Utilities.nodocs)
-- [`Documenter.Utilities.nodocs`](internals.html#Documenter.Utilities.nodocs)
-- [`Documenter.Utilities.object`](internals.html#Documenter.Utilities.object)
-- [`Documenter.Utilities.object`](internals.html#Documenter.Utilities.object)
-- [`Documenter.Utilities.object`](internals.html#Documenter.Utilities.object)
-- [`Documenter.Utilities.object`](internals.html#Documenter.Utilities.object)
-- [`Documenter.Utilities.object`](internals.html#Documenter.Utilities.object)
-- [`Documenter.Utilities.object`](internals.html#Documenter.Utilities.object)
 - [`Documenter.Utilities.object`](internals.html#Documenter.Utilities.object)
 - [`Documenter.Utilities.object`](internals.html#Documenter.Utilities.object)
 - [`Documenter.Utilities.parseblock`](internals.html#Documenter.Utilities.parseblock)
 - [`Documenter.Utilities.parseblock`](internals.html#Documenter.Utilities.parseblock)
-- [`Documenter.Utilities.parseblock`](internals.html#Documenter.Utilities.parseblock)
-- [`Documenter.Utilities.parseblock`](internals.html#Documenter.Utilities.parseblock)
-- [`Documenter.Utilities.parseblock`](internals.html#Documenter.Utilities.parseblock)
-- [`Documenter.Utilities.parseblock`](internals.html#Documenter.Utilities.parseblock)
-- [`Documenter.Utilities.parseblock`](internals.html#Documenter.Utilities.parseblock)
-- [`Documenter.Utilities.parseblock`](internals.html#Documenter.Utilities.parseblock)
-- [`Documenter.Utilities.slugify`](internals.html#Documenter.Utilities.slugify)
-- [`Documenter.Utilities.slugify`](internals.html#Documenter.Utilities.slugify)
-- [`Documenter.Utilities.slugify`](internals.html#Documenter.Utilities.slugify)
-- [`Documenter.Utilities.slugify`](internals.html#Documenter.Utilities.slugify)
-- [`Documenter.Utilities.slugify`](internals.html#Documenter.Utilities.slugify)
-- [`Documenter.Utilities.slugify`](internals.html#Documenter.Utilities.slugify)
 - [`Documenter.Utilities.slugify`](internals.html#Documenter.Utilities.slugify)
 - [`Documenter.Utilities.slugify`](internals.html#Documenter.Utilities.slugify)
 - [`Documenter.Utilities.submodules`](internals.html#Documenter.Utilities.submodules)
 - [`Documenter.Utilities.submodules`](internals.html#Documenter.Utilities.submodules)
-- [`Documenter.Utilities.submodules`](internals.html#Documenter.Utilities.submodules)
-- [`Documenter.Utilities.submodules`](internals.html#Documenter.Utilities.submodules)
-- [`Documenter.Utilities.submodules`](internals.html#Documenter.Utilities.submodules)
-- [`Documenter.Utilities.submodules`](internals.html#Documenter.Utilities.submodules)
-- [`Documenter.Utilities.submodules`](internals.html#Documenter.Utilities.submodules)
-- [`Documenter.Utilities.submodules`](internals.html#Documenter.Utilities.submodules)
-- [`Documenter.Utilities.warn`](internals.html#Documenter.Utilities.warn)
-- [`Documenter.Utilities.warn`](internals.html#Documenter.Utilities.warn)
-- [`Documenter.Utilities.warn`](internals.html#Documenter.Utilities.warn)
-- [`Documenter.Utilities.warn`](internals.html#Documenter.Utilities.warn)
-- [`Documenter.Utilities.warn`](internals.html#Documenter.Utilities.warn)
-- [`Documenter.Utilities.warn`](internals.html#Documenter.Utilities.warn)
 - [`Documenter.Utilities.warn`](internals.html#Documenter.Utilities.warn)
 - [`Documenter.Utilities.warn`](internals.html#Documenter.Utilities.warn)
 - [`Documenter.Walkers.walk`](internals.html#Documenter.Walkers.walk)
 - [`Documenter.Walkers.walk`](internals.html#Documenter.Walkers.walk)
-- [`Documenter.Walkers.walk`](internals.html#Documenter.Walkers.walk)
-- [`Documenter.Walkers.walk`](internals.html#Documenter.Walkers.walk)
-- [`Documenter.Walkers.walk`](internals.html#Documenter.Walkers.walk)
-- [`Documenter.Walkers.walk`](internals.html#Documenter.Walkers.walk)
-- [`Documenter.Walkers.walk`](internals.html#Documenter.Walkers.walk)
-- [`Documenter.Walkers.walk`](internals.html#Documenter.Walkers.walk)
-- [`Documenter.Writers.MarkdownWriter.join_decl`](internals.html#Documenter.Writers.MarkdownWriter.join_decl)
-- [`Documenter.Writers.MarkdownWriter.join_decl`](internals.html#Documenter.Writers.MarkdownWriter.join_decl)
-- [`Documenter.Writers.MarkdownWriter.join_decl`](internals.html#Documenter.Writers.MarkdownWriter.join_decl)
-- [`Documenter.Writers.MarkdownWriter.join_decl`](internals.html#Documenter.Writers.MarkdownWriter.join_decl)
-- [`Documenter.Writers.MarkdownWriter.join_decl`](internals.html#Documenter.Writers.MarkdownWriter.join_decl)
-- [`Documenter.Writers.MarkdownWriter.join_decl`](internals.html#Documenter.Writers.MarkdownWriter.join_decl)
 - [`Documenter.Writers.MarkdownWriter.join_decl`](internals.html#Documenter.Writers.MarkdownWriter.join_decl)
 - [`Documenter.Writers.MarkdownWriter.join_decl`](internals.html#Documenter.Writers.MarkdownWriter.join_decl)
 - [`Documenter.Writers.MarkdownWriter.span`](internals.html#Documenter.Writers.MarkdownWriter.span)
 - [`Documenter.Writers.MarkdownWriter.span`](internals.html#Documenter.Writers.MarkdownWriter.span)
-- [`Documenter.Writers.MarkdownWriter.span`](internals.html#Documenter.Writers.MarkdownWriter.span)
-- [`Documenter.Writers.MarkdownWriter.span`](internals.html#Documenter.Writers.MarkdownWriter.span)
-- [`Documenter.Writers.MarkdownWriter.span`](internals.html#Documenter.Writers.MarkdownWriter.span)
-- [`Documenter.Writers.MarkdownWriter.span`](internals.html#Documenter.Writers.MarkdownWriter.span)
-- [`Documenter.Writers.MarkdownWriter.span`](internals.html#Documenter.Writers.MarkdownWriter.span)
-- [`Documenter.Writers.MarkdownWriter.span`](internals.html#Documenter.Writers.MarkdownWriter.span)
 - [`Documenter.Writers.render`](internals.html#Documenter.Writers.render)
 - [`Documenter.Writers.render`](internals.html#Documenter.Writers.render)
-- [`Documenter.Writers.render`](internals.html#Documenter.Writers.render)
-- [`Documenter.Writers.render`](internals.html#Documenter.Writers.render)
-- [`Documenter.Writers.render`](internals.html#Documenter.Writers.render)
-- [`Documenter.Writers.render`](internals.html#Documenter.Writers.render)
-- [`Documenter.Writers.render`](internals.html#Documenter.Writers.render)
-- [`Documenter.Writers.render`](internals.html#Documenter.Writers.render)
-- [`Documenter.Utilities.DOM.@tags`](internals.html#Documenter.Utilities.DOM.@tags)
-- [`Documenter.Utilities.DOM.@tags`](internals.html#Documenter.Utilities.DOM.@tags)
-- [`Documenter.Utilities.DOM.@tags`](internals.html#Documenter.Utilities.DOM.@tags)
-- [`Documenter.Utilities.DOM.@tags`](internals.html#Documenter.Utilities.DOM.@tags)
-- [`Documenter.Utilities.DOM.@tags`](internals.html#Documenter.Utilities.DOM.@tags)
-- [`Documenter.Utilities.DOM.@tags`](internals.html#Documenter.Utilities.DOM.@tags)
 - [`Documenter.Utilities.DOM.@tags`](internals.html#Documenter.Utilities.DOM.@tags)
 - [`Documenter.Utilities.DOM.@tags`](internals.html#Documenter.Utilities.DOM.@tags)
 
-</pre></div><a id="Anchors-1"></a><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Anchors&#39; href=&#39;#Documenter.Anchors&#39;&gt;#&lt;/a&gt;
+</pre></div><a id="Anchors-1"></a><div class="mdnote">Base.Markdown.Header{2}</div><h2>Anchors</h2><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Anchors&#39; href=&#39;#Documenter.Anchors&#39;&gt;#&lt;/a&gt;
 **`Documenter.Anchors`** &amp;mdash; *Module*.
 
 
@@ -1138,7 +433,7 @@ Is the `id` unique within the given [`AnchorMap`](internals.html#Documenter.Anch
 &lt;/li&gt;
 &lt;/ul&gt;
 
-</pre></div><a id="Builder-1"></a><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Builder&#39; href=&#39;#Documenter.Builder&#39;&gt;#&lt;/a&gt;
+</pre></div><a id="Builder-1"></a><div class="mdnote">Base.Markdown.Header{2}</div><h2>Builder</h2><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Builder&#39; href=&#39;#Documenter.Builder&#39;&gt;#&lt;/a&gt;
 **`Documenter.Builder`** &amp;mdash; *Module*.
 
 
@@ -1238,7 +533,7 @@ Writes the document tree to the `build` directory.
 
 &lt;a target=&#39;_blank&#39; href=&#39;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Builder.jl#L67-69&#39; class=&#39;documenter-source&#39;&gt;source&lt;/a&gt;&lt;br&gt;
 
-</pre></div><a id="CrossReferences-1"></a><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.CrossReferences&#39; href=&#39;#Documenter.CrossReferences&#39;&gt;#&lt;/a&gt;
+</pre></div><a id="CrossReferences-1"></a><div class="mdnote">Base.Markdown.Header{2}</div><h2>CrossReferences</h2><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.CrossReferences&#39; href=&#39;#Documenter.CrossReferences&#39;&gt;#&lt;/a&gt;
 **`Documenter.CrossReferences`** &amp;mdash; *Module*.
 
 
@@ -1277,7 +572,7 @@ Traverses a [`Documents.Document`](internals.html#Documenter.Documents.Document)
 &lt;/li&gt;
 &lt;/ul&gt;
 
-</pre></div><a id="DocChecks-1"></a><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.DocChecks&#39; href=&#39;#Documenter.DocChecks&#39;&gt;#&lt;/a&gt;
+</pre></div><a id="DocChecks-1"></a><div class="mdnote">Base.Markdown.Header{2}</div><h2>DocChecks</h2><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.DocChecks&#39; href=&#39;#Documenter.DocChecks&#39;&gt;#&lt;/a&gt;
 **`Documenter.DocChecks`** &amp;mdash; *Module*.
 
 
@@ -1349,7 +644,7 @@ Traverses the document tree and tries to run each Julia code block encountered. 
 &lt;/li&gt;
 &lt;/ul&gt;
 
-</pre></div><a id="DocSystem-1"></a><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.DocSystem&#39; href=&#39;#Documenter.DocSystem&#39;&gt;#&lt;/a&gt;
+</pre></div><a id="DocSystem-1"></a><div class="mdnote">Base.Markdown.Header{2}</div><h2>DocSystem</h2><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.DocSystem&#39; href=&#39;#Documenter.DocSystem&#39;&gt;#&lt;/a&gt;
 **`Documenter.DocSystem`** &amp;mdash; *Module*.
 
 
@@ -1552,7 +847,7 @@ The original docstring cache is not modified.
 &lt;/li&gt;
 &lt;/ul&gt;
 
-</pre></div><a id="Documents-1"></a><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Documents&#39; href=&#39;#Documenter.Documents&#39;&gt;#&lt;/a&gt;
+</pre></div><a id="Documents-1"></a><div class="mdnote">Base.Markdown.Header{2}</div><h2>Documents</h2><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Documents&#39; href=&#39;#Documenter.Documents&#39;&gt;#&lt;/a&gt;
 **`Documenter.Documents`** &amp;mdash; *Module*.
 
 
@@ -1772,7 +1067,7 @@ _Hiding 1 method defined outside of this package._
 
 _Hiding 1 method defined outside of this package._
 
-</pre></div><a id="Expanders-1"></a><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Expanders&#39; href=&#39;#Documenter.Expanders&#39;&gt;#&lt;/a&gt;
+</pre></div><a id="Expanders-1"></a><div class="mdnote">Base.Markdown.Header{2}</div><h2>Expanders</h2><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Expanders&#39; href=&#39;#Documenter.Expanders&#39;&gt;#&lt;/a&gt;
 **`Documenter.Expanders`** &amp;mdash; *Module*.
 
 
@@ -1980,7 +1275,7 @@ Due to differences between 0.4 and 0.5, only 0.5 is supported currently. On 0.4 
 &lt;/li&gt;
 &lt;/ul&gt;
 
-</pre></div><a id="Formats-1"></a><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Formats&#39; href=&#39;#Documenter.Formats&#39;&gt;#&lt;/a&gt;
+</pre></div><a id="Formats-1"></a><div class="mdnote">Base.Markdown.Header{2}</div><h2>Formats</h2><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Formats&#39; href=&#39;#Documenter.Formats&#39;&gt;#&lt;/a&gt;
 **`Documenter.Formats`** &amp;mdash; *Module*.
 
 
@@ -2028,7 +1323,7 @@ Converts a [`Format`](internals.html#Documenter.Formats.Format) value to a `MIME
 &lt;/li&gt;
 &lt;/ul&gt;
 
-</pre></div><a id="Generator-1"></a><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Generator&#39; href=&#39;#Documenter.Generator&#39;&gt;#&lt;/a&gt;
+</pre></div><a id="Generator-1"></a><div class="mdnote">Base.Markdown.Header{2}</div><h2>Generator</h2><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Generator&#39; href=&#39;#Documenter.Generator&#39;&gt;#&lt;/a&gt;
 **`Documenter.Generator`** &amp;mdash; *Module*.
 
 
@@ -2148,7 +1443,7 @@ Contents of the default `src/index.md` file.
 &lt;/li&gt;
 &lt;/ul&gt;
 
-</pre></div><a id="Selectors-1"></a><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Selectors&#39; href=&#39;#Documenter.Selectors&#39;&gt;#&lt;/a&gt;
+</pre></div><a id="Selectors-1"></a><div class="mdnote">Base.Markdown.Header{2}</div><h2>Selectors</h2><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Selectors&#39; href=&#39;#Documenter.Selectors&#39;&gt;#&lt;/a&gt;
 **`Documenter.Selectors`** &amp;mdash; *Module*.
 
 
@@ -2737,7 +2032,7 @@ Selectors.dispatch(MySelector, 1)
 &lt;/li&gt;
 &lt;/ul&gt;
 
-</pre></div><a id="Walkers-1"></a><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Walkers&#39; href=&#39;#Documenter.Walkers&#39;&gt;#&lt;/a&gt;
+</pre></div><a id="Walkers-1"></a><div class="mdnote">Base.Markdown.Header{2}</div><h2>Walkers</h2><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Walkers&#39; href=&#39;#Documenter.Walkers&#39;&gt;#&lt;/a&gt;
 **`Documenter.Walkers`** &amp;mdash; *Module*.
 
 
@@ -2768,24 +2063,6 @@ Calls `f` on `element` and any of its child elements. `meta` is a `Dict` contain
     &lt;pre&gt;&lt;span class=&quot;nf&quot;&gt;walk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
 &lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;meta&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
-&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Base.Markdown.Table&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/pre&gt;
-    defined at
-    &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Walkers.jl#L66&quot;&gt;src/Walkers.jl:66&lt;/a&gt;
-&lt;/li&gt;
-&lt;li&gt;
-    &lt;pre&gt;&lt;span class=&quot;nf&quot;&gt;walk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
-&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;meta&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
-&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Documenter.Documents.DocsNodes&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/pre&gt;
-    defined at
-    &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Walkers.jl#L47&quot;&gt;src/Walkers.jl:47&lt;/a&gt;
-&lt;/li&gt;
-&lt;li&gt;
-    &lt;pre&gt;&lt;span class=&quot;nf&quot;&gt;walk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
-&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;meta&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
 &lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Documenter.Documents.DocsNode&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/pre&gt;
     defined at
@@ -2795,10 +2072,10 @@ Calls `f` on `element` and any of its child elements. `meta` is a `Dict` contain
     &lt;pre&gt;&lt;span class=&quot;nf&quot;&gt;walk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
 &lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;meta&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
-&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Documenter.Documents.EvalNode&lt;/span&gt;
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Base.Markdown.Link&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/pre&gt;
     defined at
-    &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Walkers.jl#L50&quot;&gt;src/Walkers.jl:50&lt;/a&gt;
+    &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Walkers.jl#L68&quot;&gt;src/Walkers.jl:68&lt;/a&gt;
 &lt;/li&gt;
 &lt;li&gt;
     &lt;pre&gt;&lt;span class=&quot;nf&quot;&gt;walk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
@@ -2813,10 +2090,37 @@ Calls `f` on `element` and any of its child elements. `meta` is a `Dict` contain
     &lt;pre&gt;&lt;span class=&quot;nf&quot;&gt;walk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
 &lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;meta&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Base.Markdown.Footnote&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/pre&gt;
+    defined at
+    &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Walkers.jl#L62&quot;&gt;src/Walkers.jl:62&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;
+    &lt;pre&gt;&lt;span class=&quot;nf&quot;&gt;walk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;meta&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
 &lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Base.Markdown.MD&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/pre&gt;
     defined at
     &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Walkers.jl#L26&quot;&gt;src/Walkers.jl:26&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;
+    &lt;pre&gt;&lt;span class=&quot;nf&quot;&gt;walk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;meta&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Documenter.Documents.EvalNode&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/pre&gt;
+    defined at
+    &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Walkers.jl#L50&quot;&gt;src/Walkers.jl:50&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;
+    &lt;pre&gt;&lt;span class=&quot;nf&quot;&gt;walk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;meta&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Base.Markdown.Table&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/pre&gt;
+    defined at
+    &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Walkers.jl#L66&quot;&gt;src/Walkers.jl:66&lt;/a&gt;
 &lt;/li&gt;
 &lt;li&gt;
     &lt;pre&gt;&lt;span class=&quot;nf&quot;&gt;walk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
@@ -2840,19 +2144,10 @@ Calls `f` on `element` and any of its child elements. `meta` is a `Dict` contain
     &lt;pre&gt;&lt;span class=&quot;nf&quot;&gt;walk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
 &lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;meta&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
-&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Base.Markdown.Link&lt;/span&gt;
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Documenter.Documents.DocsNodes&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/pre&gt;
     defined at
-    &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Walkers.jl#L68&quot;&gt;src/Walkers.jl:68&lt;/a&gt;
-&lt;/li&gt;
-&lt;li&gt;
-    &lt;pre&gt;&lt;span class=&quot;nf&quot;&gt;walk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
-&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;meta&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
-&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;block&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Base.Markdown.Footnote&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/pre&gt;
-    defined at
-    &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Walkers.jl#L62&quot;&gt;src/Walkers.jl:62&lt;/a&gt;
+    &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Walkers.jl#L47&quot;&gt;src/Walkers.jl:47&lt;/a&gt;
 &lt;/li&gt;
 &lt;li&gt;
     &lt;pre&gt;&lt;span class=&quot;nf&quot;&gt;walk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
@@ -2892,7 +2187,7 @@ Calls `f` on `element` and any of its child elements. `meta` is a `Dict` contain
 &lt;/li&gt;
 &lt;/ul&gt;
 
-</pre></div><a id="Writers-1"></a><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Writers&#39; href=&#39;#Documenter.Writers&#39;&gt;#&lt;/a&gt;
+</pre></div><a id="Writers-1"></a><div class="mdnote">Base.Markdown.Header{2}</div><h2>Writers</h2><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Writers&#39; href=&#39;#Documenter.Writers&#39;&gt;#&lt;/a&gt;
 **`Documenter.Writers`** &amp;mdash; *Module*.
 
 
@@ -2958,17 +2253,17 @@ where `format` is one of the values of the [`Formats.Format`](internals.html#Doc
     &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Writers/HTMLWriter.jl#L21&quot;&gt;src/Writers/HTMLWriter.jl:21&lt;/a&gt;
 &lt;/li&gt;
 &lt;li&gt;
-    &lt;pre class=&quot;documenter-inline&quot;&gt;&lt;span class=&quot;nf&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;doc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Documenter.Documents.Document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/pre&gt;
-    defined at
-    &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Writers/Writers.jl#L40&quot;&gt;src/Writers/Writers.jl:40&lt;/a&gt;
-&lt;/li&gt;
-&lt;li&gt;
     &lt;pre&gt;&lt;span class=&quot;nf&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Documenter.Writers.Writer{LaTeX::Documenter.Formats.Format = 1}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,
 &lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;doc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Documenter.Documents.Document&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/pre&gt;
     defined at
     &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Writers/LaTeXWriter.jl#L21&quot;&gt;src/Writers/LaTeXWriter.jl:21&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;
+    &lt;pre class=&quot;documenter-inline&quot;&gt;&lt;span class=&quot;nf&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;doc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Documenter.Documents.Document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/pre&gt;
+    defined at
+    &lt;a target=&quot;_blank&quot; href=&quot;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Writers/Writers.jl#L40&quot;&gt;src/Writers/Writers.jl:40&lt;/a&gt;
 &lt;/li&gt;
 &lt;li&gt;
     &lt;pre&gt;&lt;span class=&quot;nf&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
@@ -3166,7 +2461,7 @@ Provides the [`render`](internals.html#Documenter.Writers.render) methods to wri
 
 &lt;a target=&#39;_blank&#39; href=&#39;https://github.com/mortenpi/documenter-html/tree/27c3dccf769c689a61db91d983062bcf65b31893/src/Writers/LaTeXWriter.jl#L1-4&#39; class=&#39;documenter-source&#39;&gt;source&lt;/a&gt;&lt;br&gt;
 
-</pre></div><a id="Utilities-1"></a><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Utilities&#39; href=&#39;#Documenter.Utilities&#39;&gt;#&lt;/a&gt;
+</pre></div><a id="Utilities-1"></a><div class="mdnote">Base.Markdown.Header{2}</div><h2>Utilities</h2><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Utilities&#39; href=&#39;#Documenter.Utilities&#39;&gt;#&lt;/a&gt;
 **`Documenter.Utilities`** &amp;mdash; *Module*.
 
 
@@ -3640,7 +2935,7 @@ E.g. `A.B.C` is a submodule of `A`, `A.B` and `A.B.C`, but it is not a submodule
 &lt;/li&gt;
 &lt;/ul&gt;
 
-</pre></div><a id="DOM-1"></a><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Utilities.DOM&#39; href=&#39;#Documenter.Utilities.DOM&#39;&gt;#&lt;/a&gt;
+</pre></div><a id="DOM-1"></a><div class="mdnote">Base.Markdown.Header{3}</div><h3>DOM</h3><div class="ukwnode"><h1>Documenter.Documents.DocsNodes</h1><pre>&lt;a id=&#39;Documenter.Utilities.DOM&#39; href=&#39;#Documenter.Utilities.DOM&#39;&gt;#&lt;/a&gt;
 **`Documenter.Utilities.DOM`** &amp;mdash; *Module*.
 
 
