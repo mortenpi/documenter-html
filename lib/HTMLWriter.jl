@@ -88,7 +88,10 @@ navitem(p::Vector, src) = map(p->navitem(p, src), p)
 
 function domify(anchor::Anchors.Anchor, page, doc)
     aid = "$(anchor.id)-$(anchor.nth)"
-    a["#$(aid)"]()
+    [
+        a["#$(aid)"]()
+        domify(anchor.object, page, doc)
+    ]
 end
 
 function domify(contents::Documents.ContentsNode, page, doc)
@@ -103,6 +106,7 @@ domify(anchor::Documents.MetaNode, page, doc) = Vector{DOM.Node}()
 function domify(page, doc)
     map(page.elements) do elem
         node = page.mapping[elem]
+        info("domify: $(typeof(elem)) -> $(typeof(node))")
         domify(node, page, doc)
     end
 end
@@ -110,7 +114,10 @@ end
 function domify(node, page, doc)
     warn("Default domify: $(typeof(node))")
     if typeof(node).name.module === Base.Markdown
-        Documenter.Utilities.DOM.MarkdownConverter.mdconvert(node, Base.Markdown.MD())
+        [
+            div[".mdnote"]("$(typeof(node))")
+            Documenter.Utilities.DOM.MarkdownConverter.mdconvert(node, Base.Markdown.MD())
+        ]
     else
         io = IOBuffer()
         Documenter.Writers.MarkdownWriter.render(io,MIME("text/plain"),node,page,doc)
@@ -132,7 +139,7 @@ function domify(mp::Pygments.Magpie)
 end
 
 import Documenter.Utilities.DOM.MarkdownConverter: mdconvert
-import Base.Markdown: MD, Code
+import Base.Markdown: MD, Code, Header
 @tags code
 function mdconvert(c::Code, parent::MD)
     info("MD CODE BLOCK: `$(c.language)`")
@@ -144,6 +151,10 @@ function mdconvert(c::Code, parent::MD)
         code[".language-$(language)"](pre(c.code))
     end
 end
-mdconvert(c::Code, parent) = begin info("MD CODE: `$(c.language)`"); code[".asdf"](c.code) end
+
+function mdconvert(c::Code, parent)
+    info("MD CODE: `$(c.language)`")
+    code[".asdf"](c.code)
+end
 
 end
