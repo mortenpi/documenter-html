@@ -50,6 +50,14 @@ article > footer {
     background-color: lightblue;
 }
 
+code {
+    background-color: lightgray;
+}
+
+code pre {
+    background: inherit;
+}
+
 .ukwnode h1 {
     font-size: medium;
 }
