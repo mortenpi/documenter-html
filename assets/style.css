@@ -44,6 +44,12 @@ article > footer {
 
 .ukwnode {
     margin: 20px;
-    padding: 20px;
-    border: 2px dashed blueviolet;
+    padding-left: 20px;
+    padding-right: 20px;
+    border: 2px solid black;
+    background-color: lightblue;
+}
+
+.ukwnode h1 {
+    font-size: medium;
 }
