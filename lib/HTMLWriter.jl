@@ -73,7 +73,7 @@ function _relpath(path, src)
 end
 
 function pagename(page,doc)
-    docpath = normpath(relpath(page.source,doc.user.source))
+    docpath = normpath(relpath(page.build,doc.user.build))
     first(splitext(docpath))
 end
 
