@@ -94,10 +94,45 @@ function domify(anchor::Anchors.Anchor, page, doc)
     ]
 end
 
+import Base: push!
+type ListBuilder
+    es::Vector
+end
+ListBuilder() = ListBuilder([])
+
+function push!(lb::ListBuilder, level, node)
+    @assert level >= 1
+    if level == 1
+        push!(lb.es, node)
+    else
+        if isempty(lb.es) || typeof(last(lb.es)) !== ListBuilder
+            push!(lb.es, ListBuilder())
+        end
+        push!(last(lb.es), level-1, node)
+    end
+end
+
+function domify(lb::ListBuilder)
+    ul(map(lb.es) do e
+        if typeof(e) === ListBuilder
+            domify(e)
+        else
+            li(e)
+        end
+    end)
+end
+
 function domify(contents::Documents.ContentsNode, page, doc)
-    io = IOBuffer()
-    Documenter.Writers.MarkdownWriter.render(io,MIME("text/plain"),contents,page,doc)
-    pre[".info"](takebuf_string(io))
+    Documents.populate!(contents, doc)
+    lb = ListBuilder()
+    for (count, path, anchor) in contents.elements
+        header = anchor.object
+        url = string(path, '#', anchor.id, '-', anchor.nth)
+        node = a[:href=>url](mdconvert(header.text))
+        level = Utilities.header_level(header)
+        push!(lb, level, node)
+    end
+    domify(lb)
 end
 
 # nothing to show for MetaNodes, so we just return an empty list
