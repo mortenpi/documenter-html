@@ -123,7 +123,6 @@ function domify(lb::ListBuilder)
 end
 
 function domify(contents::Documents.ContentsNode, page, doc)
-    Documents.populate!(contents, doc)
     lb = ListBuilder()
     for (count, path, anchor) in contents.elements
         header = anchor.object
