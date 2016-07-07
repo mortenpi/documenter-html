@@ -14,7 +14,8 @@ import Documenter:
     Formats,
     Documenter,
     Utilities,
-    Utilities.DOM
+    Utilities.DOM,
+    Writers
 
 using Documenter.Utilities.DOM
 @tags html body title head link article
@@ -24,6 +25,8 @@ using Documenter.Utilities.DOM
 @tags header footer
 @tags h1 h2 p em a div
 @tags pre
+
+include("Pygments.jl")
 
 import Documenter.Writers: Writer, render
 function render(::Writer{Formats.HTML}, doc::Documents.Document)
@@ -134,6 +137,99 @@ function domify(contents::Documents.ContentsNode, page, doc)
     domify(lb)
 end
 
+function domify(index::Documents.IndexNode, page, doc)
+    lis = map(index.elements) do _
+        object, doc, page, mod, cat = _
+        url = string(page, "#", Utilities.slugify(object))
+        li(a[:href=>url]("$(object.binding)"))
+    end
+    ul(lis)
+end
+
+function domify(node::Documents.DocsNodes, page, doc)
+    [domify(node, page, doc) for node in node.nodes]
+end
+
+function domify(node::Documents.DocsNode, page, doc)
+    @tags strong br em
+    ret = [
+        a[:id=>node.anchor.id, :href=>"#$(node.anchor.id)"]("#")
+        strong(code("$(node.object.binding)"))
+        "—" # &mdash;
+        em("$(Utilities.doccat(node.object))")
+        "."
+        br()
+        domify_doc(node.docstr,page,doc)
+    ]
+    Utilities.unwrap(node.methods) do methodnodes
+        name = node.object.binding.var # name of the method without the modules
+
+        # We filter out the methods that are marked `visible`
+        ms = [m.method for m in filter(m -> m.visible, methodnodes)]
+
+        push!(ret, strong("Methods"))
+
+        # We print a small notice of the methods table is completely empty,
+        # and an unordered list of methods if there are some to display.
+        if isempty(methodnodes)
+            push!(ret, "This function has no methods.")
+        elseif isempty(ms)
+            push!(ret, "This function has no methods to display.")
+        else
+            # A regexp to match filenames with an absolute path
+            r = Regex("$(Pkg.dir())/([A-Za-z0-9]+)/(.*)")
+
+            lis = map(ms) do m
+                tv, decls, file, line = Base.arg_decl_parts(m)
+                decls = decls[2:end]
+                file = string(file)
+                url = get(Utilities.url(doc.internal.remote, m.module, file, line), "")
+                file_match = match(r, file)
+                if file_match !== nothing
+                    file = file_match.captures[2]
+                end
+                args_raw = join([Writers.MarkdownWriter.join_decl(d, html=false) for d in decls], ", ")
+                tvars = isempty(tv) ? "" : "{" * join(tv,", ") * "}"
+                signature = "$(name)$(tvars)($(args_raw))"
+                # TODO: Multiline signature (as done in the Markdown output)
+                li(code(domify(Pygments.lex("julia",signature))), " defined at ", a[:target=>"_blank", :href=>url]("$(file):$(line)"))
+            end
+            push!(ret, ul(lis))
+        end
+
+        # we print a small notice if we are not displaying all the methods
+        nh = length(methodnodes)-length(ms) # number of hidden methods
+        if nh > 0
+            push!(ret, em("Hiding $(nh) method$(nh==1?"":"s") defined outside of this package."))
+        end
+    end
+    ret
+end
+
+function domify_doc(md::Markdown.MD, page, doc)
+    @tags br
+    if haskey(md.meta, :results)
+        # The `:results` field contains a vector of `Docs.DocStr` objects associated with
+        # each markdown object. The `DocStr` contains data such as file and line info that
+        # we need for generating correct source links.
+        map(zip(md.content, md.meta[:results])) do _
+            markdown, result = _
+            ret = Vector{Any}(domify(Writers.MarkdownWriter.dropheaders(markdown), page, doc))
+            @show typeof(ret)
+            # When a source link is available then print the link.
+            Utilities.unwrap(Utilities.url(doc.internal.remote, result)) do url
+                push!(ret, a[".documenter-source", :target=>"_blank", :href=>url]("source"))
+                push!(ret, br())
+            end
+            ret
+        end
+    else
+        # Docstrings with no `:results` metadata won't contain source locations so we don't
+        # try to print them out. Just print the basic docstring.
+        domify(Writers.MarkdownWriter.dropheaders(md), page, doc)
+    end
+end
+
 # nothing to show for MetaNodes, so we just return an empty list
 domify(anchor::Documents.MetaNode, page, doc) = Vector{DOM.Node}()
 
@@ -162,7 +258,6 @@ function domify(node, page, doc)
     end
 end
 
-include("Pygments.jl")
 function domify(mp::Pygments.Magpie)
     @tags span
     ret = Vector()

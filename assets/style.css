@@ -51,6 +51,11 @@ code pre {
     background: inherit;
 }
 
+
+a.documenter-source {
+  float: right;
+}
+
 /* DEBUG THINGS */
 .ukwnode {
     margin: 20px;
