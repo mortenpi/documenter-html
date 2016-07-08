@@ -183,7 +183,7 @@ function domify(node::Documents.DocsNode, page, doc)
                 tv, decls, file, line = Base.arg_decl_parts(m)
                 decls = decls[2:end]
                 file = string(file)
-                url = get(Utilities.url(doc.internal.remote, m.module, file, line), "")
+                url = get(Utilities.url(doc.internal.remote, doc.user.repo, m.module, file, line), "")
                 file_match = match(r, file)
                 if file_match !== nothing
                     file = file_match.captures[2]
@@ -217,7 +217,7 @@ function domify_doc(md::Markdown.MD, page, doc)
             ret = Vector{Any}(domify(Writers.MarkdownWriter.dropheaders(markdown), page, doc))
             @show typeof(ret)
             # When a source link is available then print the link.
-            Utilities.unwrap(Utilities.url(doc.internal.remote, result)) do url
+            Utilities.unwrap(Utilities.url(doc.internal.remote, doc.user.repo, result)) do url
                 push!(ret, a[".documenter-source", :target=>"_blank", :href=>url]("source"))
                 push!(ret, br())
             end
@@ -274,10 +274,10 @@ function mdconvert(c::Code, parent::MD)
     info("MD CODE BLOCK: `$(c.language)`")
     language = isempty(c.language) ? "none" : c.language
     try
-        code[".language-$(language)"](pre((domify(Pygments.lex(language, c.code)))))
+        pre(code[".language-$(language)"]((domify(Pygments.lex(language, c.code)))))
     catch
         warn("No lexer for $(language)")
-        code[".language-$(language)"](pre(c.code))
+        pre(code[".language-$(language)"](c.code))
     end
 end
 

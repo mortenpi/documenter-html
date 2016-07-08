@@ -47,13 +47,35 @@ code {
     background-color: lightgray;
 }
 
-code pre {
-    background: inherit;
+pre > code {
+    display: inherit;
 }
 
 
 a.documenter-source {
   float: right;
+}
+
+/* admonitions */
+.admonition {
+
+}
+
+.admonition .admonition-title:before {
+    font-family: "FontAwesome";
+    margin-right: 5px;
+}
+
+.admonition.note .admonition-title:before {
+    content: "\f06a";
+}
+
+.admonition.note .admonition-title {
+    background-color: #6ab0de;
+}
+
+.admonition.note {
+    background-color: #e7f2fa;
 }
 
 /* DEBUG THINGS */
