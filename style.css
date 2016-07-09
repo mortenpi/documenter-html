@@ -1,35 +1,41 @@
 /* fonts */
 body, input {
   font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+
 }
 pre, code {
   font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
 }
 
-/*body, body * {
-    padding: 1px;
-    border: 1px solid black;
-}*/
-
-nav {
-    position: absolute;
+nav.toc {
+    position: fixed;
+    overflow-y: auto;
     width: 300px;
     top: 0;
     left: 0;
+    background-color: #fcfcfc;
+    height: 100%;
+    box-shadow: inset -14px 0px 5px -12px rgb(210,210,210);
+}
+
+nav.toc .logo {
+    margin: 0 auto;
+    display: block;
+}
+
+nav.toc h1 {
+    text-align: center;
 }
 
 article {
     margin-left: 300px;
     max-width: 800px;
+    padding: 2em;
 }
 
-article > header {
-    border-bottom: 1px solid gray;
-}
+article > header {}
 
-article > footer {
-    border-top: 1px solid gray;
-}
+article > footer {}
 
 @media screen and (max-device-width: 480px) {
     nav {
@@ -43,12 +49,18 @@ article > footer {
     }
 }
 
-code {
-    background-color: lightgray;
+hr {
+    margin: 1em 0;
 }
 
-code pre {
-    background: inherit;
+pre, code {
+    background-color: #f7f7f7;
+    /*color: #73261e;*/
+}
+
+pre {
+    padding: 0.5em;
+    overflow: auto;
 }
 
 
@@ -56,7 +68,33 @@ a.documenter-source {
   float: right;
 }
 
+/* admonitions */
+.admonition {
+
+}
+
+.admonition .admonition-title:before {
+    font-family: "FontAwesome";
+    margin-right: 5px;
+}
+
+.admonition.note .admonition-title:before {
+    content: "\f06a";
+}
+
+.admonition.note .admonition-title {
+    background-color: #6ab0de;
+}
+
+.admonition.note {
+    background-color: #e7f2fa;
+}
+
 /* DEBUG THINGS */
+.debug {
+    display: none;
+}
+
 .ukwnode {
     margin: 20px;
     padding-left: 20px;
