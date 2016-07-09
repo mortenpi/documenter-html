@@ -28,11 +28,26 @@ using Documenter.Utilities.DOM
 
 include("Pygments.jl")
 
+type HTMLDocument
+    doctype::String
+    root::DOM.Node
+end
+HTMLDocument(root) = HTMLDocument("html", root)
+
+function Base.show(io::IO, doc::HTMLDocument)
+    println(io, "<!DOCTYPE $(doc.doctype)>")
+    println(io, doc.root)
+end
+
 import Documenter.Writers: Writer, render
 function render(::Writer{Formats.HTML}, doc::Documents.Document)
+    @tags hr meta
     #if ispath("build")
     #    rm("build", recursive=true)
     #end
+
+    # determine variables
+    pkgname = "SomePackage.jl (TODO)"
 
     #mkdir("build")
     cp("assets/style.css", "build/style.css", remove_destination=true)
@@ -47,6 +62,7 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
         @show Formats.extension(Formats.HTML, pagename(page,doc))
 
         h = head(
+            meta[:charset=>"UTF-8"](),
             title("Documenter.jl"),
             stylesheet(_relpath("style.css",src)),
             stylesheet(_relpath("highlight.css",src)),
@@ -55,17 +71,37 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
         )
 
         logo = a[:href=>"http://julialang.org/"](
-            img[".logo", :src=>"http://docs.julialang.org/en/release-0.4/_static/julia-logo.svg"]()
+            img[
+                ".logo",
+                :src => "http://docs.julialang.org/en/release-0.4/_static/julia-logo.svg",
+                :alt => "$(pkgname) logo"
+            ]()
         )
-        navmenu = nav(logo, ul(navitem(doc.user.pages, src)))
+        page_nav = nav[".toc"](
+            logo,
+            h1(pkgname),
+            ul(navitem(doc.user.pages, src))
+        )
 
-        art_header = header("Header stuff")
-        art_footer = footer("Footer stuff")
+        art_header = header(
+            "Header stuff",
+            nav(
+                "You'd like some nav?",
+                div("GitHub link maybe?")
+            ),
+            hr()
+        )
+        art_footer = footer(
+            hr(),
+            "Footer stuff"
+        )
 
         pagenodes = domify(page, doc)
         art = article(art_header, pagenodes, art_footer)
+
+        htmldoc = HTMLDocument(html[:lang=>"en"](h,body(page_nav, art)))
         open(Formats.extension(Formats.HTML, page.build), "w") do io
-            print(io, html(h,body(navmenu, art)))
+            print(io, htmldoc)
         end
     end
 end
@@ -236,7 +272,7 @@ domify(anchor::Documents.MetaNode, page, doc) = Vector{DOM.Node}()
 function domify(page, doc)
     map(page.elements) do elem
         node = page.mapping[elem]
-        info("domify: $(typeof(elem)) -> $(typeof(node))")
+        #info("domify: $(typeof(elem)) -> $(typeof(node))")
         domify(node, page, doc)
     end
 end
@@ -245,7 +281,7 @@ function domify(node, page, doc)
     warn("Default domify: $(typeof(node))")
     if typeof(node).name.module === Base.Markdown
         [
-            div[".mdnote"]("$(typeof(node))")
+            div[".mdnote.debug"]("$(typeof(node))")
             Documenter.Utilities.DOM.MarkdownConverter.mdconvert(node, Base.Markdown.MD())
         ]
     else
@@ -271,7 +307,7 @@ import Documenter.Utilities.DOM.MarkdownConverter: mdconvert
 import Base.Markdown: MD, Code, Header
 @tags code
 function mdconvert(c::Code, parent::MD)
-    info("MD CODE BLOCK: `$(c.language)`")
+    #info("MD CODE BLOCK: `$(c.language)`")
     language = isempty(c.language) ? "none" : c.language
     try
         pre(code[".language-$(language)"]((domify(Pygments.lex(language, c.code)))))
@@ -282,7 +318,7 @@ function mdconvert(c::Code, parent::MD)
 end
 
 function mdconvert(c::Code, parent)
-    info("MD CODE: `$(c.language)`")
+    #info("MD CODE: `$(c.language)`")
     code[".asdf"](c.code)
 end
 
