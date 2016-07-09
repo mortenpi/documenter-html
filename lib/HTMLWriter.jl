@@ -41,7 +41,7 @@ end
 
 import Documenter.Writers: Writer, render
 function render(::Writer{Formats.HTML}, doc::Documents.Document)
-    @tags hr meta
+    @tags hr meta input
     #if ispath("build")
     #    rm("build", recursive=true)
     #end
@@ -80,6 +80,7 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
         page_nav = nav[".toc"](
             logo,
             h1(pkgname),
+            input[:type => "text", :placeholder => "Search docs"](),
             ul(navitem(doc.user.pages, src))
         )
 
