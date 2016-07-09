@@ -27,6 +27,18 @@ nav.toc h1 {
     text-align: center;
 }
 
+nav.toc input {
+    border-color: #c9c9c9;
+    border-radius: 50px;
+    display: block;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    /* box-sizing: border-box; */
+    /* height: 2em; */
+    width: 85%;
+    padding: .5em;
+}
+
 article {
     margin-left: 300px;
     max-width: 800px;
