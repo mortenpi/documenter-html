@@ -1,10 +1,15 @@
 /* fonts */
 body, input {
-  font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+  /*font-family: 'Ubuntu', Helvetica, Arial, sans-serif;*/
+  font-family: Helvetica, Arial, sans-serif;
 
 }
 pre, code {
-  font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+  /*font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;*/
+  font-family: 'Courier New', 'Courier', monospace;
+}
+.fa {
+    font-family: 'FontAwesome';
 }
 
 nav.toc {
@@ -49,17 +54,24 @@ article > header {}
 
 article > footer {}
 
-@media screen and (max-device-width: 480px) {
+/*content: "»";*/
+
+/*@media screen and (max-device-width: 480px) {
     nav {
         background-color: red;
         position: relative;
         width: 100%;
     }
 
+    nav.toc h1:before {
+        font-family: "FontAwesome";
+        content: "\f0c9";
+    }
+
     article {
         margin-left: auto;
     }
-}
+}*/
 
 hr {
     margin: 1em 0;
@@ -80,26 +92,46 @@ a.documenter-source {
   float: right;
 }
 
-/* admonitions */
+/*
+ * Admonitions
+ *
+ * Colors (title, body)
+ * warning: #f0b37e #ffedcc (orange)
+ * note:    #6ab0de #e7f2fa (blue)
+ * tip:     #1abc9c #dbfaf4 (green)
+*/
 .admonition {
 
 }
 
-.admonition .admonition-title:before {
+.admonition > .admonition-title:before {
     font-family: "FontAwesome";
     margin-right: 5px;
-}
-
-.admonition.note .admonition-title:before {
     content: "\f06a";
 }
 
-.admonition.note .admonition-title {
+.admonition.warning > .admonition-title {
+    background-color: #f0b37e;
+}
+
+.admonition.warning {
+    background-color: #ffedcc;
+}
+
+.admonition.note > .admonition-title {
     background-color: #6ab0de;
 }
 
 .admonition.note {
     background-color: #e7f2fa;
+}
+
+.admonition.tip > .admonition-title {
+    background-color: #1abc9c;
+}
+
+.admonition.tip {
+    background-color: #dbfaf4;
 }
 
 /* DEBUG THINGS */
