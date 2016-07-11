@@ -23,6 +23,7 @@ pages = [
     ]
     "Dynamic pages" => [
         "dynamic/code.md"
+        "Admonitions & Co" => "dynamic/admonitions.md"
     ]
 ]
 
@@ -45,7 +46,7 @@ function custompage!(doc, name, mds)
     doc.internal.pages[name] = page
 end
 
-custompage!(doc, "dynamic/code.md", """
+custompage!(doc, "dynamic/code", """
 # Code examples
 
 Whee, showing off syntax highlighting.
@@ -90,7 +91,41 @@ function custompage!(doc, name, mds)
     doc.internal.pages[name] = page
 end
 ```
+""")
 
+custompage!(doc, "dynamic/admonitions", """
+# Admonitions
+
+!!! warning
+    Paragraph?
+
+    Another paragraph?
+
+!!! note
+    # Heading
+    ## in
+    ### an
+    #### ad-
+    ##### mo-
+    ###### ni
+    ####### tion?
+
+
+
+!!! tip "Custom title for an admonition?"
+    ```julia
+    function custompage!(doc, name, mds)
+        elements = Base.Markdown.parse(mds).content
+        build = joinpath(doc.user.build, name)
+        page = Page("", build, elements, ObjectIdDict(), Globals())
+        doc.internal.pages[name] = page
+    end
+    ```
+
+    Let's link to something: [`makedocs`](@ref)
+
+    !!! warning
+        Admonition in an admonition?
 """)
 
 cd(doc.user.root) do

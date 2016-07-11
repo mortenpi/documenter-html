@@ -39,17 +39,30 @@ function Base.show(io::IO, doc::HTMLDocument)
     println(io, doc.root)
 end
 
+"""
+Build a `Page` "database" out of a `Document`.
+"""
+type PageDB
+    function PageDB(doc::Documents.Document)
+        flatpages = flattenpages(doc.user.pages)
+        map!(p->first(splitext(p)), flatpages)
+    end
+end
+
 import Documenter.Writers: Writer, render
 function render(::Writer{Formats.HTML}, doc::Documents.Document)
     @tags hr meta input
+    @tags span
     #if ispath("build")
     #    rm("build", recursive=true)
     #end
 
     # determine variables
-    pkgname = "SomePackage.jl (TODO)"
+    pkgname = "\$pkgname.jl"
 
     #mkdir("build")
+    cp("assets/reset.css", "build/reset.css", remove_destination=true)
+    cp("assets/normalize.css", "build/normalize.css", remove_destination=true)
     cp("assets/style.css", "build/style.css", remove_destination=true)
     cp("assets/highlight.css", "build/highlight.css", remove_destination=true)
     cp(joinpath(Pkg.dir("Documenter"), "assets/mathjaxhelper.js"),
@@ -64,6 +77,8 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
         h = head(
             meta[:charset=>"UTF-8"](),
             title("Documenter.jl"),
+            #stylesheet(_relpath("reset.css",src)),
+            stylesheet(_relpath("normalize.css",src)),
             stylesheet(_relpath("style.css",src)),
             stylesheet(_relpath("highlight.css",src)),
             script("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"),
@@ -81,20 +96,25 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
             logo,
             h1(pkgname),
             input[:type => "text", :placeholder => "Search docs"](),
-            ul(navitem(doc.user.pages, src))
+            navitem(doc.user.pages, src)
         )
 
         art_header = header(
             "Header stuff",
             nav(
-                "You'd like some nav?",
-                div("GitHub link maybe?")
+                ul(
+                    li("Page"),
+                    li("Subpage"),
+                    li("SubSubPage")
+                ),
+                a[".edit-page", :href=>"https://github.com/"](span[".fa"]("\uf09b"), " Edit on GitHub") # TODO
             ),
             hr()
         )
         art_footer = footer(
             hr(),
-            "Footer stuff"
+            a("Previous"),
+            a("Next")
         )
 
         pagenodes = domify(page, doc)
@@ -107,9 +127,13 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
     end
 end
 
+flattenpages(pages::Vector) = mapreduce(flattenpages, vcat, pages)
+flattenpages(page::String) = [page]
+flattenpages(p::Pair) = flattenpages(p.second)
+
 function _relpath(path, src)
     pagedir = dirname(src)
-    relpath(path, isempty(pagedir)?".":pagedir)
+    relpath(path, isempty(pagedir) ? "." : pagedir)
 end
 
 function pagename(page,doc)
@@ -120,9 +144,11 @@ end
 stylesheet(href) = link[:href=>href,:rel=>"stylesheet",:type=>"text/css"]()
 script(src) = DOM.Tag(:script)[:src=>src]()
 
-@compat navitem(p::String, src) = li(a[:href=>Formats.extension(Formats.HTML,_relpath(p,src))](p))
-navitem(p::Pair, src) = li(p.first, ul(navitem(p.second, src)))
-navitem(p::Vector, src) = map(p->navitem(p, src), p)
+navlink(str,p,src) = a[:href=>Formats.extension(Formats.HTML,_relpath(p,src))](str)
+navitem(p::String, src) = li(navlink(p,p,src))
+navitem(p::Pair, src) = li(p.first, navitem(p.second, src))
+navitem(p::Pair{String,String}, src) = li(navlink(p.first,p.second,src))
+navitem(p::Vector, src) = ul(map(p->navitem(p, src), p))
 
 # DOMIFY
 
@@ -321,6 +347,25 @@ end
 function mdconvert(c::Code, parent)
     #info("MD CODE: `$(c.language)`")
     code[".asdf"](c.code)
+end
+
+
+# Other utilities
+
+"""
+Returns a `Nullable{String}`, which is nulled if the page title could not be
+determined.
+
+Currently simplistically assumes that if there is a header, then it's the first
+`Header{1}` in the `page.elements`.
+"""
+function pagetitle(page::Documenter.Documents.Page)
+    h = first(page.elements)
+    if typeof(h) === Base.Markdown.Header{1}
+        Nullable{Any}(h.text)
+    else
+        Nullable{Any}()
+    end
 end
 
 end
