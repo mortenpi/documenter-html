@@ -54,6 +54,18 @@ article > header {}
 
 article > footer {}
 
+article > footer a.prev {
+    float: left;
+}
+
+article > footer a.next {
+    float: right;
+}
+
+article > footer a .direction:after {
+    content: ": ";
+}
+
 /*content: "»";*/
 
 /*@media screen and (max-device-width: 480px) {
