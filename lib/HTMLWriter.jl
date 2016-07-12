@@ -337,7 +337,7 @@ function mdconvert(c::Code, parent::MD)
     #info("MD CODE BLOCK: `$(c.language)`")
     language = isempty(c.language) ? "none" : c.language
     try
-        pre(code[".language-$(language)"]((domify(Pygments.lex(language, c.code)))))
+        pre(code[".highlight.language-$(language)"]((domify(Pygments.lex(language, c.code)))))
     catch
         warn("No lexer for $(language)")
         pre(code[".language-$(language)"](c.code))
@@ -346,7 +346,7 @@ end
 
 function mdconvert(c::Code, parent)
     #info("MD CODE: `$(c.language)`")
-    code[".asdf"](c.code)
+    code(c.code)
 end
 
 
