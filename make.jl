@@ -7,24 +7,24 @@ import Documenter: Selectors
 #include("lib/HTMLWriter.jl")
 
 pages = [
-    "index.md"
+    "Overview" => "index.md",
     "Manual" => [
-        "man/guide.md"
-        "man/examples.md"
-        "man/syntax.md"
-        "man/doctests.md"
-        "man/hosting.md"
-        "man/latex.md"
-        "man/internals.md"
-    ]
+        "Guide" => "man/guide.md",
+        "man/examples.md",
+        "man/syntax.md",
+        "man/doctests.md",
+        "man/hosting.md",
+        "Latex syntax" => "man/latex.md",
+        "man/internals.md",
+    ],
     "Library" => [
-        "lib/public.md"
-        "lib/internals.md"
-    ]
+        "lib/public.md",
+        "lib/internals.md",
+    ],
     "Dynamic pages" => [
-        "dynamic/code.md"
-        "Admonitions & Co" => "dynamic/admonitions.md"
-    ]
+        "dynamic/code.md",
+        "Admonitions & Co" => "dynamic/admonitions.md",
+    ],
 ]
 
 Documenter.Selectors.disable(::Type{Documenter.Builder.RenderDocument}) = true

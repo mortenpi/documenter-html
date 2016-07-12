@@ -39,15 +39,77 @@ function Base.show(io::IO, doc::HTMLDocument)
     println(io, doc.root)
 end
 
+type MetaPage
+    title::String
+    subpages::Vector{MetaPage}
+    page::Nullable{Pair{String,Documents.Page}}
+    prev::Nullable{MetaPage}
+    next::Nullable{MetaPage}
+end
+
 """
 Build a `Page` "database" out of a `Document`.
 """
 type PageDB
+    doc::Documents.Document
+    tree::Vector{MetaPage}
+    """a flat list of pages that have a corresponding "physical" page."""
+    pages::Vector{MetaPage}
     function PageDB(doc::Documents.Document)
-        flatpages = flattenpages(doc.user.pages)
-        map!(p->first(splitext(p)), flatpages)
+        pagewalkstate = PageWalkState(
+            doc,
+            Nullable{MetaPage}(),
+            []
+        )
+        tree = walkpages(pagewalkstate, doc.user.pages)
+        new(doc,tree,pagewalkstate.pagelist)
     end
 end
+
+type PageWalkState
+    doc::Documents.Document
+    prev::Nullable{MetaPage}
+    pagelist::Vector{MetaPage}
+end
+
+walkpages(state, ps::Vector) = map(p->walkpages(state,p), ps)
+function walkpages{T}(state, p::Pair{String,Vector{T}})
+    MetaPage(
+        p.first,
+        walkpages(state, p.second),
+        Nullable{Pair{String,Documents.Page}}(),
+        Nullable{MetaPage}(),
+        Nullable{MetaPage}()
+    )
+end
+function walkpages(state, p::Pair{String,String})
+    mp = walkpages(state, p.second)
+    mp.title = p.first
+    @show mp.title
+    mp
+end
+function walkpages(state, src::String)
+    pname = pagename(src)
+    page = state.doc.internal.pages[pname]
+    mp = MetaPage(
+        get(pagetitle(page), "<Untitled>"),
+        [],
+        Nullable(src => page),
+        state.prev,
+        Nullable{MetaPage}()
+    )
+    Utilities.unwrap(state.prev) do prev
+        prev.next = Nullable(mp)
+    end
+    state.prev = Nullable(mp)
+    push!(state.pagelist, mp)
+    mp
+end
+
+import Base: start, next, done
+start(pagedb::PageDB) = start(pagedb.pages)
+next(pagedb::PageDB, state) = next(pagedb.pages, state)
+done(pagedb::PageDB, state) = done(pagedb.pages, state)
 
 import Documenter.Writers: Writer, render
 function render(::Writer{Formats.HTML}, doc::Documents.Document)
@@ -60,6 +122,8 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
     # determine variables
     pkgname = "\$pkgname.jl"
 
+    pagedb = PageDB(doc)
+
     #mkdir("build")
     cp("assets/reset.css", "build/reset.css", remove_destination=true)
     cp("assets/normalize.css", "build/normalize.css", remove_destination=true)
@@ -68,7 +132,9 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
     cp(joinpath(Pkg.dir("Documenter"), "assets/mathjaxhelper.js"),
         "build/mathjaxhelper.js", remove_destination=true)
 
-    for (src, page) in doc.internal.pages
+    for metapage in pagedb
+        if isnull(metapage.page) continue end
+        src, page = get(metapage.page)
         println("- building $(page.build)")
         @show page.source page.build
         @show pagename(page,doc)
@@ -96,7 +162,8 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
             logo,
             h1(pkgname),
             input[:type => "text", :placeholder => "Search docs"](),
-            navitem(doc.user.pages, src)
+            #navitem(doc.user.pages, src)
+            navitem(pagedb, src)
         )
 
         art_header = header(
@@ -111,11 +178,21 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
             ),
             hr()
         )
-        art_footer = footer(
-            hr(),
-            a("Previous"),
-            a("Next")
-        )
+
+        # build the footer with nav links
+        art_footer = footer(hr())
+        Utilities.unwrap(metapage.prev) do mp
+            direction = span[".direction"]("Previous")
+            pagetitle = span[".title"](mp.title)
+            link = a[".previous", :href => navhref(get(mp.page).first, src)](direction, pagetitle)
+            push!(art_footer.nodes, link)
+        end
+        Utilities.unwrap(metapage.next) do mp
+            direction = span[".direction"]("Next")
+            pagetitle = span[".title"](mp.title)
+            link = a[".next", :href => navhref(get(mp.page).first, src)](direction, pagetitle)
+            push!(art_footer.nodes, link)
+        end
 
         pagenodes = domify(page, doc)
         art = article(art_header, pagenodes, art_footer)
@@ -127,6 +204,11 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
     end
 end
 
+function uncertain_title(mp::Nullable{MetaPage})::Nullable{String}
+    !isnull(mp) ? get(mp).title : nothing
+end
+
+
 flattenpages(pages::Vector) = mapreduce(flattenpages, vcat, pages)
 flattenpages(page::String) = [page]
 flattenpages(p::Pair) = flattenpages(p.second)
@@ -136,7 +218,11 @@ function _relpath(path, src)
     relpath(path, isempty(pagedir) ? "." : pagedir)
 end
 
-function pagename(page,doc)
+function pagename(src::String)
+    first(splitext(src))
+end
+
+function pagename(page::Documents.Page, doc)
     docpath = normpath(relpath(page.build,doc.user.build))
     first(splitext(docpath))
 end
@@ -144,11 +230,29 @@ end
 stylesheet(href) = link[:href=>href,:rel=>"stylesheet",:type=>"text/css"]()
 script(src) = DOM.Tag(:script)[:src=>src]()
 
-navlink(str,p,src) = a[:href=>Formats.extension(Formats.HTML,_relpath(p,src))](str)
+navhref(pagename, src) = Formats.extension(Formats.HTML,_relpath(pagename, src))
+navlink(str,p,src) = a[:href=>navhref(p,src)](str)
+
+navitem(pagedb::PageDB, src) = navitem(pagedb.tree, src)
+navitem(p::Vector, src) = ul(map(p->navitem(p, src), p))
+function navitem(p::MetaPage, src)
+    item = if !isnull(p.page)
+        link, _ = get(p.page)
+        li(navlink(p.title, link, src))
+    else
+        li(p.title)
+    end
+
+    if !isempty(p.subpages)
+        push!(item.nodes, navitem(p.subpages, src))
+    end
+
+    item
+end
+
 navitem(p::String, src) = li(navlink(p,p,src))
 navitem(p::Pair, src) = li(p.first, navitem(p.second, src))
 navitem(p::Pair{String,String}, src) = li(navlink(p.first,p.second,src))
-navitem(p::Vector, src) = ul(map(p->navitem(p, src), p))
 
 # DOMIFY
 
@@ -362,7 +466,7 @@ Currently simplistically assumes that if there is a header, then it's the first
 function pagetitle(page::Documenter.Documents.Page)
     h = first(page.elements)
     if typeof(h) === Base.Markdown.Header{1}
-        Nullable{Any}(h.text)
+        Nullable{Any}(Markdown.plaininline(h.text))
     else
         Nullable{Any}()
     end
