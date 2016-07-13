@@ -43,6 +43,7 @@ type MetaPage
     title::String
     subpages::Vector{MetaPage}
     page::Nullable{Pair{String,Documents.Page}}
+    parent::Nullable{MetaPage}
     prev::Nullable{MetaPage}
     next::Nullable{MetaPage}
 end
@@ -56,31 +57,35 @@ type PageDB
     """a flat list of pages that have a corresponding "physical" page."""
     pages::Vector{MetaPage}
     function PageDB(doc::Documents.Document)
-        pagewalkstate = PageWalkState(
-            doc,
-            Nullable{MetaPage}(),
-            []
-        )
+        pagewalkstate = PageWalkState(doc, [], nothing, nothing)
         tree = walkpages(pagewalkstate, doc.user.pages)
+        @show map(typeof,tree)
         new(doc,tree,pagewalkstate.pagelist)
     end
 end
 
 type PageWalkState
     doc::Documents.Document
-    prev::Nullable{MetaPage}
     pagelist::Vector{MetaPage}
+    parent::Nullable{MetaPage}
+    prev::Nullable{MetaPage}
 end
 
 walkpages(state, ps::Vector) = map(p->walkpages(state,p), ps)
 function walkpages{T}(state, p::Pair{String,Vector{T}})
-    MetaPage(
+    mp = MetaPage(
         p.first,
-        walkpages(state, p.second),
+        [],
         Nullable{Pair{String,Documents.Page}}(),
-        Nullable{MetaPage}(),
-        Nullable{MetaPage}()
+        state.parent,
+        nothing,
+        nothing
     )
+    state.parent = mp
+    subpages = walkpages(state, p.second)
+    mp.subpages = subpages
+    state.parent = mp.parent
+    mp
 end
 function walkpages(state, p::Pair{String,String})
     mp = walkpages(state, p.second)
@@ -95,8 +100,9 @@ function walkpages(state, src::String)
         get(pagetitle(page), "<Untitled>"),
         [],
         Nullable(src => page),
+        state.parent,
         state.prev,
-        Nullable{MetaPage}()
+        nothing
     )
     Utilities.unwrap(state.prev) do prev
         prev.next = Nullable(mp)
@@ -110,6 +116,8 @@ import Base: start, next, done
 start(pagedb::PageDB) = start(pagedb.pages)
 next(pagedb::PageDB, state) = next(pagedb.pages, state)
 done(pagedb::PageDB, state) = done(pagedb.pages, state)
+
+parents(mp::MetaPage) = isnull(mp.parent) ? [mp] : push!(parents(get(mp.parent)), mp)
 
 import Documenter.Writers: Writer, render
 function render(::Writer{Formats.HTML}, doc::Documents.Document)
@@ -166,13 +174,19 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
             navitem(pagedb, src)
         )
 
+        header_links = map(parents(metapage)) do mp
+            if isnull(mp.page)
+                li(mp.title)
+            else
+                li(a[:href => navhref(get(mp.page).first, src)](mp.title))
+            end
+        end
+
         art_header = header(
-            "Header stuff",
             nav(
                 ul(
-                    li("Page"),
-                    li("Subpage"),
-                    li("SubSubPage")
+                    #li(a[:href => navhref("/", src)]("Home")),
+                    header_links
                 ),
                 a[".edit-page", :href=>"https://github.com/"](span[".fa"]("\uf09b"), " Edit on GitHub") # TODO
             ),
