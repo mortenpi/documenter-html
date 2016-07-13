@@ -40,7 +40,8 @@ function Base.show(io::IO, doc::HTMLDocument)
 end
 
 type MetaPage
-    title::String
+    #title::String
+    title::Vector{DOM.Node}
     subpages::Vector{MetaPage}
     page::Nullable{Pair{String,Documents.Page}}
     parent::Nullable{MetaPage}
@@ -74,7 +75,7 @@ end
 walkpages(state, ps::Vector) = map(p->walkpages(state,p), ps)
 function walkpages{T}(state, p::Pair{String,Vector{T}})
     mp = MetaPage(
-        p.first,
+        [DOM.Node(p.first)],
         [],
         Nullable{Pair{String,Documents.Page}}(),
         state.parent,
@@ -89,8 +90,7 @@ function walkpages{T}(state, p::Pair{String,Vector{T}})
 end
 function walkpages(state, p::Pair{String,String})
     mp = walkpages(state, p.second)
-    mp.title = p.first
-    @show mp.title
+    mp.title = [DOM.Node(p.first)]
     mp
 end
 function walkpages(state, src::String)
@@ -171,14 +171,14 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
             h1(pkgname),
             input[:type => "text", :placeholder => "Search docs"](),
             #navitem(doc.user.pages, src)
-            navitem(pagedb, src)
+            navitem(pagedb, metapage)
         )
 
         header_links = map(parents(metapage)) do mp
             if isnull(mp.page)
                 li(mp.title)
             else
-                li(a[:href => navhref(get(mp.page).first, src)](mp.title))
+                li(a[:href => navhref(mp, metapage)](mp.title))
             end
         end
 
@@ -198,13 +198,13 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
         Utilities.unwrap(metapage.prev) do mp
             direction = span[".direction"]("Previous")
             pagetitle = span[".title"](mp.title)
-            link = a[".previous", :href => navhref(get(mp.page).first, src)](direction, pagetitle)
+            link = a[".previous", :href => navhref(mp, metapage)](direction, pagetitle)
             push!(art_footer.nodes, link)
         end
         Utilities.unwrap(metapage.next) do mp
             direction = span[".direction"]("Next")
             pagetitle = span[".title"](mp.title)
-            link = a[".next", :href => navhref(get(mp.page).first, src)](direction, pagetitle)
+            link = a[".next", :href => navhref(mp, metapage)](direction, pagetitle)
             push!(art_footer.nodes, link)
         end
 
@@ -244,36 +244,46 @@ end
 stylesheet(href) = link[:href=>href,:rel=>"stylesheet",:type=>"text/css"]()
 script(src) = DOM.Tag(:script)[:src=>src]()
 
-navhref(pagename, src) = Formats.extension(Formats.HTML,_relpath(pagename, src))
-navlink(str,p,src) = a[:href=>navhref(p,src)](str)
+function navhref(to, from)
+    from_src = get(from.page).first
+    to_src = get(to.page).first
+    Formats.extension(Formats.HTML,_relpath(to_src, from_src))
+end
+navlink(to,from) = a[".toctext",:href=>navhref(to,from)](to.title)
 
-navitem(pagedb::PageDB, src) = navitem(pagedb.tree, src)
-navitem(p::Vector, src) = ul(map(p->navitem(p, src), p))
-function navitem(p::MetaPage, src)
-    item = if !isnull(p.page)
-        link, _ = get(p.page)
-        li(navlink(p.title, link, src))
-    else
-        li(p.title)
-    end
+navitem(pagedb::PageDB, mp) = navitem(pagedb.tree, mp)
+navitem(p::Vector, mp) = ul(map(p->navitem(p, mp), p))
+function navitem(p::MetaPage, mp)
+    @tags span
+    link = isnull(p.page) ? span[".toctext"](p.title) : navlink(p, mp)
+    item = (p === mp) ? li[".current"](link) : li(link)
 
     if !isempty(p.subpages)
-        push!(item.nodes, navitem(p.subpages, src))
+        push!(item.nodes, navitem(p.subpages, mp))
+    end
+
+    if p === mp && !isnull(p.page)
+        sections = collect_subsections(get(p.page).second)
+        internal_links = map(sections) do s
+            anchor, title = s
+            li(a[".toctext", :href => anchor](title))
+        end
+        push!(item.nodes, ul[".internal"](internal_links))
     end
 
     item
 end
 
-navitem(p::String, src) = li(navlink(p,p,src))
-navitem(p::Pair, src) = li(p.first, navitem(p.second, src))
-navitem(p::Pair{String,String}, src) = li(navlink(p.first,p.second,src))
+navitem(p::String, mp) = li(navlink(p,p,mp))
+navitem(p::Pair, mp) = li(p.first, navitem(p.second, mp))
+navitem(p::Pair{String,String}, mp) = li(navlink(p.first,p.second,mp))
 
 # DOMIFY
 
 function domify(anchor::Anchors.Anchor, page, doc)
     aid = "$(anchor.id)-$(anchor.nth)"
     [
-        a["#$(aid)"]()
+        a[:id => aid](),
         domify(anchor.object, page, doc)
     ]
 end
@@ -473,16 +483,23 @@ end
 """
 Returns a `Nullable{String}`, which is nulled if the page title could not be
 determined.
-
-Currently simplistically assumes that if there is a header, then it's the first
-`Header{1}` in the `page.elements`.
 """
-function pagetitle(page::Documenter.Documents.Page)
-    h = first(page.elements)
-    if typeof(h) === Base.Markdown.Header{1}
-        Nullable{Any}(Markdown.plaininline(h.text))
-    else
-        Nullable{Any}()
+function pagetitle(page::Documenter.Documents.Page)::Nullable{Any}
+    for e in page.elements
+        if typeof(e) === Base.Markdown.Header{1}
+            return mdconvert(e.text)
+        end
+    end
+    return nothing
+end
+
+function collect_subsections(page::Documenter.Documents.Page)
+    # TODO: Multiple H1-s?
+    # TODO: Can we get header "link" as well?
+    h2s = filter(e->typeof(e)===Base.Markdown.Header{2}, page.elements)
+    map(h2s) do e
+        anchor = page.mapping[e]
+        "#$(anchor.id)-$(anchor.nth)", mdconvert(e.text)
     end
 end
 
