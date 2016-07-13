@@ -14,7 +14,7 @@ pages = [
         "man/syntax.md",
         "man/doctests.md",
         "man/hosting.md",
-        "Latex syntax" => "man/latex.md",
+        "man/latex.md",
         "man/internals.md",
     ],
     "Library" => [
