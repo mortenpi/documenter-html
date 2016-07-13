@@ -12,6 +12,10 @@ pre, code {
     font-family: 'FontAwesome';
 }
 
+a {
+    text-decoration: none;
+}
+
 nav.toc {
     position: fixed;
     overflow-y: auto;
@@ -44,6 +48,64 @@ nav.toc input {
     padding: .5em;
 }
 
+nav.toc ul {
+    color: #b3b3b3;
+    padding: 0;
+    list-style: none;
+}
+
+nav.toc ul .toctext {
+    color: inherit;
+    display: block;
+    /*padding-top: 0.4em;
+    padding-bottom: 0.4em;*/
+}
+
+nav.toc ul a:hover {
+    background-color: #4e4a4a;
+}
+
+nav.toc ul.internal a {
+    color: inherit;
+    display: block;
+}
+
+nav.toc ul.internal a:hover {
+    background-color: #d6d6d6;
+}
+
+nav.toc ul.internal {
+    color: gray;
+    background-color: #e3e3e3;
+    list-style: none;
+}
+
+nav.toc .toctext {
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
+    padding-right: 1em;
+}
+
+nav.toc ul .toctext {
+    padding-left: 1em;
+}
+
+nav.toc ul ul .toctext {
+    padding-left: 2em;
+}
+
+nav.toc ul ul ul .toctext {
+    padding-left: 3em;
+}
+
+nav.toc li.current > .toctext {
+    border-top: 1px solid #c9c9c9;
+    border-bottom: 1px solid #c9c9c9;
+    color: #404040;
+    font-weight: bold;
+    background-color: white;
+}
+
 article {
     margin-left: 300px;
     max-width: 800px;
@@ -52,12 +114,32 @@ article {
 
 article > header {}
 
+article > header nav ul {
+    display: inline-block;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+article > header nav li {
+    display: inline-block;
+    padding-right: 0.2em;
+}
+
+article > header nav li:before {
+    content: "»";
+    padding-right: 0.2em;
+}
+
+article > header .edit-page {
+    float: right;
+}
+
 article > footer {}
 
 article > footer a.prev {
     float: left;
 }
-
 article > footer a.next {
     float: right;
 }
