@@ -150,6 +150,7 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
 
         h = head(
             meta[:charset=>"UTF-8"](),
+            meta[:name => "viewport", :content => "width=device-width, initial-scale=1.0"](),
             title("Documenter.jl"),
             #stylesheet(_relpath("reset.css",src)),
             stylesheet(_relpath("normalize.css",src)),
