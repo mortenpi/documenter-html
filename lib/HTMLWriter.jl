@@ -133,7 +133,6 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
     pagedb = PageDB(doc)
 
     #mkdir("build")
-    cp("assets/reset.css", "build/reset.css", remove_destination=true)
     cp("assets/normalize.css", "build/normalize.css", remove_destination=true)
     cp("assets/style.css", "build/style.css", remove_destination=true)
     cp("assets/highlight.css", "build/highlight.css", remove_destination=true)
@@ -152,7 +151,6 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
             meta[:charset=>"UTF-8"](),
             meta[:name => "viewport", :content => "width=device-width, initial-scale=1.0"](),
             title("Documenter.jl"),
-            #stylesheet(_relpath("reset.css",src)),
             stylesheet(_relpath("normalize.css",src)),
             stylesheet(_relpath("style.css",src)),
             stylesheet(_relpath("highlight.css",src)),
