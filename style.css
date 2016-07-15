@@ -2,12 +2,13 @@
 body, input {
   /*font-family: 'Ubuntu', Helvetica, Arial, sans-serif;*/
   font-family: Helvetica, Arial, sans-serif;
-
 }
+
 pre, code {
   /*font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;*/
   font-family: 'Courier New', 'Courier', monospace;
 }
+
 .fa {
     font-family: 'FontAwesome';
 }
@@ -16,6 +17,36 @@ a {
     text-decoration: none;
 }
 
+h1 { font-size: 1.75em; }
+h2 { font-size: 1.50em; }
+h3 { font-size: 1.25em; }
+h4 { font-size: 1.15em; }
+h5 { font-size: 1.10em; }
+h6 { font-size: 1em; }
+
+h4, h5, h6 {
+    margin: 1em 0;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 1em 0;
+}
+
+th, td {
+    border: 1px solid #e1e4e5;
+    padding: 0.5em 1em;
+}
+
+th {
+    border-bottom-width: 2px;
+}
+
+tr:nth-child(even) {
+    background-color: #f3f6f6;
+}
+
+/* Navigation */
 nav.toc {
     position: fixed;
     overflow-y: auto;
