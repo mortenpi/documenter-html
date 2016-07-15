@@ -24,6 +24,8 @@ pages = [
     "Dynamic pages" => [
         "dynamic/code.md",
         "Admonitions & Co" => "dynamic/admonitions.md",
+        "dynamic/styles.md",
+        "dynamic/bugs.md"
     ],
 ]
 
@@ -126,6 +128,63 @@ custompage!(doc, "dynamic/admonitions", """
 
     !!! warning
         Admonition in an admonition?
+""")
+
+custompage!(doc, "dynamic/styles", """
+# Demonstrating _styles_ of MD elements
+
+## Headers
+
+`h1` and `h2` ↑.
+
+### Header 3
+This is `h3`.
+
+#### Header 4
+This is `h4`.
+
+##### Header 5
+This is `h5`.
+
+###### Header 6
+This is `h6`.
+
+## Blocks
+
+```
+This is a normal code block.
+With multiple lines.
+```
+
+## Tables
+
+If you require... | ... then use...
+----------- | -----------------
+features         | PyPlot, Plotly, GR
+speed            | GR
+interactivity    | Plotly
+beauty           | Plotly, PGFPlots
+REPL Plotting    | UnicodePlots
+3D plots  		 | PyPlot, GR, Plotly
+a GUI Window     | GR, PyPlot, PlotlyJS
+a small footprint | UnicodePlots, Plotly
+
+
+## Pictures
+
+[![Ducks! (alt-text)](http://www.freedigitalphotos.net/images/img/homepage/87357.jpg)](https://en.wikipedia.org/wiki/Duck)
+
+""")
+
+custompage!(doc, "dynamic/bugs", """
+# Some existing bugs
+
+**Titles for links and images.**
+
+![Ducks! (alt-text)](http://www.freedigitalphotos.net/images/img/homepage/87357.jpg "Title text? About ducks?")
+
+[About ducks.](https://en.wikipedia.org/wiki/Duck "Whee, wikipedia.")
+
 """)
 
 cd(doc.user.root) do
