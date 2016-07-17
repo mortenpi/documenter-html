@@ -46,11 +46,34 @@ tr:nth-child(even) {
     background-color: #f3f6f6;
 }
 
+/* Inline code and code blocks */
+
+pre, code {
+    /*background-color: #f7f7f7;*/
+    /*color: #73261e;*/
+    background-color: rgba(0,0,0,.04);
+    border-radius: 3px;
+}
+
+pre {
+    padding: 0.5em;
+    overflow: auto;
+}
+
+code {
+    padding: 0.2em;
+}
+
+pre code {
+    background-color: initial;
+    padding: 0;
+}
+
 /* Navigation */
 nav.toc {
     position: fixed;
     overflow-y: auto;
-    width: 300px;
+    width: 20em;
     top: 0;
     left: 0;
     background-color: #fcfcfc;
@@ -138,8 +161,9 @@ nav.toc li.current > .toctext {
 }
 
 article {
-    margin-left: 300px;
-    max-width: 800px;
+    margin-left: 20em;
+    min-width: 20em;
+    max-width: 50em;
     padding: 2em;
 }
 
@@ -179,39 +203,9 @@ article > footer a .direction:after {
     content: ": ";
 }
 
-/*content: "»";*/
-
-/*@media screen and (max-device-width: 480px) {
-    nav {
-        background-color: red;
-        position: relative;
-        width: 100%;
-    }
-
-    nav.toc h1:before {
-        font-family: "FontAwesome";
-        content: "\f0c9";
-    }
-
-    article {
-        margin-left: auto;
-    }
-}*/
-
 hr {
     margin: 1em 0;
 }
-
-pre, code {
-    background-color: #f7f7f7;
-    /*color: #73261e;*/
-}
-
-pre {
-    padding: 0.5em;
-    overflow: auto;
-}
-
 
 a.documenter-source {
   float: right;
@@ -258,6 +252,29 @@ a.documenter-source {
 .admonition.tip {
     background-color: #dbfaf4;
 }
+
+/* Overrides for responsive design */
+/*@media screen and (max-width: 42em) {
+    nav.toc {
+        box-shadow: none;
+        position: relative;
+        width: 100%;
+    }
+
+    nav.toc h1:before {
+        font-family: "FontAwesome";
+        content: "\f0c9 ";
+    }
+
+    article {
+        margin-left: auto;
+    }
+
+    .edit-page {
+        display: none;
+    }
+}*/
+
 
 /* DEBUG THINGS */
 .debug {

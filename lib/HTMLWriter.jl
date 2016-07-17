@@ -128,7 +128,8 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
     #end
 
     # determine variables
-    pkgname = "\$pkgname.jl"
+    pkgname = "\$pkgname.jl" # TODO
+    versionstring = "v0.0.0" # TODO
 
     pagedb = PageDB(doc)
 
@@ -343,12 +344,13 @@ end
 function domify(node::Documents.DocsNode, page, doc)
     @tags strong br em
     ret = [
-        a[:id=>node.anchor.id, :href=>"#$(node.anchor.id)"]("#")
-        strong(code("$(node.object.binding)"))
-        "—" # &mdash;
-        em("$(Utilities.doccat(node.object))")
-        "."
-        br()
+        a[:id=>node.anchor.id, :href=>"#$(node.anchor.id)"]("#"),
+        " ",
+        strong(code("$(node.object.binding)")),
+        " — ", # &mdash;
+        em("$(Utilities.doccat(node.object))"),
+        ".",
+        br(),
         domify_doc(node.docstr,page,doc)
     ]
     Utilities.unwrap(node.methods) do methodnodes
