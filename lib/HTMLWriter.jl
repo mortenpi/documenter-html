@@ -137,6 +137,10 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
     cp("assets/normalize.css", "build/normalize.css", remove_destination=true)
     cp("assets/style.css", "build/style.css", remove_destination=true)
     cp("assets/highlight.css", "build/highlight.css", remove_destination=true)
+
+    cp("assets/js/require.js", "build/require.js", remove_destination=true)
+    cp("assets/js/documenter.js", "build/documenter.js", remove_destination=true)
+    cp("assets/js/lunr.js", "build/lunr.js", remove_destination=true)
     cp(joinpath(Pkg.dir("Documenter"), "assets/mathjaxhelper.js"),
         "build/mathjaxhelper.js", remove_destination=true)
 
@@ -152,11 +156,17 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
             meta[:charset=>"UTF-8"](),
             meta[:name => "viewport", :content => "width=device-width, initial-scale=1.0"](),
             title("Documenter.jl"),
+
             stylesheet(_relpath("normalize.css",src)),
             stylesheet(_relpath("style.css",src)),
             stylesheet(_relpath("highlight.css",src)),
+
             script("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"),
-            script(_relpath("mathjaxhelper.js",src))
+            script("https://code.jquery.com/jquery-3.1.0.js"),
+            script(_relpath("mathjaxhelper.js",src)),
+            #script(_relpath("lunr.js",src))
+            #script(_relpath("documenter.js",src))
+            DOM.Tag(:script)[:src=>_relpath("require.js",src),Symbol("data-main")=>_relpath("documenter.js",src)]()
         )
 
         logo = a[:href=>"http://julialang.org/"](
