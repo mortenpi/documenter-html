@@ -13,6 +13,10 @@ pre, code {
     font-family: 'FontAwesome';
 }
 
+body {
+    line-height: 1.4em;
+}
+
 a {
     text-decoration: none;
 }
@@ -61,7 +65,7 @@ pre {
 }
 
 code {
-    padding: 0.2em;
+    padding: 0.1em;
 }
 
 pre code {
@@ -91,15 +95,15 @@ nav.toc h1 {
 }
 
 nav.toc input {
-    border-color: #c9c9c9;
-    border-radius: 50px;
     display: block;
+    height: 2em;
+    width: 90%;
+    width: calc(100% - 5em);
     margin: 0 auto;
-    border: 1px solid #ccc;
-    /* box-sizing: border-box; */
-    /* height: 2em; */
-    width: 85%;
-    padding: .5em;
+    padding: 0 1em;
+    border: 1px solid #c9c9c9;
+    border-radius: 1em;
+    font-size: smaller;
 }
 
 nav.toc ul {
@@ -203,7 +207,11 @@ article > footer a .direction:after {
     content: ": ";
 }
 
-hr {
+article hr {
+    margin: 1em 0;
+}
+
+article div.docheader {
     margin: 1em 0;
 }
 

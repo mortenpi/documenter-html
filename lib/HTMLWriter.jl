@@ -342,15 +342,17 @@ function domify(node::Documents.DocsNodes, page, doc)
 end
 
 function domify(node::Documents.DocsNode, page, doc)
-    @tags strong br em
-    ret = [
+    @tags div strong br em
+    docheader = div[".docheader"](
         a[:id=>node.anchor.id, :href=>"#$(node.anchor.id)"]("#"),
         " ",
         strong(code("$(node.object.binding)")),
         " — ", # &mdash;
         em("$(Utilities.doccat(node.object))"),
-        ".",
-        br(),
+        "."
+    )
+    ret = [
+        docheader,
         domify_doc(node.docstr,page,doc)
     ]
     Utilities.unwrap(node.methods) do methodnodes
