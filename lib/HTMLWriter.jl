@@ -140,9 +140,9 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
 
     cp("assets/js/require.js", "build/require.js", remove_destination=true)
     cp("assets/js/documenter.js", "build/documenter.js", remove_destination=true)
+
     cp("assets/js/lunr.js", "build/lunr.js", remove_destination=true)
-    cp(joinpath(Pkg.dir("Documenter"), "assets/mathjaxhelper.js"),
-        "build/mathjaxhelper.js", remove_destination=true)
+    cp("assets/search-index.js", "build/search-index.js", remove_destination=true)
 
     for metapage in pagedb
         if isnull(metapage.page) continue end
@@ -161,12 +161,12 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
             stylesheet(_relpath("style.css",src)),
             stylesheet(_relpath("highlight.css",src)),
 
-            script("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"),
-            script("https://code.jquery.com/jquery-3.1.0.js"),
-            script(_relpath("mathjaxhelper.js",src)),
+            #script("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"),
+            #script("https://code.jquery.com/jquery-3.1.0.js"),
+            #script(_relpath("mathjaxhelper.js",src)),
             #script(_relpath("lunr.js",src))
-            #script(_relpath("documenter.js",src))
-            DOM.Tag(:script)[:src=>_relpath("require.js",src),Symbol("data-main")=>_relpath("documenter.js",src)]()
+            DOM.Tag(:script)[:src=>_relpath("require.js",src),Symbol("data-main")=>_relpath("documenter.js",src)](),
+            script(_relpath("search-index.js",src)),
         )
 
         logo = a[:href=>"http://julialang.org/"](
