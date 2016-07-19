@@ -14,12 +14,12 @@ pre, code {
 }
 
 body {
-    line-height: 1.4em;
+    line-height: 1.5;
 }
 
-a {
-    text-decoration: none;
-}
+/*p, pre, ul, ol {
+    margin: 0.5em 0;
+}*/
 
 h1 { font-size: 1.75em; }
 h2 { font-size: 1.50em; }
@@ -48,6 +48,10 @@ th {
 
 tr:nth-child(even) {
     background-color: #f3f6f6;
+}
+
+a {
+    text-decoration: none;
 }
 
 /* Inline code and code blocks */
@@ -80,6 +84,7 @@ nav.toc {
     width: 20em;
     top: 0;
     left: 0;
+    padding-top: 1em;
     background-color: #fcfcfc;
     height: 100%;
     box-shadow: inset -14px 0px 5px -12px rgb(210,210,210);
@@ -104,6 +109,10 @@ nav.toc input {
     border: 1px solid #c9c9c9;
     border-radius: 1em;
     font-size: smaller;
+}
+
+nav.toc > ul * {
+    margin: 0;
 }
 
 nav.toc ul {
@@ -167,7 +176,7 @@ nav.toc li.current > .toctext {
 article {
     margin-left: 20em;
     min-width: 20em;
-    max-width: 50em;
+    max-width: 44em;
     padding: 2em;
 }
 
@@ -227,8 +236,12 @@ a.documenter-source {
  * note:    #6ab0de #e7f2fa (blue)
  * tip:     #1abc9c #dbfaf4 (green)
 */
-.admonition {
+.admonition > * {
+    padding: 0.15em .3em;
+}
 
+.admonition-text > first-child {
+    margin-top: 0;
 }
 
 .admonition > .admonition-title:before {
