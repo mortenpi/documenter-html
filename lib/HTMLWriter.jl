@@ -490,6 +490,15 @@ function mdconvert(c::Code, parent)
     code(c.code)
 end
 
+if isdefined(Base.Markdown, :Admonition)
+    import Base.Markdown: Admonition
+    mdconvert(a::Admonition, parent) =
+        div[".admonition.$(a.category)"](
+            div[".admonition-title"](a.title),
+            div[".admonition-text"](mdconvert(a.content, a))
+        )
+end
+
 
 # Other utilities
 
