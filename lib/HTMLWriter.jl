@@ -26,6 +26,7 @@ using Documenter.Utilities.DOM
 @tags h1 h2 p em a div
 @tags pre
 
+include("MDFlat.jl")
 include("Pygments.jl")
 
 type HTMLDocument
@@ -119,6 +120,19 @@ done(pagedb::PageDB, state) = done(pagedb.pages, state)
 
 parents(mp::MetaPage) = isnull(mp.parent) ? [mp] : push!(parents(get(mp.parent)), mp)
 
+type SearchIndex
+    loc::String
+    title::String
+    text::String
+end
+
+immutable DomifyContext
+    doc::Documents.Document
+    page::Documents.Page
+    index::Vector{SearchIndex}
+    DomifyContext(page, doc) = new(doc, page, [])
+end
+
 import Documenter.Writers: Writer, render
 function render(::Writer{Formats.HTML}, doc::Documents.Document)
     @tags hr meta input
@@ -142,7 +156,10 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
     cp("assets/js/documenter.js", "build/documenter.js", remove_destination=true)
 
     cp("assets/js/lunr.js", "build/lunr.js", remove_destination=true)
-    cp("assets/search-index.js", "build/search-index.js", remove_destination=true)
+    #cp("assets/search-index.js", "build/search-index.js", remove_destination=true)
+
+    fout_search = open("build/search-index.js", "w")
+    println(fout_search, "var documenterSearchIndex = {\"docs\": [\n")
 
     for metapage in pagedb
         if isnull(metapage.page) continue end
@@ -218,20 +235,37 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
             push!(art_footer.nodes, link)
         end
 
-        pagenodes = domify(page, doc)
+        context = DomifyContext(page, doc)
+        pagenodes = domify(page, context)
         art = article(art_header, pagenodes, art_footer)
 
         htmldoc = HTMLDocument(html[:lang=>"en"](h,body(page_nav, art)))
         open(Formats.extension(Formats.HTML, page.build), "w") do io
             print(io, htmldoc)
         end
+
+        # Append to the search index
+        href = Formats.extension(Formats.HTML, src)
+        for idx in context.index
+            ref = isempty(idx.loc) ? href : "$(href)#$(idx.loc)"
+            println(fout_search, """
+            {
+                "location": "$(jsonescape(ref))",
+                "title": "$(jsonescape(idx.title))",
+                "text": "$(jsonescape(idx.text))"
+            },
+            """)
+        end
     end
+
+    println(fout_search, "]}")
+    close(fout_search)
 end
 
-function uncertain_title(mp::Nullable{MetaPage})::Nullable{String}
-    !isnull(mp) ? get(mp).title : nothing
+function jsonescape(s)
+    s = replace(s, '\n', "\\nn")
+    replace(s, '"', "\\\"")
 end
-
 
 flattenpages(pages::Vector) = mapreduce(flattenpages, vcat, pages)
 flattenpages(page::String) = [page]
@@ -437,12 +471,32 @@ end
 # nothing to show for MetaNodes, so we just return an empty list
 domify(anchor::Documents.MetaNode, page, doc) = Vector{DOM.Node}()
 
-function domify(page, doc)
+function domify(page::Documents.Page, context::DomifyContext)
+    sl = ""
+    st = get(pagetitle_string(page), "<UNTITLED>")
+    ss = IOBuffer()
     map(page.elements) do elem
+        if typeof(elem) <: Header
+            push!(context.index, SearchIndex(sl, st, takebuf_string(ss)))
+
+            a = page.mapping[elem]
+            sl = "$(a.id)-$(a.nth)"
+            st = MDFlat.mdflatten(elem)
+            info("New section: $(a.file)#$(a.id)-$(a.nth)")
+        else
+            MDFlat.mdflatten(ss, elem)
+        end
         node = page.mapping[elem]
-        #info("domify: $(typeof(elem)) -> $(typeof(node))")
-        domify(node, page, doc)
+        info("Top-block-domify: $(typeof(elem)) -> $(typeof(node))")
+        #domify(node, page, doc)
+        domify(node, context)
     end
+end
+
+#domify(node, context::DomifyContext) = domify(node, context.page, context.doc)
+function domify(node, context::DomifyContext)
+    warn("Default context-domify: $(typeof(node))")
+    domify(node, context.page, context.doc)
 end
 
 function domify(node, page, doc)
@@ -506,6 +560,15 @@ end
 Returns a `Nullable{String}`, which is nulled if the page title could not be
 determined.
 """
+function pagetitle_string(page::Documenter.Documents.Page)::Nullable{String}
+    for e in page.elements
+        if typeof(e) === Base.Markdown.Header{1}
+            return MDFlat.mdflatten(e.text)
+        end
+    end
+    return nothing
+end
+
 function pagetitle(page::Documenter.Documents.Page)::Nullable{Any}
     for e in page.elements
         if typeof(e) === Base.Markdown.Header{1}
