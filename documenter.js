@@ -64,29 +64,47 @@ require(["jquery", "lunr"], function($,lunr) {
         this.field('title', {boost: 10})
         this.field('text')
     })
+    var store = {}
 
     documenterSearchIndex['docs'].forEach(function(e) {
-        console.log("Indexing: " + e.title)
+        console.log("Indexing: " + e.location)
         index.add(e)
+        store[e.location] = e
     })
 
     console.log("setting up jQuery.")
     $(function(){
         console.log("documenter.js: prepend")
-        $('article').prepend('<div id="dynamic"> </div>')
-        $('#dynamic').css('border', '1px dashed')
-    })
+        $('body').append('<article id="search"> </div>')
+        $('#search').append('<span id="search-close"></span>')
+        $('#search').append('<h1 id="search-title">Search</h1>')
+        $('#search').append('<p id="search-meta"></p>')
+        $('#search').append('<ul id="search-results"></ul>')
 
-    $('nav.toc input').change(function(){
-        query = $('nav.toc input').val()
-        results = index.search(query)
-        $('#dynamic').empty()
-        $('#dynamic').append($('<p>').text("Number of results: " + results.length))
-        results.forEach(function(result) {
-            link = $('<a>')
-            link.text(result.ref + " (" + result.score + ")")
-            link.attr("href", result.ref)
-            $('#dynamic').append($('<p>').html(link))
+        $('#search-close').click(function() {
+            $('#search').hide()
+            $('body').css('overflow', 'auto')
         })
+
+        function update_search() {
+            $('body').css('overflow', 'hidden')
+            $('#search').show()
+            query = $('nav.toc input').val()
+            results = index.search(query)
+            $('#search-meta').text("Number of results: " + results.length)
+            $('#search-results').empty()
+            results.forEach(function(result) {
+                data = store[result.ref]
+                link = $('<a>')
+                link.text(data.title)
+                link.attr('href', documenterBaseURL+'/'+result.ref)
+                dgb = $('<span class="score debug">'+result.score+'</span>')
+                li = $('<li>').append(link).append(dgb)
+                $('#search-results').append(li)
+            })
+        }
+
+        $('nav.toc input').keyup(update_search)
+        $('nav.toc input').change(update_search)
     })
 })
