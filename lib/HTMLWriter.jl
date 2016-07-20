@@ -178,6 +178,7 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
             stylesheet(_relpath("style.css",src)),
             stylesheet(_relpath("highlight.css",src)),
 
+            DOM.Tag(:script)("documenterBaseURL=\"$(_relpath(".",src))\""),
             #script("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"),
             #script("https://code.jquery.com/jquery-3.1.0.js"),
             #script(_relpath("mathjaxhelper.js",src)),
@@ -237,7 +238,7 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
 
         context = DomifyContext(page, doc)
         pagenodes = domify(page, context)
-        art = article(art_header, pagenodes, art_footer)
+        art = article["#docs"](art_header, pagenodes, art_footer)
 
         htmldoc = HTMLDocument(html[:lang=>"en"](h,body(page_nav, art)))
         open(Formats.extension(Formats.HTML, page.build), "w") do io

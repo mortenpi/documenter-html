@@ -274,6 +274,31 @@ a.documenter-source {
     background-color: #dbfaf4;
 }
 
+/* Search */
+#search {
+    display: none;
+    padding: 1em;
+    width: calc(100% - 22em);
+    position: fixed;
+    top: 0;
+    background-color: rgba(255,255,255,0.9);
+    border: 1px solid rgba(200,200,200,0.6);
+    max-height: calc(100% - 2em);
+    overflow-y: auto;
+}
+
+#search-close {
+    float: right;
+    border: 1px dashed;
+    width: 1.5em;
+    height: 1.5em;
+    text-align: center;
+}
+
+#search-close:before {
+    content: "X";
+}
+
 /* Overrides for responsive design */
 /*@media screen and (max-width: 42em) {
     nav.toc {
@@ -300,6 +325,15 @@ a.documenter-source {
 /* DEBUG THINGS */
 .debug {
     display: none;
+}
+
+#search span.score {
+    float: right;
+    font-size: x-small;
+}
+
+#search span.score::before {
+    content: 'Score: ';
 }
 
 .ukwnode {
