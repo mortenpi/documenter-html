@@ -157,7 +157,6 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
     cp("assets/js/documenter.js", "build/documenter.js", remove_destination=true)
 
     cp("assets/js/lunr.js", "build/lunr.js", remove_destination=true)
-    #cp("assets/search-index.js", "build/search-index.js", remove_destination=true)
 
     fout_search = open("build/search-index.js", "w")
     println(fout_search, "var documenterSearchIndex = {\"docs\": [\n")
