@@ -81,12 +81,12 @@ pre code {
 nav.toc {
     position: fixed;
     overflow-y: auto;
+    height: calc(100% - 2em);
     width: 20em;
     top: 0;
     left: 0;
-    padding-top: 1em;
+    padding: 1em 0;
     background-color: #fcfcfc;
-    height: 100%;
     box-shadow: inset -14px 0px 5px -12px rgb(210,210,210);
 }
 
