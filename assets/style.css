@@ -274,17 +274,27 @@ a.documenter-source {
     background-color: #dbfaf4;
 }
 
+.overlay {
+    display: none; /* the overlays should be hidden by default */
+    position: fixed;
+    top: 2em;
+    left: 22em;
+    right: 2em;
+    bottom: 2em;
+    overflow-y: auto;
+    /* reasonable defaults */
+    padding: 1em;
+}
+
 /* Search */
 #search {
-    display: none;
-    padding: 1em;
-    width: calc(100% - 22em);
-    position: fixed;
-    top: 0;
+    /* restoring values, since a global `article` selector changes them */
+    margin: initial;
+    min-width: initial;
+    max-width: initial;
+    /* design of the search box */
     background-color: rgba(255,255,255,0.9);
     border: 1px solid rgba(200,200,200,0.6);
-    max-height: calc(100% - 2em);
-    overflow-y: auto;
 }
 
 #search-close {

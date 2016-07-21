@@ -75,7 +75,7 @@ require(["jquery", "lunr"], function($,lunr) {
     console.log("setting up jQuery.")
     $(function(){
         console.log("documenter.js: prepend")
-        $('body').append('<article id="search"> </div>')
+        $('body').append('<article id="search" class="overlay"> </div>')
         $('#search').append('<span id="search-close"></span>')
         $('#search').append('<h1 id="search-title">Search</h1>')
         $('#search').append('<p id="search-meta"></p>')
