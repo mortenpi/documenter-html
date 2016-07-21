@@ -179,18 +179,53 @@ a small footprint | UnicodePlots, Plotly
 custompage!(doc, "dynamic/bugs", """
 # Some existing bugs
 
-**Titles for links and images.**
+## Titles for links and images.
 
 ![Ducks! (alt-text)](http://www.freedigitalphotos.net/images/img/homepage/87357.jpg "Title text? About ducks?")
 
 [About ducks.](https://en.wikipedia.org/wiki/Duck "Whee, wikipedia.")
 
+## Lists
+
+If a list follows a paragraph without a space...
+- it
+- does
+- not
+- work
+
+Also, dense lists don't get parsed correctly:
+
+- This should be
+- a dense list.
+- But it's not.
+
+```@example
+using Base.Markdown
+x = md\"""
+Some initial paragraph.
+
+- This should be
+- a dense list.
+- But it's not.
+\"""
+
+for li in x.content[2].items
+    println(" - \$(typeof(li)) :: \$(li)")
+end
+```
+
+These should not be paragraphs.
+
 """)
 
+Selectors.disable(::Type{SetupBuildDirectory}) = true
+
 cd(doc.user.root) do
+    @show doc.user.root
+    Selectors.runner(SetupBuildDirectory, doc)
+    mkdir("build/dynamic")
     Selectors.dispatch(Builder.DocumentPipeline, doc)
 end
-mkdir("build/dynamic")
 
 macro build()
     quote
