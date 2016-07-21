@@ -124,6 +124,7 @@ type SearchIndex
     loc::String
     title::String
     text::String
+    category::String
 end
 
 immutable DomifyContext
@@ -253,6 +254,7 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
             {
                 "location": "$(jsonescape(ref))",
                 "title": "$(jsonescape(idx.title))",
+                "category": "$(jsonescape(idx.category))",
                 "text": "$(jsonescape(idx.text))"
             },
             """)
@@ -382,11 +384,12 @@ function domify(index::Documents.IndexNode, page, doc)
     ul(lis)
 end
 
-function domify(node::Documents.DocsNodes, page, doc)
-    [domify(node, page, doc) for node in node.nodes]
+function domify(node::Documents.DocsNodes, context::DomifyContext)
+    [domify(node, context) for node in node.nodes]
 end
 
-function domify(node::Documents.DocsNode, page, doc)
+function domify(node::Documents.DocsNode, context::DomifyContext)
+    page, doc = context.page, context.doc
     @tags div strong br em
     docheader = div[".docheader"](
         a[:id=>node.anchor.id, :href=>"#$(node.anchor.id)"]("#"),
@@ -400,6 +403,16 @@ function domify(node::Documents.DocsNode, page, doc)
         docheader,
         domify_doc(node.docstr,page,doc)
     ]
+
+    # push to search index
+    push!(context.index, SearchIndex(
+        node.anchor.id,
+        string(node.object.binding),
+        MDFlat.mdflatten(node.docstr),
+        Utilities.doccat(node.object)
+    ))
+
+    # generate a table of methods
     Utilities.unwrap(node.methods) do methodnodes
         name = node.object.binding.var # name of the method without the modules
 
@@ -473,12 +486,15 @@ end
 domify(anchor::Documents.MetaNode, page, doc) = Vector{DOM.Node}()
 
 function domify(page::Documents.Page, context::DomifyContext)
+    stillpage = true
     sl = ""
     st = get(pagetitle_string(page), "<UNTITLED>")
     ss = IOBuffer()
     map(page.elements) do elem
         if typeof(elem) <: Header
-            push!(context.index, SearchIndex(sl, st, takebuf_string(ss)))
+            searchcat = stillpage ? "Page" : "Section"
+            stillpage && (stillpage = false)
+            push!(context.index, SearchIndex(sl, st, takebuf_string(ss), searchcat))
 
             a = page.mapping[elem]
             sl = "$(a.id)-$(a.nth)"

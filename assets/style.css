@@ -299,6 +299,14 @@ a.documenter-source {
     content: "X";
 }
 
+#search-results .category {
+    font-size: smaller;
+}
+
+#search-results .category:before {
+    content: " ";
+}
+
 /* Overrides for responsive design */
 /*@media screen and (max-width: 42em) {
     nav.toc {

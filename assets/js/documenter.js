@@ -98,8 +98,9 @@ require(["jquery", "lunr"], function($,lunr) {
                 link = $('<a>')
                 link.text(data.title)
                 link.attr('href', documenterBaseURL+'/'+result.ref)
-                dgb = $('<span class="score debug">'+result.score+'</span>')
-                li = $('<li>').append(link).append(dgb)
+                cat = $('<span class="category">('+data.category+')</span>')
+                dbg = $('<span class="score debug">'+result.score+'</span>')
+                li = $('<li>').append(link).append(cat).append(dbg)
                 $('#search-results').append(li)
             })
         }
