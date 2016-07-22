@@ -1346,14 +1346,14 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "dynamic/styles.html",
-    "title": "Demonstrating _styles_ of MD elements",
+    "title": "Demonstrating styles of MD elements",
     "category": "Page",
     "text": ""
 },
 
 {
-    "location": "dynamic/styles.html#Demonstrating-_styles_-of-MD-elements-1",
-    "title": "Demonstrating _styles_ of MD elements",
+    "location": "dynamic/styles.html#Demonstrating-*styles*-of-MD-elements-1",
+    "title": "Demonstrating styles of MD elements",
     "category": "Section",
     "text": ""
 },
@@ -1397,7 +1397,7 @@ var documenterSearchIndex = {"docs": [
     "location": "dynamic/styles.html#Blocks-1",
     "title": "Blocks",
     "category": "Section",
-    "text": "This is a normal code block.\nnWith multiple lines."
+    "text": "This is a normal code block.\nnWith multiple lines.This is a quote. Another line in source."
 },
 
 {
@@ -1412,6 +1412,20 @@ var documenterSearchIndex = {"docs": [
     "title": "Some existing bugs",
     "category": "Page",
     "text": ""
+},
+
+{
+    "location": "dynamic/bugs.html#Some-existing-bugs-1",
+    "title": "Some existing bugs",
+    "category": "Section",
+    "text": ""
+},
+
+{
+    "location": "dynamic/bugs.html#Titles-for-links-and-images.-1",
+    "title": "Titles for links and images.",
+    "category": "Section",
+    "text": "[image: Ducks! (alt-text) (http://www.freedigitalphotos.net/images/img/homepage/87357.jpg \"Title text? About ducks?\")]About ducks."
 },
 
 ]}

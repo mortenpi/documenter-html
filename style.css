@@ -81,12 +81,12 @@ pre code {
 nav.toc {
     position: fixed;
     overflow-y: auto;
+    height: calc(100% - 2em);
     width: 20em;
     top: 0;
     left: 0;
-    padding-top: 1em;
+    padding: 1em 0;
     background-color: #fcfcfc;
-    height: 100%;
     box-shadow: inset -14px 0px 5px -12px rgb(210,210,210);
 }
 
@@ -228,6 +228,11 @@ a.documenter-source {
   float: right;
 }
 
+ul.methods pre {
+    /* HACK: overflow: auto / scroll make the list bullets disappear. */
+    overflow: visible;
+}
+
 /*
  * Admonitions
  *
@@ -274,17 +279,27 @@ a.documenter-source {
     background-color: #dbfaf4;
 }
 
+.overlay {
+    display: none; /* the overlays should be hidden by default */
+    position: fixed;
+    top: 2em;
+    left: 22em;
+    right: 2em;
+    bottom: 2em;
+    overflow-y: auto;
+    /* reasonable defaults */
+    padding: 1em;
+}
+
 /* Search */
 #search {
-    display: none;
-    padding: 1em;
-    width: calc(100% - 22em);
-    position: fixed;
-    top: 0;
+    /* restoring values, since a global `article` selector changes them */
+    margin: initial;
+    min-width: initial;
+    max-width: initial;
+    /* design of the search box */
     background-color: rgba(255,255,255,0.9);
     border: 1px solid rgba(200,200,200,0.6);
-    max-height: calc(100% - 2em);
-    overflow-y: auto;
 }
 
 #search-close {
