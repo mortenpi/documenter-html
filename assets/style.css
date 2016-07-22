@@ -228,6 +228,11 @@ a.documenter-source {
   float: right;
 }
 
+ul.methods pre {
+    /* HACK: overflow: auto / scroll make the list bullets disappear. */
+    overflow: visible;
+}
+
 /*
  * Admonitions
  *

@@ -428,6 +428,7 @@ function domify(node::Documents.DocsNode, context::DomifyContext)
             push!(ret, "This function has no methods to display.")
         else
             # A regexp to match filenames with an absolute path
+            # TODO: improve the comment
             r = Regex("$(Pkg.dir())/([A-Za-z0-9]+)/(.*)")
 
             lis = map(ms) do m
@@ -443,9 +444,27 @@ function domify(node::Documents.DocsNode, context::DomifyContext)
                 tvars = isempty(tv) ? "" : "{" * join(tv,", ") * "}"
                 signature = "$(name)$(tvars)($(args_raw))"
                 # TODO: Multiline signature (as done in the Markdown output)
-                li(code(domify(Pygments.lex("julia",signature))), " defined at ", a[:target=>"_blank", :href=>url]("$(file):$(line)"))
+                if length(signature) <= 40
+                    li(
+                        code[".highlight.language-julia"](
+                            domify(Pygments.lex("julia",signature))
+                        ),
+                        " defined at ",
+                        a[:target=>"_blank", :href=>url]("$(file):$(line)")
+                    )
+                else
+                    args_raw = join([" "^4 * Writers.MarkdownWriter.join_decl(d, html=false) for d in decls], ",\n")
+                    signature = "$(name)$(tvars)(\n$(args_raw)\n)"
+                    li(
+                        pre(code[".highlight.language-julia"](
+                            domify(Pygments.lex("julia",signature))
+                        )),
+                        " defined at ",
+                        a[:target=>"_blank", :href=>url]("$(file):$(line)")
+                    )
+                end
             end
-            push!(ret, ul(lis))
+            push!(ret, ul[".methods"](lis))
         end
 
         # we print a small notice if we are not displaying all the methods
