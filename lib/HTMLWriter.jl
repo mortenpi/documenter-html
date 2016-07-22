@@ -389,7 +389,7 @@ end
 
 function domify(node::Documents.DocsNode, context::DomifyContext)
     page, doc = context.page, context.doc
-    @tags div strong br em
+    @tags div strong br em section
     docheader = div[".docheader"](
         a[:id=>node.anchor.id, :href=>"#$(node.anchor.id)"]("#"),
         " ",
@@ -473,7 +473,7 @@ function domify(node::Documents.DocsNode, context::DomifyContext)
             push!(ret, em("Hiding $(nh) method$(nh==1?"":"s") defined outside of this package."))
         end
     end
-    ret
+    section[".docstring"](ret)
 end
 
 function domify_doc(md::Markdown.MD, page, doc)
