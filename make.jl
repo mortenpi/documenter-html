@@ -131,7 +131,7 @@ custompage!(doc, "dynamic/admonitions", """
 """)
 
 custompage!(doc, "dynamic/styles", """
-# Demonstrating _styles_ of MD elements
+# Demonstrating *styles* of MD elements
 
 ## Headers
 
@@ -156,6 +156,9 @@ This is a normal code block.
 With multiple lines.
 ```
 
+> This is a quote.
+> Another *line* in source.
+
 ## Tables
 
 If you require... | ... then use...
@@ -178,6 +181,13 @@ a small footprint | UnicodePlots, Plotly
 
 custompage!(doc, "dynamic/bugs", """
 # Some existing bugs
+
+... in Julia's Markdown parser.
+
+## Emphasis
+
+The underscores don't work for _emphasis_ nor __strong emphasis__.
+Only *asterisks* work for **emphasis**.
 
 ## Titles for links and images.
 
