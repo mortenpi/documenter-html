@@ -1,0 +1,3 @@
+[submodule "julia-docs"]
+	path = julia-docs
+	url = https://github.com/MichaelHatherly/julia-docs.git
