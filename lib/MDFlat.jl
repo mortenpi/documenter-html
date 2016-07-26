@@ -72,6 +72,9 @@ mdflatten(io, c::Code, parent) = print(io, c.code)
 mdflatten(io, i::Image, parent) = print(io, "[image: $(i.alt) ($(i.url))]")
 mdflatten(io, m::LaTeX, parent) = print(io, "[latex: m.formula]")
 
+# Special (inline) "nodes" -- due to JuliaMark's interpolations
+mdflatten(io, expr::Union{Symbol,Expr}, parent) = print(io, expr)
+
 
 # Only available on Julia 0.5.
 if isdefined(Base.Markdown, :Footnote)
