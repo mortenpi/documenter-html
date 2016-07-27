@@ -2,9 +2,6 @@ using Documenter
 import Documenter: Builder, Selectors, Formats
 import Documenter.Documents: Page, Globals
 import Documenter.Builder: SetupBuildDirectory
-import Documenter: Selectors
-
-#include("lib/HTMLWriter.jl")
 
 pages = [
     "Overview" => "index.md",
