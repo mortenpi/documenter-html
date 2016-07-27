@@ -26,6 +26,15 @@ using Documenter.Utilities.DOM
 @tags h1 h2 p em a div
 @tags pre
 
+# TODO: wait for merge
+if isdefined(Documenter.Writers.HTMLWriter, :mdconvert)
+    import Documenter.Writers.HTMLWriter: mdconvert
+elseif isdefined(Documenter.Utilities.DOM.MarkdownConverter, :mdconvert)
+    import Documenter.Utilities.DOM.MarkdownConverter: mdconvert
+else
+    error("mdconvert not defined in Documenter..?!")
+end
+
 include("MDFlat.jl")
 include("Pygments.jl")
 
@@ -539,7 +548,7 @@ function domify(node, page, doc)
     if typeof(node).name.module === Base.Markdown
         [
             div[".mdnote.debug"]("$(typeof(node))")
-            Documenter.Utilities.DOM.MarkdownConverter.mdconvert(node, Base.Markdown.MD())
+            mdconvert(node, Base.Markdown.MD())
         ]
     else
         io = IOBuffer()
@@ -560,7 +569,6 @@ function domify(mp::Pygments.Magpie)
     ret
 end
 
-import Documenter.Utilities.DOM.MarkdownConverter: mdconvert
 import Base.Markdown: MD, Code, Header
 @tags code
 function mdconvert(c::Code, parent::MD)
