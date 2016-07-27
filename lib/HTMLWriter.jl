@@ -274,7 +274,8 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
 end
 
 function jsonescape(s)
-    s = replace(s, '\n', "\\nn")
+    s = replace(s, '\\', "\\\\")
+    s = replace(s, '\n', "\\n")
     replace(s, '"', "\\\"")
 end
 
