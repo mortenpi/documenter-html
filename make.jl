@@ -26,7 +26,10 @@ pages = [
     ],
 ]
 
+# Configure Documenter
+Documenter.Selectors.disable(::Type{Documenter.Builder.RedirectOutputStreams}) = true
 Documenter.Selectors.disable(::Type{Documenter.Builder.RenderDocument}) = true
+Documenter.Selectors.disable(::Type{Documenter.Builder.CheckDocument}) = true
 
 println("Creating the document...")
 ispath("build") && rm("build", recursive=true)
@@ -38,12 +41,27 @@ doc = Documenter.Documents.Document(
 )
 @show doc.user.source
 
+function loadpages(dir, prefix, doc)
+    map(readdir(dir)) do p
+        mds = readstring(joinpath(dir,p))
+        name = first(splitext(joinpath(prefix,p)))
+        custompage!(doc, name, mds)
+        name
+    end
+end
+
+
 function custompage!(doc, name, mds)
     elements = Base.Markdown.parse(mds).content
     build = joinpath(doc.user.build, name)
     page = Page("", build, elements, ObjectIdDict(), Globals())
     doc.internal.pages[name] = page
 end
+
+# Add additional pages manually
+push!(doc.user.pages, "JuliaDocs - Manual" => loadpages("julia-docs/manual", "manual", doc))
+push!(doc.user.pages, "JuliaDocs - Standard Libary" => loadpages("julia-docs/stdlib", "stdlib", doc))
+push!(doc.user.pages, "JuliaDocs - DevDocs" => loadpages("julia-docs/devdocs", "devdocs", doc))
 
 custompage!(doc, "dynamic/code", """
 # Code examples
@@ -231,6 +249,9 @@ cd(doc.user.root) do
     @show doc.user.root
     Selectors.runner(SetupBuildDirectory, doc)
     mkdir("build/dynamic")
+    mkdir("build/manual")
+    mkdir("build/stdlib")
+    mkdir("build/devdocs")
     Selectors.dispatch(Builder.DocumentPipeline, doc)
 end
 

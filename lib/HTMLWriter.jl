@@ -445,7 +445,14 @@ function domify(node::Documents.DocsNode, context::DomifyContext)
                 tv, decls, file, line = Base.arg_decl_parts(m)
                 decls = decls[2:end]
                 file = string(file)
-                url = get(Utilities.url(doc.internal.remote, doc.user.repo, m.module, file, line), "")
+                url = try
+                    get(Utilities.url(doc.internal.remote, doc.user.repo, m.module, file, line), "")
+                catch e
+                    # the url() fails sometimes because is can't chdir into somewhere
+                    warn(e)
+                    info(" > file: $(file)")
+                    ""
+                end
                 file_match = match(r, file)
                 if file_match !== nothing
                     file = file_match.captures[2]
@@ -597,6 +604,7 @@ if isdefined(Base.Markdown, :Admonition)
         )
 end
 
+mdconvert(expr::Union{Expr,Symbol}, parent) = string(expr)
 
 # Other utilities
 
