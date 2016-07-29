@@ -33,17 +33,6 @@ mdflatten = MDFlatten.mdflatten
 
 include("Pygments.jl")
 
-type HTMLDocument
-    doctype::String
-    root::DOM.Node
-end
-HTMLDocument(root) = HTMLDocument("html", root)
-
-function Base.show(io::IO, doc::HTMLDocument)
-    println(io, "<!DOCTYPE $(doc.doctype)>")
-    println(io, doc.root)
-end
-
 type MetaPage
     #title::String
     title::Vector{DOM.Node}
