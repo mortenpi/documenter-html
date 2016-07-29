@@ -18,13 +18,6 @@ import Documenter:
     Writers
 
 using Documenter.Utilities.DOM
-@tags html body title head link article
-@tags title head link
-@tags nav li ul
-@tags img
-@tags header footer
-@tags h1 h2 p em a div
-@tags pre
 
 import Documenter.Writers.HTMLWriter: mdconvert
 
@@ -129,11 +122,9 @@ end
 
 import Documenter.Writers: Writer, render
 function render(::Writer{Formats.HTML}, doc::Documents.Document)
-    @tags hr meta input
-    @tags span
-    #if ispath("build")
-    #    rm("build", recursive=true)
-    #end
+    @tags html head title meta link
+    @tags body article header footer nav h1 ul li
+    @tags span a img input hr
 
     # determine variables
     pkgname = "\$pkgname.jl" # TODO
@@ -141,14 +132,12 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
 
     pagedb = PageDB(doc)
 
-    #mkdir("build")
     cp("assets/normalize.css", "build/normalize.css", remove_destination=true)
     cp("assets/style.css", "build/style.css", remove_destination=true)
     cp("assets/highlight.css", "build/highlight.css", remove_destination=true)
 
     cp("assets/js/require.js", "build/require.js", remove_destination=true)
     cp("assets/js/documenter.js", "build/documenter.js", remove_destination=true)
-
     cp("assets/js/lunr.js", "build/lunr.js", remove_destination=true)
 
     fout_search = open("build/search-index.js", "w")
@@ -158,25 +147,21 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
         if isnull(metapage.page) continue end
         src, page = get(metapage.page)
         println("- building $(page.build)")
-        @show page.source page.build
-        @show pagename(page,doc)
-        @show Formats.extension(Formats.HTML, pagename(page,doc))
 
         h = head(
             meta[:charset=>"UTF-8"](),
             meta[:name => "viewport", :content => "width=device-width, initial-scale=1.0"](),
             title("Documenter.jl"),
 
-            stylesheet(_relpath("normalize.css",src)),
-            stylesheet(_relpath("style.css",src)),
-            stylesheet(_relpath("highlight.css",src)),
+            stylesheet(_relpath("normalize.css", src)),
+            stylesheet(_relpath("style.css", src)),
+            stylesheet(_relpath("highlight.css", src)),
 
             DOM.Tag(:script)("documenterBaseURL=\"$(_relpath(".",src))\""),
-            #script("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"),
-            #script("https://code.jquery.com/jquery-3.1.0.js"),
-            #script(_relpath("mathjaxhelper.js",src)),
-            #script(_relpath("lunr.js",src))
-            DOM.Tag(:script)[:src=>_relpath("require.js",src),Symbol("data-main")=>_relpath("documenter.js",src)](),
+            DOM.Tag(:script)[
+                :src=>_relpath("require.js",src),
+                Symbol("data-main") => _relpath("documenter.js",src)
+            ](),
             script(_relpath("search-index.js",src)),
         )
 
@@ -233,7 +218,7 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
         pagenodes = domify(page, context)
         art = article["#docs"](art_header, pagenodes, art_footer)
 
-        htmldoc = HTMLDocument(html[:lang=>"en"](h,body(page_nav, art)))
+        htmldoc = DOM.HTMLDocument(html[:lang=>"en"](h,body(page_nav, art)))
         open(Formats.extension(Formats.HTML, page.build), "w") do io
             print(io, htmldoc)
         end
@@ -281,20 +266,20 @@ function pagename(page::Documents.Page, doc)
     first(splitext(docpath))
 end
 
-stylesheet(href) = link[:href=>href,:rel=>"stylesheet",:type=>"text/css"]()
-script(src) = DOM.Tag(:script)[:src=>src]()
+stylesheet(href) = DOM.Tag(:link)[:href => href, :rel => "stylesheet", :type => "text/css"]()
+script(src) = DOM.Tag(:script)[:src => src]()
 
 function navhref(to, from)
     from_src = get(from.page).first
     to_src = get(to.page).first
     Formats.extension(Formats.HTML,_relpath(to_src, from_src))
 end
-navlink(to,from) = a[".toctext",:href=>navhref(to,from)](to.title)
+navlink(to,from) = DOM.Tag(:a)[".toctext",:href=>navhref(to,from)](to.title)
 
 navitem(pagedb::PageDB, mp) = navitem(pagedb.tree, mp)
-navitem(p::Vector, mp) = ul(map(p->navitem(p, mp), p))
+navitem(p::Vector, mp) = DOM.Tag(:ul)(map(p->navitem(p, mp), p))
 function navitem(p::MetaPage, mp)
-    @tags span
+    @tags ul li span a
     link = isnull(p.page) ? span[".toctext"](p.title) : navlink(p, mp)
     item = (p === mp) ? li[".current"](link) : li(link)
 
@@ -321,6 +306,7 @@ navitem(p::Pair{String,String}, mp) = li(navlink(p.first,p.second,mp))
 # DOMIFY
 
 function domify(anchor::Anchors.Anchor, page, doc)
+    @tags a
     aid = "$(anchor.id)-$(anchor.nth)"
     [
         a[:id => aid](),
@@ -347,6 +333,7 @@ function push!(lb::ListBuilder, level, node)
 end
 
 function domify(lb::ListBuilder)
+    @tags ul li
     ul(map(lb.es) do e
         if typeof(e) === ListBuilder
             domify(e)
@@ -357,6 +344,7 @@ function domify(lb::ListBuilder)
 end
 
 function domify(contents::Documents.ContentsNode, page, doc)
+    @tags a
     lb = ListBuilder()
     for (count, path, anchor) in contents.elements
         header = anchor.object
@@ -369,6 +357,7 @@ function domify(contents::Documents.ContentsNode, page, doc)
 end
 
 function domify(index::Documents.IndexNode, page, doc)
+    @tags ul li a
     lis = map(index.elements) do _
         object, doc, page, mod, cat = _
         url = string(page, "#", Utilities.slugify(object))
@@ -382,8 +371,8 @@ function domify(node::Documents.DocsNodes, context::DomifyContext)
 end
 
 function domify(node::Documents.DocsNode, context::DomifyContext)
+    @tags div section p ul li pre strong em a br
     page, doc = context.page, context.doc
-    @tags div strong br em section
     docheader = div[".docheader"](
         a[:id=>node.anchor.id, :href=>"#$(node.anchor.id)"]("#"),
         " ",
@@ -471,14 +460,14 @@ function domify(node::Documents.DocsNode, context::DomifyContext)
         # we print a small notice if we are not displaying all the methods
         nh = length(methodnodes)-length(ms) # number of hidden methods
         if nh > 0
-            push!(ret, em("Hiding $(nh) method$(nh==1?"":"s") defined outside of this package."))
+            push!(ret, p(em("Hiding $(nh) method$(nh==1?"":"s") defined outside of this package.")))
         end
     end
     section[".docstring"](ret)
 end
 
 function domify_doc(md::Markdown.MD, page, doc)
-    @tags br
+    @tags a br
     if haskey(md.meta, :results)
         # The `:results` field contains a vector of `Docs.DocStr` objects associated with
         # each markdown object. The `DocStr` contains data such as file and line info that
@@ -536,6 +525,7 @@ function domify(node, context::DomifyContext)
 end
 
 function domify(node, page, doc)
+    @tags div h1
     warn("Default domify: $(typeof(node))")
     if typeof(node).name.module === Base.Markdown
         [
@@ -564,7 +554,7 @@ end
 import Base.Markdown: MD, Code, Header
 @tags code
 function mdconvert(c::Code, parent::MD)
-    #info("MD CODE BLOCK: `$(c.language)`")
+    @tags pre code
     language = isempty(c.language) ? "none" : c.language
     try
         pre(code[".highlight.language-$(language)"]((domify(Pygments.lex(language, c.code)))))
@@ -575,17 +565,19 @@ function mdconvert(c::Code, parent::MD)
 end
 
 function mdconvert(c::Code, parent)
-    #info("MD CODE: `$(c.language)`")
+    @tags code
     code(c.code)
 end
 
 if isdefined(Base.Markdown, :Admonition)
     import Base.Markdown: Admonition
-    mdconvert(a::Admonition, parent) =
+    function mdconvert(a::Admonition, parent)
+        @tags div
         div[".admonition.$(a.category)"](
             div[".admonition-title"](a.title),
             div[".admonition-text"](mdconvert(a.content, a))
         )
+    end
 end
 
 mdconvert(expr::Union{Expr,Symbol}, parent) = string(expr)
