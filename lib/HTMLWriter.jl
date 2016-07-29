@@ -26,14 +26,7 @@ using Documenter.Utilities.DOM
 @tags h1 h2 p em a div
 @tags pre
 
-# TODO: wait for merge
-if isdefined(Documenter.Writers.HTMLWriter, :mdconvert)
-    import Documenter.Writers.HTMLWriter: mdconvert
-elseif isdefined(Documenter.Utilities.DOM.MarkdownConverter, :mdconvert)
-    import Documenter.Utilities.DOM.MarkdownConverter: mdconvert
-else
-    error("mdconvert not defined in Documenter..?!")
-end
+import Documenter.Writers.HTMLWriter: mdconvert
 
 include("MDFlatten.jl")
 mdflatten = MDFlatten.mdflatten
