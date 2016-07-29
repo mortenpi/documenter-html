@@ -27,7 +27,6 @@ pages = [
 ]
 
 # Configure Documenter
-Documenter.Selectors.disable(::Type{Documenter.Builder.RedirectOutputStreams}) = true
 Documenter.Selectors.disable(::Type{Documenter.Builder.RenderDocument}) = true
 Documenter.Selectors.disable(::Type{Documenter.Builder.CheckDocument}) = true
 
