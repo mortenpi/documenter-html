@@ -35,7 +35,9 @@ else
     error("mdconvert not defined in Documenter..?!")
 end
 
-include("MDFlat.jl")
+include("MDFlatten.jl")
+mdflatten = MDFlatten.mdflatten
+
 include("Pygments.jl")
 
 type HTMLDocument
@@ -417,7 +419,7 @@ function domify(node::Documents.DocsNode, context::DomifyContext)
     push!(context.index, SearchIndex(
         node.anchor.id,
         string(node.object.binding),
-        MDFlat.mdflatten(node.docstr),
+        mdflatten(node.docstr),
         Utilities.doccat(node.object)
     ))
 
@@ -533,10 +535,10 @@ function domify(page::Documents.Page, context::DomifyContext)
 
             a = page.mapping[elem]
             sl = "$(a.id)-$(a.nth)"
-            st = MDFlat.mdflatten(elem)
+            st = mdflatten(elem)
             info("New section: $(a.file)#$(a.id)-$(a.nth)")
         else
-            MDFlat.mdflatten(ss, elem)
+            mdflatten(ss, elem)
         end
         node = page.mapping[elem]
         info("Top-block-domify: $(typeof(elem)) -> $(typeof(node))")
@@ -615,7 +617,7 @@ determined.
 function pagetitle_string(page::Documenter.Documents.Page)::Nullable{String}
     for e in page.elements
         if typeof(e) === Base.Markdown.Header{1}
-            return MDFlat.mdflatten(e.text)
+            return mdflatten(e.text)
         end
     end
     return nothing
