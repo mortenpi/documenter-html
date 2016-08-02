@@ -25,8 +25,21 @@ include("Pygments.jl")
 # Necessary until HTML PR is merged
 if isdefined(Documenter.Utilities, :MDFlatten)
     using Documenter.Utilities.MDFlatten
+    import Documenter.Utilities.DOM: HTMLDocument
 else
     include("MDFlatten.jl")
+    mdflatten = MDFlatten.mdflatten
+
+    type HTMLDocument
+        doctype::String
+        root::DOM.Node
+    end
+    HTMLDocument(root) = HTMLDocument("html", root)
+
+    function Base.show(io::IO, doc::HTMLDocument)
+        println(io, "<!DOCTYPE $(doc.doctype)>")
+        println(io, doc.root)
+    end
 end
 
 # Necessary until pages refactor is merged
