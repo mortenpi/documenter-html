@@ -58,9 +58,9 @@ function custompage!(doc, name, mds)
 end
 
 # Add additional pages manually
-push!(doc.user.pages, "JuliaDocs - Manual" => loadpages("julia-docs/manual", "manual", doc))
-push!(doc.user.pages, "JuliaDocs - Standard Libary" => loadpages("julia-docs/stdlib", "stdlib", doc))
-push!(doc.user.pages, "JuliaDocs - DevDocs" => loadpages("julia-docs/devdocs", "devdocs", doc))
+#push!(doc.user.pages, "JuliaDocs - Manual" => loadpages("julia-docs/manual", "manual", doc))
+#push!(doc.user.pages, "JuliaDocs - Standard Libary" => loadpages("julia-docs/stdlib", "stdlib", doc))
+#push!(doc.user.pages, "JuliaDocs - DevDocs" => loadpages("julia-docs/devdocs", "devdocs", doc))
 
 custompage!(doc, "dynamic/code", """
 # Code examples
