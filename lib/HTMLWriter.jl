@@ -59,56 +59,73 @@ type PageDB
     """a flat list of pages that have a corresponding "physical" page."""
     pages::Vector{NavItem}
     function PageDB(doc::Documents.Document)
-        pagewalkstate = PageWalkState(doc, [], nothing, nothing)
+        mdpages = map(p -> "$p.md", keys(doc.internal.pages))
+        pagewalkstate = PagewalkContext(doc, mdpages)
         tree = walkpages(pagewalkstate, doc.user.pages)
         @show map(typeof,tree)
         new(doc,tree,pagewalkstate.pagelist)
     end
 end
 
-type PageWalkState
-    doc::Documents.Document
-    pagelist::Vector{NavItem}
-    parent::Nullable{NavItem}
-    prev::Nullable{NavItem}
+"""
+The "global" state that gets passed around in the recursive [`walkpages`](@ref)
+function.
+"""
+type PagewalkContext
+    doc      :: Documents.Document
+    mdpages  :: Vector{String}
+    pagelist :: Vector{NavItem}
+    parent   :: Nullable{NavItem}
+    prev     :: Nullable{NavItem}
 end
+PagewalkContext(doc, mdpages) = PagewalkContext(doc, mdpages, [], nothing, nothing)
 
-walkpages(state, ps::Vector) = map(p->walkpages(state,p), ps)
-function walkpages{T}(state, p::Pair{String,Vector{T}})
+"""
+    walkpages(ctx::PagewalkContext, x)
+
+Recursively walks through the [`Documents.Document`](@ref)'s `.user.pages` field,
+generating [`Documents.NavItem`](@ref)s and related data structures in the
+process.
+
+This implementation is the de facto specification for the `.user.pages` field.
+"""
+walkpages(ctx, ps::Vector) = map(p->walkpages(ctx, p), ps)
+function walkpages{T}(ctx, p::Pair{String, Vector{T}})
+    @show p.first
     mp = NavItem(
         [DOM.Node(p.first)],
-        Nullable{Pair{String,Documents.Page}}(),
+        nothing,
         [],
-        state.parent,
+        ctx.parent,
         nothing,
         nothing
     )
-    state.parent = mp
-    mp.children = walkpages(state, p.second)
-    state.parent = mp.parent
+    ctx.parent = mp
+    mp.children = walkpages(ctx, p.second)
+    ctx.parent = mp.parent
     mp
 end
-function walkpages(state, p::Pair{String,String})
-    mp = walkpages(state, p.second)
+function walkpages(ctx, p::Pair{String,String})
+    mp = walkpages(ctx, p.second)
     mp.title = [DOM.Node(p.first)]
     mp
 end
-function walkpages(state, src::String)
+function walkpages(ctx, src::String)
     pname = pagename(src)
-    page = state.doc.internal.pages[pname]
+    page = ctx.doc.internal.pages[pname]
     mp = NavItem(
         get(pagetitle(page), "<Untitled>"),
         Nullable(src => page),
         [],
-        state.parent,
-        state.prev,
+        ctx.parent,
+        ctx.prev,
         nothing
     )
-    Utilities.unwrap(state.prev) do prev
+    Utilities.unwrap(ctx.prev) do prev
         prev.next = Nullable(mp)
     end
-    state.prev = Nullable(mp)
-    push!(state.pagelist, mp)
+    ctx.prev = Nullable(mp)
+    push!(ctx.pagelist, mp)
     mp
 end
 
