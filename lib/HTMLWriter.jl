@@ -93,7 +93,7 @@ walkpages(ctx, ps::Vector) = map(p->walkpages(ctx, p), ps)
 function walkpages{T}(ctx, p::Pair{String, Vector{T}})
     @show p.first
     mp = NavItem(
-        [DOM.Node(p.first)],
+        [p.first],
         nothing,
         [],
         ctx.parent,
@@ -107,14 +107,16 @@ function walkpages{T}(ctx, p::Pair{String, Vector{T}})
 end
 function walkpages(ctx, p::Pair{String,String})
     mp = walkpages(ctx, p.second)
-    mp.title = [DOM.Node(p.first)]
+    mp.title = [p.first]
     mp
 end
 function walkpages(ctx, src::String)
     pname = pagename(src)
     page = ctx.doc.internal.pages[pname]
+    title = pagetitle(page)
+    if isnull(title) warn("Unable to determine page title [$(page.source)]") end
     mp = NavItem(
-        get(pagetitle(page), "<Untitled>"),
+        get(title, "<Untitled>"),
         Nullable(src => page),
         [],
         ctx.parent,
@@ -173,9 +175,9 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
     fout_search = open("build/search-index.js", "w")
     println(fout_search, "var documenterSearchIndex = {\"docs\": [\n")
 
-    for NavItem in pagedb
-        if isnull(NavItem.page) continue end
-        src, page = get(NavItem.page)
+    for metapage in pagedb
+        if isnull(metapage.page) continue end
+        src, page = get(metapage.page)
         println("- building $(page.build)")
 
         h = head(
@@ -207,14 +209,14 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
             h1(pkgname),
             input[:type => "text", :placeholder => "Search docs"](),
             #navitem(doc.user.pages, src)
-            navitem(pagedb, NavItem)
+            navitem(pagedb, metapage)
         )
 
-        header_links = map(parents(NavItem)) do mp
+        header_links = map(parents(metapage)) do mp
             if isnull(mp.page)
-                li(mp.title)
+                li(mdconvert(mp.title))
             else
-                li(a[:href => navhref(mp, NavItem)](mp.title))
+                li(a[:href => navhref(mp, metapage)](mdconvert(mp.title)))
             end
         end
 
@@ -231,16 +233,16 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
 
         # build the footer with nav links
         art_footer = footer(hr())
-        Utilities.unwrap(NavItem.prev) do mp
+        Utilities.unwrap(metapage.prev) do mp
             direction = span[".direction"]("Previous")
-            pagetitle = span[".title"](mp.title)
-            link = a[".previous", :href => navhref(mp, NavItem)](direction, pagetitle)
+            pagetitle = span[".title"](mdconvert(mp.title))
+            link = a[".previous", :href => navhref(mp, metapage)](direction, pagetitle)
             push!(art_footer.nodes, link)
         end
-        Utilities.unwrap(NavItem.next) do mp
+        Utilities.unwrap(metapage.next) do mp
             direction = span[".direction"]("Next")
-            pagetitle = span[".title"](mp.title)
-            link = a[".next", :href => navhref(mp, NavItem)](direction, pagetitle)
+            pagetitle = span[".title"](mdconvert(mp.title))
+            link = a[".next", :href => navhref(mp, metapage)](direction, pagetitle)
             push!(art_footer.nodes, link)
         end
 
@@ -304,13 +306,13 @@ function navhref(to, from)
     to_src = get(to.page).first
     Formats.extension(Formats.HTML,_relpath(to_src, from_src))
 end
-navlink(to,from) = DOM.Tag(:a)[".toctext",:href=>navhref(to,from)](to.title)
+navlink(to,from) = DOM.Tag(:a)[".toctext",:href=>navhref(to,from)](mdconvert(to.title))
 
 navitem(pagedb::PageDB, mp) = navitem(pagedb.tree, mp)
 navitem(p::Vector, mp) = DOM.Tag(:ul)(map(p->navitem(p, mp), p))
 function navitem(p::NavItem, mp)
     @tags ul li span a
-    link = isnull(p.page) ? span[".toctext"](p.title) : navlink(p, mp)
+    link = isnull(p.page) ? span[".toctext"](mdconvert(p.title)) : navlink(p, mp)
     item = (p === mp) ? li[".current"](link) : li(link)
 
     if !isempty(p.children)
@@ -630,7 +632,7 @@ end
 function pagetitle(page::Documenter.Documents.Page)::Nullable{Any}
     for e in page.elements
         if typeof(e) === Base.Markdown.Header{1}
-            return mdconvert(e.text)
+            return e.text
         end
     end
     return nothing
