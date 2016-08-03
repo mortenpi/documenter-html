@@ -263,6 +263,11 @@ cd(doc.user.root) do
     Selectors.dispatch(Builder.DocumentPipeline, doc)
 end
 
+println("Pages:")
+for (src, page) in doc.internal.pages
+    println(" - [$src] \t $(page.source)")
+end
+
 macro build()
     quote
         include("lib/HTMLWriter.jl")
