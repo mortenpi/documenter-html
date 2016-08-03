@@ -19,10 +19,10 @@ pages = [
         "lib/internals.md",
     ],
     "Dynamic pages" => [
-        "dynamic/code.md",
-        "Admonitions & Co" => "dynamic/admonitions.md",
-        "dynamic/styles.md",
-        "dynamic/bugs.md"
+        "dynamic/code",
+        "Admonitions & Co" => "dynamic/admonitions",
+        "dynamic/styles",
+        "dynamic/bugs"
     ],
 ]
 
@@ -54,7 +54,7 @@ if fieldtype(Documenter.Documents.Internal, :pages) <: Vector
     function custompage!(doc, name, mds)
         elements = Base.Markdown.parse(mds).content
         build = joinpath(doc.user.build, name)
-        page = Page("dynamic://$name", build, elements, ObjectIdDict(), Globals())
+        page = Page("$name", build, elements, ObjectIdDict(), Globals())
         push!(doc.internal.pages, page)
     end
 else
