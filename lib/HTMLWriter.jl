@@ -43,10 +43,18 @@ else
 end
 
 # Necessary until pages refactor is merged
-if isdefined(Documenter.Documents, :NavItem)
-    import Documenter.Documents: NavItem
+if isdefined(Documenter.Documents, :NavNode)
+    import Documenter.Documents: NavNode
 else
-    include("deprecated.jl")
+    # Old MetaPage
+    type NavNode
+        title    :: Vector
+        page     :: Nullable{Pair{String, Documents.Page}}
+        children :: Vector{NavNode}
+        parent   :: Nullable{NavNode}
+        prev     :: Nullable{NavNode}
+        next     :: Nullable{NavNode}
+    end
 end
 
 
@@ -55,9 +63,9 @@ Build a `Page` "database" out of a `Document`.
 """
 type PageDB
     doc::Documents.Document
-    tree::Vector{NavItem}
+    tree::Vector{NavNode}
     """a flat list of pages that have a corresponding "physical" page."""
-    pages::Vector{NavItem}
+    pages::Vector{NavNode}
     function PageDB(doc::Documents.Document)
 
         # UNTIL: refactor-pages PR
@@ -83,9 +91,9 @@ function.
 type PagewalkContext
     doc      :: Documents.Document
     mdpages  :: Vector{String}
-    pagelist :: Vector{NavItem}
-    parent   :: Nullable{NavItem}
-    prev     :: Nullable{NavItem}
+    pagelist :: Vector{NavNode}
+    parent   :: Nullable{NavNode}
+    prev     :: Nullable{NavNode}
 end
 PagewalkContext(doc, mdpages) = PagewalkContext(doc, mdpages, [], nothing, nothing)
 
@@ -93,7 +101,7 @@ PagewalkContext(doc, mdpages) = PagewalkContext(doc, mdpages, [], nothing, nothi
     walkpages(ctx::PagewalkContext, x)
 
 Recursively walks through the [`Documents.Document`](@ref)'s `.user.pages` field,
-generating [`Documents.NavItem`](@ref)s and related data structures in the
+generating [`Documents.NavNode`](@ref)s and related data structures in the
 process.
 
 This implementation is the de facto specification for the `.user.pages` field.
@@ -101,7 +109,7 @@ This implementation is the de facto specification for the `.user.pages` field.
 walkpages(ctx, ps::Vector) = map(p->walkpages(ctx, p), ps)
 function walkpages{T}(ctx, p::Pair{String, Vector{T}})
     @show p.first
-    mp = NavItem(
+    mp = NavNode(
         [p.first],
         nothing,
         [],
@@ -123,7 +131,7 @@ function walkpages(ctx, src::String)
     page = findpage(ctx.doc, src)
     title = pagetitle(page)
     if isnull(title) warn("Unable to determine page title [$(page.source)]") end
-    mp = NavItem(
+    mp = NavNode(
         get(title, "<Untitled>"),
         Nullable(src => page),
         [],
@@ -169,7 +177,7 @@ start(pagedb::PageDB) = start(pagedb.pages)
 next(pagedb::PageDB, state) = next(pagedb.pages, state)
 done(pagedb::PageDB, state) = done(pagedb.pages, state)
 
-parents(mp::NavItem) = isnull(mp.parent) ? [mp] : push!(parents(get(mp.parent)), mp)
+parents(mp::NavNode) = isnull(mp.parent) ? [mp] : push!(parents(get(mp.parent)), mp)
 
 type SearchIndex
     loc::String
@@ -208,9 +216,9 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
     fout_search = open("build/search-index.js", "w")
     println(fout_search, "var documenterSearchIndex = {\"docs\": [\n")
 
-    for metapage in pagedb
-        if isnull(metapage.page) continue end
-        src, page = get(metapage.page)
+    for navnode in pagedb
+        if isnull(navnode.page) continue end
+        src, page = get(navnode.page)
         println("- building $(page.build)")
 
         h = head(
@@ -242,14 +250,14 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
             h1(pkgname),
             input[:type => "text", :placeholder => "Search docs"](),
             #navitem(doc.user.pages, src)
-            navitem(pagedb, metapage)
+            navitem(pagedb, navnode)
         )
 
-        header_links = map(parents(metapage)) do mp
+        header_links = map(parents(navnode)) do mp
             if isnull(mp.page)
                 li(mdconvert(mp.title))
             else
-                li(a[:href => navhref(mp, metapage)](mdconvert(mp.title)))
+                li(a[:href => navhref(mp, navnode)](mdconvert(mp.title)))
             end
         end
 
@@ -266,16 +274,16 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
 
         # build the footer with nav links
         art_footer = footer(hr())
-        Utilities.unwrap(metapage.prev) do mp
+        Utilities.unwrap(navnode.prev) do mp
             direction = span[".direction"]("Previous")
             pagetitle = span[".title"](mdconvert(mp.title))
-            link = a[".previous", :href => navhref(mp, metapage)](direction, pagetitle)
+            link = a[".previous", :href => navhref(mp, navnode)](direction, pagetitle)
             push!(art_footer.nodes, link)
         end
-        Utilities.unwrap(metapage.next) do mp
+        Utilities.unwrap(navnode.next) do mp
             direction = span[".direction"]("Next")
             pagetitle = span[".title"](mdconvert(mp.title))
-            link = a[".next", :href => navhref(mp, metapage)](direction, pagetitle)
+            link = a[".next", :href => navhref(mp, navnode)](direction, pagetitle)
             push!(art_footer.nodes, link)
         end
 
@@ -334,7 +342,7 @@ navlink(to,from) = DOM.Tag(:a)[".toctext",:href=>navhref(to,from)](mdconvert(to.
 
 navitem(pagedb::PageDB, mp) = navitem(pagedb.tree, mp)
 navitem(p::Vector, mp) = DOM.Tag(:ul)(map(p->navitem(p, mp), p))
-function navitem(p::NavItem, mp)
+function navitem(p::NavNode, mp)
     @tags ul li span a
     link = isnull(p.page) ? span[".toctext"](mdconvert(p.title)) : navlink(p, mp)
     item = (p === mp) ? li[".current"](link) : li(link)
