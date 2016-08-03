@@ -680,4 +680,11 @@ function collect_subsections(page::Documenter.Documents.Page)
     end
 end
 
+function pageid(page, doc)
+    for (src, page_try) in doc.internal.pages
+        page == page_try && return src
+    end
+    throw(KeyError("page [$(object_id(page))] not found in document [$(object_id(doc))]"))
+end
+
 end
