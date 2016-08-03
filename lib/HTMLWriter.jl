@@ -50,8 +50,8 @@ else
     type NavNode
         title    :: Vector
         page     :: Nullable{Pair{String, Documents.Page}}
-        children :: Vector{NavNode}
         parent   :: Nullable{NavNode}
+        children :: Vector{NavNode}
         prev     :: Nullable{NavNode}
         next     :: Nullable{NavNode}
     end
@@ -112,8 +112,8 @@ function walkpages{T}(ctx, p::Pair{String, Vector{T}})
     mp = NavNode(
         [p.first],
         nothing,
-        [],
         ctx.parent,
+        [],
         nothing,
         nothing
     )
@@ -134,8 +134,8 @@ function walkpages(ctx, src::String)
     mp = NavNode(
         get(title, "<Untitled>"),
         Nullable(src => page),
-        [],
         ctx.parent,
+        [],
         ctx.prev,
         nothing
     )
