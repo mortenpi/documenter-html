@@ -59,7 +59,16 @@ type PageDB
     """a flat list of pages that have a corresponding "physical" page."""
     pages::Vector{NavItem}
     function PageDB(doc::Documents.Document)
-        mdpages = map(p -> "$p.md", keys(doc.internal.pages))
+
+        # UNTIL: refactor-pages PR
+        mdpages = if fieldtype(Documenter.Documents.Internal, :pages) <: Vector
+            map(doc.internal.pages) do page
+                normpath(relpath(page.source, doc.user.source))
+            end
+        else
+            map(p -> "$p.md", keys(doc.internal.pages))
+        end
+
         pagewalkstate = PagewalkContext(doc, mdpages)
         tree = walkpages(pagewalkstate, doc.user.pages)
         @show map(typeof,tree)
@@ -111,8 +120,7 @@ function walkpages(ctx, p::Pair{String,String})
     mp
 end
 function walkpages(ctx, src::String)
-    pname = pagename(src)
-    page = ctx.doc.internal.pages[pname]
+    page = findpage(ctx.doc, src)
     title = pagetitle(page)
     if isnull(title) warn("Unable to determine page title [$(page.source)]") end
     mp = NavItem(
@@ -129,6 +137,31 @@ function walkpages(ctx, src::String)
     ctx.prev = Nullable(mp)
     push!(ctx.pagelist, mp)
     mp
+end
+
+# UNTIL: refactor-pages PR
+if fieldtype(Documenter.Documents.Internal, :pages) <: Vector
+    function findpage(doc, path)
+        for page in doc.internal.pages
+            pagepath = if startswith(page.source, "dynamic://")
+                string(page.source[length("dynamic://")+1 : end], ".md")
+            else
+                normpath(relpath(page.source, doc.user.source))
+            end
+            @show pagepath
+            if pagepath == path
+                return page
+            end
+        end
+        error("Unable to find page: $path")
+    end
+else
+    findpage(doc, path) = doc.internal.pages[pagename(path)]
+    pagename(src::String) = first(splitext(src))
+    #=function pagename(page::Documents.Page, doc)
+        docpath = normpath(relpath(page.build,doc.user.build))
+        first(splitext(docpath))
+    end=#
 end
 
 import Base: start, next, done
@@ -287,15 +320,6 @@ flattenpages(p::Pair) = flattenpages(p.second)
 function _relpath(path, src)
     pagedir = dirname(src)
     relpath(path, isempty(pagedir) ? "." : pagedir)
-end
-
-function pagename(src::String)
-    first(splitext(src))
-end
-
-function pagename(page::Documents.Page, doc)
-    docpath = normpath(relpath(page.build,doc.user.build))
-    first(splitext(docpath))
 end
 
 stylesheet(href) = DOM.Tag(:link)[:href => href, :rel => "stylesheet", :type => "text/css"]()
