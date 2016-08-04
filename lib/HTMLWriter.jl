@@ -46,109 +46,67 @@ end
 if isdefined(Documenter.Documents, :NavNode)
     import Documenter.Documents: NavNode
 else
-    # Old MetaPage
+    """
+    Element in the navigation tree of a document, containing navigation references
+    to other page, reference to the [`Page`](@ref) object etc.
+    """
     type NavNode
-        title    :: Vector
-        page     :: Nullable{Pair{String, Documents.Page}}
-        parent   :: Nullable{NavNode}
-        children :: Vector{NavNode}
-        prev     :: Nullable{NavNode}
-        next     :: Nullable{NavNode}
+        page           :: Nullable{Compat.UTF8String} # unless null, should point to a valid Page in the document
+        title_override :: Nullable{Compat.UTF8String}
+        parent         :: Nullable{NavNode}
+        children       :: Vector{NavNode}
+        prev           :: Nullable{NavNode}
+        next           :: Nullable{NavNode}
+    end
+    NavNode(page, title_override, parent) = NavNode(page, title_override, parent, [], nothing, nothing)
+
+    """
+        walk_navpages(x, parent, doc)
+
+    Recursively walks through the [`Documents.Document`](@ref)'s `.user.pages` field,
+    generating [`Documents.NavNode`](@ref)s and related data structures in the
+    process.
+
+    This implementation is the de facto specification for the `.user.pages` field.
+    """
+    walk_navpages(ps::Vector, parent, doc) = map(p -> walk_navpages(p, parent, doc), ps)
+    function walk_navpages{T}(p::Pair{String, Vector{T}}, parent, doc)
+        nn = NavNode(nothing, p.first, parent)
+        nn.children = walk_navpages(p.second, nn, doc)
+        nn
+    end
+    function walk_navpages(p::Pair{String,String}, parent, doc)
+        nn = walk_navpages(p.second, parent, doc)
+        nn.title_override = p.first
+        nn
+    end
+    function walk_navpages(src::String, parent, pagedb)
+        doc = pagedb.doc
+        if !(src in keys(doc.internal.pages))
+            _src = first(splitext(src))
+            _src in keys(doc.internal.pages) || error("'$src' is not an existing page!")
+            src = _src
+        end
+        nn = NavNode(src, nothing, parent)
+        push!(pagedb.navlist, nn)
+        nn
     end
 end
-
 
 """
 Build a `Page` "database" out of a `Document`.
 """
 type PageDB
     doc::Documents.Document
-    tree::Vector{NavNode}
-    """a flat list of pages that have a corresponding "physical" page."""
-    pages::Vector{NavNode}
-    function PageDB(doc::Documents.Document)
-
-        # UNTIL: refactor-pages PR
-        mdpages = if fieldtype(Documenter.Documents.Internal, :pages) <: Vector
-            map(doc.internal.pages) do page
-                normpath(relpath(page.source, doc.user.source))
-            end
-        else
-            map(p -> "$p.md", keys(doc.internal.pages))
-        end
-
-        pagewalkstate = PagewalkContext(doc, mdpages)
-        tree = walkpages(pagewalkstate, doc.user.pages)
-        @show map(typeof,tree)
-        new(doc,tree,pagewalkstate.pagelist)
-    end
+    navtree::Vector{NavNode}
+    navlist::Vector{NavNode}
 end
 
-"""
-The "global" state that gets passed around in the recursive [`walkpages`](@ref)
-function.
-"""
-type PagewalkContext
-    doc      :: Documents.Document
-    mdpages  :: Vector{String}
-    pagelist :: Vector{NavNode}
-    parent   :: Nullable{NavNode}
-    prev     :: Nullable{NavNode}
-end
-PagewalkContext(doc, mdpages) = PagewalkContext(doc, mdpages, [], nothing, nothing)
-
-"""
-    walkpages(ctx::PagewalkContext, x)
-
-Recursively walks through the [`Documents.Document`](@ref)'s `.user.pages` field,
-generating [`Documents.NavNode`](@ref)s and related data structures in the
-process.
-
-This implementation is the de facto specification for the `.user.pages` field.
-"""
-walkpages(ctx, ps::Vector) = map(p->walkpages(ctx, p), ps)
-function walkpages{T}(ctx, p::Pair{String, Vector{T}})
-    @show p.first
-    mp = NavNode(
-        [p.first],
-        nothing,
-        ctx.parent,
-        [],
-        nothing,
-        nothing
-    )
-    ctx.parent = mp
-    mp.children = walkpages(ctx, p.second)
-    ctx.parent = mp.parent
-    mp
-end
-function walkpages(ctx, p::Pair{String,String})
-    mp = walkpages(ctx, p.second)
-    mp.title = [p.first]
-    mp
-end
-function walkpages(ctx, src::String)
-    page = findpage(ctx.doc, src)
-    title = pagetitle(page)
-    if isnull(title) warn("Unable to determine page title [$(page.source)]") end
-    mp = NavNode(
-        get(title, "<Untitled>"),
-        Nullable(src => page),
-        ctx.parent,
-        [],
-        ctx.prev,
-        nothing
-    )
-    Utilities.unwrap(ctx.prev) do prev
-        prev.next = Nullable(mp)
-    end
-    ctx.prev = Nullable(mp)
-    push!(ctx.pagelist, mp)
-    mp
-end
 
 # UNTIL: refactor-pages PR
-if fieldtype(Documenter.Documents.Internal, :pages) <: Vector
+#function pagedb end
+if isdefined(Documenter.Documents, :NavNode)
+    PageDB(doc::Documents.Document) = PageDB(doc, doc.internal.navtree, doc.internal.navlist)
     function findpage(doc, path)
         for page in doc.internal.pages
             pagepath = if startswith(page.source, "dynamic://")
@@ -164,18 +122,34 @@ if fieldtype(Documenter.Documents.Internal, :pages) <: Vector
         error("Unable to find page: $path")
     end
 else
+    function PageDB(doc::Documents.Document)
+        pagedb = PageDB(doc, [], [])
+        mdpages = map(p -> "$p.md", keys(doc.internal.pages))
+        userpages = isempty(doc.user.pages) ? mdpages : doc.user.pages
+        pagedb.navtree = walk_navpages(userpages, nothing, pagedb)
+
+        # Finally we populate the .next and .prev fields of the navnodes that point
+        # to actual pages (leaf nodes).
+        local prev::Nullable{NavNode} = nothing
+        for navnode in pagedb.navlist
+            navnode.prev = prev
+            Utilities.unwrap(prev) do prevnode
+                prevnode.next = navnode
+            end
+            prev = navnode
+        end
+
+        pagedb
+    end
+
     findpage(doc, path) = doc.internal.pages[pagename(path)]
     pagename(src::String) = first(splitext(src))
-    #=function pagename(page::Documents.Page, doc)
-        docpath = normpath(relpath(page.build,doc.user.build))
-        first(splitext(docpath))
-    end=#
 end
 
 import Base: start, next, done
-start(pagedb::PageDB) = start(pagedb.pages)
-next(pagedb::PageDB, state) = next(pagedb.pages, state)
-done(pagedb::PageDB, state) = done(pagedb.pages, state)
+start(pagedb::PageDB) = start(pagedb.navlist)
+next(pagedb::PageDB, state) = next(pagedb.navlist, state)
+done(pagedb::PageDB, state) = done(pagedb.navlist, state)
 
 parents(mp::NavNode) = isnull(mp.parent) ? [mp] : push!(parents(get(mp.parent)), mp)
 
@@ -218,7 +192,8 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
 
     for navnode in pagedb
         if isnull(navnode.page) continue end
-        src, page = get(navnode.page)
+        src = get(navnode.page)
+        page = doc.internal.pages[src]
         println("- building $(page.build)")
 
         h = head(
@@ -250,14 +225,14 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
             h1(pkgname),
             input[:type => "text", :placeholder => "Search docs"](),
             #navitem(doc.user.pages, src)
-            navitem(pagedb, navnode)
+            navitem(NavContext(doc, navnode, pagedb), pagedb)
         )
 
-        header_links = map(parents(navnode)) do mp
-            if isnull(mp.page)
-                li(mdconvert(mp.title))
+        header_links = map(parents(navnode)) do nn
+            if isnull(nn.page)
+                li(domify_pagetitle(nn, doc))
             else
-                li(a[:href => navhref(mp, navnode)](mdconvert(mp.title)))
+                li(a[:href => navhref(nn, navnode)](domify_pagetitle(nn, doc)))
             end
         end
 
@@ -276,13 +251,13 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
         art_footer = footer(hr())
         Utilities.unwrap(navnode.prev) do mp
             direction = span[".direction"]("Previous")
-            pagetitle = span[".title"](mdconvert(mp.title))
+            pagetitle = span[".title"](domify_pagetitle(mp, doc))
             link = a[".previous", :href => navhref(mp, navnode)](direction, pagetitle)
             push!(art_footer.nodes, link)
         end
         Utilities.unwrap(navnode.next) do mp
             direction = span[".direction"]("Next")
-            pagetitle = span[".title"](mdconvert(mp.title))
+            pagetitle = span[".title"](domify_pagetitle(mp, doc))
             link = a[".next", :href => navhref(mp, navnode)](direction, pagetitle)
             push!(art_footer.nodes, link)
         end
@@ -333,26 +308,32 @@ end
 stylesheet(href) = DOM.Tag(:link)[:href => href, :rel => "stylesheet", :type => "text/css"]()
 script(src) = DOM.Tag(:script)[:src => src]()
 
+type NavContext
+    doc     :: Documents.Document
+    current :: NavNode
+    pagedb  :: PageDB
+end
+
 function navhref(to, from)
-    from_src = get(from.page).first
-    to_src = get(to.page).first
+    from_src = get(from.page)
+    to_src = get(to.page)
     Formats.extension(Formats.HTML,_relpath(to_src, from_src))
 end
-navlink(to,from) = DOM.Tag(:a)[".toctext",:href=>navhref(to,from)](mdconvert(to.title))
+navlink(ctx, to) = DOM.Tag(:a)[".toctext",:href=>navhref(to, ctx.current)](domify_pagetitle(to, ctx.doc))
 
-navitem(pagedb::PageDB, mp) = navitem(pagedb.tree, mp)
-navitem(p::Vector, mp) = DOM.Tag(:ul)(map(p->navitem(p, mp), p))
-function navitem(p::NavNode, mp)
+navitem(ctx, pagedb::PageDB) = navitem(ctx, pagedb.navtree)
+navitem(ctx, p::Vector) = DOM.Tag(:ul)(map(p->navitem(ctx, p), p))
+function navitem(ctx, p::NavNode)
     @tags ul li span a
-    link = isnull(p.page) ? span[".toctext"](mdconvert(p.title)) : navlink(p, mp)
-    item = (p === mp) ? li[".current"](link) : li(link)
+    link = isnull(p.page) ? span[".toctext"](domify_pagetitle(p, ctx.doc)) : navlink(ctx, p)
+    item = (p === ctx.current) ? li[".current"](link) : li(link)
 
     if !isempty(p.children)
-        push!(item.nodes, navitem(p.children, mp))
+        push!(item.nodes, navitem(ctx, p.children))
     end
 
-    if p === mp && !isnull(p.page)
-        sections = collect_subsections(get(p.page).second)
+    if p === ctx.current && !isnull(p.page)
+        sections = collect_subsections(ctx.doc.internal.pages[get(p.page)])
         internal_links = map(sections) do s
             anchor, title = s
             li(a[".toctext", :href => anchor](title))
@@ -362,10 +343,22 @@ function navitem(p::NavNode, mp)
 
     item
 end
+#navitem(ctx, p::String) = li(navlink(ctx, p, p))
+#navitem(ctx, p::Pair) = li(p.first, navitem(ctx, p.second))
+#navitem(ctx, p::Pair{String,String}) = li(navlink(ctx, p.first, p.second))
 
-navitem(p::String, mp) = li(navlink(p,p,mp))
-navitem(p::Pair, mp) = li(p.first, navitem(p.second, mp))
-navitem(p::Pair{String,String}, mp) = li(navlink(p.first,p.second,mp))
+function domify_pagetitle(navnode, doc)::Vector{DOM.Node}
+    !isnull(navnode.title_override) && return [DOM.Node(get(navnode.title_override))]
+
+    if !isnull(navnode.page)
+        title = pagetitle(doc.internal.pages[get(navnode.page)])
+        !isnull(title) && return mdconvert(get(title))
+    end
+
+    # TODO: How to handle this error?
+    warn("Unable to determine page title.")
+    [DOM.Node("<UNTITLED>")]
+end
 
 # DOMIFY
 
