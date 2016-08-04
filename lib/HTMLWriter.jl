@@ -167,6 +167,54 @@ immutable DomifyContext
     DomifyContext(page, doc) = new(doc, page, [])
 end
 
+"""
+Calculates a relative HTML link.
+"""
+function relhref(from, to)
+    pagedir = dirname(from)
+    relpath(to, isempty(pagedir) ? "." : pagedir)
+end
+
+_relpath(to, from) = relhref(from, to)
+
+"""
+Copies an asset from Documenters `assets/html/` directory to `doc.user.build`.
+Returns the path of the copied asset relative to `.build`.
+
+Note: while the current implementation trivially just appends `file` to
+`doc.user.build`, this behaviour should not be assumed and could change in the
+future. Instead the returned path should be used to figure out the links to the
+asset.
+"""
+function copy_asset(file, doc)
+    info(" - copying asset: $file")
+    src = joinpath("assets/", file) # TODO: Utilities.assetsdir()
+    dst = joinpath("build/", file)  # TODO: doc.user.build / assets
+    isfile(src) || error("Asset '$file' not found at $(abspath(src))")
+    ispath(dirname(dst)) || mkpath(dirname(dst))
+    cp(src, dst, remove_destination=true)
+    normpath(file)
+end
+
+"""
+Copies over a stylesheet from the assets directory and returns the `link` node.
+
+`stylesheet` should be just the name of the stylesheet with the extension
+(e.g. `normalize.css`). `src` is the path of the current page and used to
+determine the relative href.
+"""
+function stylesheet_asset(stylesheet, src)
+    asset = joinpath("css", stylesheet)
+    path = copy_asset(asset, src)
+    DOM.Tag(:link)[
+        :href => relhref(src, path),
+        :rel => "stylesheet",
+        :type => "text/css"
+    ]()
+end
+
+script(src) = DOM.Tag(:script)[:src => src]()
+
 import Documenter.Writers: Writer, render
 function render(::Writer{Formats.HTML}, doc::Documents.Document)
     @tags html head title meta link
@@ -179,13 +227,9 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
 
     pagedb = PageDB(doc)
 
-    cp("assets/normalize.css", "build/normalize.css", remove_destination=true)
-    cp("assets/style.css", "build/style.css", remove_destination=true)
-    cp("assets/highlight.css", "build/highlight.css", remove_destination=true)
-
-    cp("assets/js/require.js", "build/require.js", remove_destination=true)
-    cp("assets/js/documenter.js", "build/documenter.js", remove_destination=true)
-    cp("assets/js/lunr.js", "build/lunr.js", remove_destination=true)
+    requirejs_path = copy_asset("js/require.js", doc)
+    documenterjs_path = copy_asset("js/documenter.js", doc)
+    copy_asset("js/lunr.js", doc)
 
     fout_search = open("build/search-index.js", "w")
     println(fout_search, "var documenterSearchIndex = {\"docs\": [\n")
@@ -201,16 +245,16 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
             meta[:name => "viewport", :content => "width=device-width, initial-scale=1.0"](),
             title("Documenter.jl"),
 
-            stylesheet(_relpath("normalize.css", src)),
-            stylesheet(_relpath("style.css", src)),
-            stylesheet(_relpath("highlight.css", src)),
+            stylesheet_asset("normalize.css", src),
+            stylesheet_asset("style.css", src),
+            stylesheet_asset("highlight.css", src),
 
             DOM.Tag(:script)("documenterBaseURL=\"$(_relpath(".",src))\""),
             DOM.Tag(:script)[
-                :src=>_relpath("require.js",src),
-                Symbol("data-main") => _relpath("documenter.js",src)
+                :src=>_relpath(requirejs_path, src),
+                Symbol("data-main") => _relpath(documenterjs_path, src)
             ](),
-            script(_relpath("search-index.js",src)),
+            script(_relpath("search-index.js", src)),
         )
 
         logo = a[:href=>"http://julialang.org/"](
@@ -299,14 +343,6 @@ end
 flattenpages(pages::Vector) = mapreduce(flattenpages, vcat, pages)
 flattenpages(page::String) = [page]
 flattenpages(p::Pair) = flattenpages(p.second)
-
-function _relpath(path, src)
-    pagedir = dirname(src)
-    relpath(path, isempty(pagedir) ? "." : pagedir)
-end
-
-stylesheet(href) = DOM.Tag(:link)[:href => href, :rel => "stylesheet", :type => "text/css"]()
-script(src) = DOM.Tag(:script)[:src => src]()
 
 type NavContext
     doc     :: Documents.Document
