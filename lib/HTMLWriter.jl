@@ -44,7 +44,7 @@ end
 
 # Necessary until pages refactor is merged
 if isdefined(Documenter.Documents, :NavNode)
-    import Documenter.Documents: NavNode
+    import Documenter.Documents: NavNode, navpath
 else
     """
     Element in the navigation tree of a document, containing navigation references
@@ -59,6 +59,13 @@ else
         next           :: Nullable{NavNode}
     end
     NavNode(page, title_override, parent) = NavNode(page, title_override, parent, [], nothing, nothing)
+
+    """
+    Constructs a list of the parents of the `navnode`, ordered such that the `navnode`
+    itself is the last item.
+    """
+    navpath(navnode::NavNode) = isnull(navnode.parent) ? [navnode] :
+        push!(navpath(get(navnode.parent)), navnode)
 
     """
         walk_navpages(x, parent, doc)
@@ -146,13 +153,6 @@ else
     pagename(src::String) = first(splitext(src))
 end
 
-import Base: start, next, done
-start(pagedb::PageDB) = start(pagedb.navlist)
-next(pagedb::PageDB, state) = next(pagedb.navlist, state)
-done(pagedb::PageDB, state) = done(pagedb.navlist, state)
-
-parents(mp::NavNode) = isnull(mp.parent) ? [mp] : push!(parents(get(mp.parent)), mp)
-
 type SearchIndex
     loc::String
     title::String
@@ -190,7 +190,7 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
     fout_search = open("build/search-index.js", "w")
     println(fout_search, "var documenterSearchIndex = {\"docs\": [\n")
 
-    for navnode in pagedb
+    for navnode in pagedb.navlist
         if isnull(navnode.page) continue end
         src = get(navnode.page)
         page = doc.internal.pages[src]
@@ -228,7 +228,7 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
             navitem(NavContext(doc, navnode, pagedb), pagedb)
         )
 
-        header_links = map(parents(navnode)) do nn
+        header_links = map(navpath(navnode)) do nn
             if isnull(nn.page)
                 li(domify_pagetitle(nn, doc))
             else
