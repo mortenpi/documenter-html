@@ -35,20 +35,6 @@ type PageDB
 end
 
 PageDB(doc::Documents.Document) = PageDB(doc, doc.internal.navtree, doc.internal.navlist)
-function findpage(doc, path)
-    for page in doc.internal.pages
-        pagepath = if startswith(page.source, "dynamic://")
-            string(page.source[length("dynamic://")+1 : end], ".md")
-        else
-            normpath(relpath(page.source, doc.user.source))
-        end
-        @show pagepath
-        if pagepath == path
-            return page
-        end
-    end
-    error("Unable to find page: $path")
-end
 
 type SearchIndex
     loc::String
