@@ -25,17 +25,6 @@ include("Pygments.jl")
 
 include("compat.jl")
 
-"""
-Build a `Page` "database" out of a `Document`.
-"""
-type PageDB
-    doc::Documents.Document
-    navtree::Vector{NavNode}
-    navlist::Vector{NavNode}
-end
-
-PageDB(doc::Documents.Document) = PageDB(doc, doc.internal.navtree, doc.internal.navlist)
-
 type SearchIndex
     loc::String
     title::String
@@ -50,128 +39,161 @@ immutable DomifyContext
     DomifyContext(page, doc) = new(doc, page, [])
 end
 
-script(src) = DOM.Tag(:script)[:src => src]()
+type HTMLContext
+    doc :: Documents.Document
+    pkgname :: Compat.String
+    versionstring :: Compat.String
+    scripts :: Vector{Compat.String}
+    requirejs_path :: Compat.String
+    documenterjs_path :: Compat.String
+    stylesheets :: Vector{Compat.String}
+    search_index :: IOBuffer
+end
+HTMLContext(doc) = HTMLContext(doc, "", "", [], "", "", [], IOBuffer())
+
+getpage(htmlctx, path) = htmlctx.doc.internal.pages[path]
+
+function copy_assets(doc::Documents.Document)
+    Utilities.log(doc, "copying assets to build directory.")
+    assets = doc.internal.assets
+    if isdir(assets)
+        builddir = joinpath(doc.user.build, "assets")
+        isdir(builddir) || mkdir(builddir)
+        for each in readdir(assets)
+            src = joinpath(assets, each)
+            dst = joinpath(builddir, each)
+            ispath(dst) && Utilities.warn("Overwriting '$dst'.")
+            cp(src, dst; remove_destination = true)
+        end
+    else
+        error("assets directory '$(abspath(assets))' is missing.")
+    end
+end
 
 import Documenter.Writers: Writer, render
 function render(::Writer{Formats.HTML}, doc::Documents.Document)
+    htmlctx = HTMLContext(doc)
+    htmlctx.pkgname = "\$pkgname.jl" # TODO
+    htmlctx.versionstring = "v0.0.0" # TODO
+
+    htmlctx.requirejs_path = copy_asset("js/require.js", doc)
+    htmlctx.documenterjs_path = copy_asset("js/documenter.js", doc)
+    copy_asset("js/lunr.js", doc)
+
+    println(htmlctx.search_index, "var documenterSearchIndex = {\"docs\": [\n")
+    for navnode in doc.internal.navlist
+        isnull(navnode.page) || render_page(navnode, htmlctx)
+    end
+    println(htmlctx.search_index, "]}")
+    open("build/search-index.js", "w") do io
+        write(io, takebuf_string(htmlctx.search_index))
+    end
+end
+
+function render_page(navnode, htmlctx)
     @tags html head title meta link
     @tags body article header footer nav h1 ul li
     @tags span a img input hr
 
-    # determine variables
-    pkgname = "\$pkgname.jl" # TODO
-    versionstring = "v0.0.0" # TODO
+    doc = htmlctx.doc
 
-    pagedb = PageDB(doc)
+    src = get(navnode.page)
+    page = getpage(htmlctx, src)
+    println(" - Building HTML page: $(page.build)")
 
-    requirejs_path = copy_asset("js/require.js", doc)
-    documenterjs_path = copy_asset("js/documenter.js", doc)
-    copy_asset("js/lunr.js", doc)
+    h = head(
+        meta[:charset=>"UTF-8"](),
+        meta[:name => "viewport", :content => "width=device-width, initial-scale=1.0"](),
+        title(htmlctx.pkgname), # TODO
 
-    fout_search = open("build/search-index.js", "w")
-    println(fout_search, "var documenterSearchIndex = {\"docs\": [\n")
+        stylesheet_asset("normalize.css", src),
+        stylesheet_asset("style.css", src),
+        stylesheet_asset("highlight.css", src),
 
-    for navnode in pagedb.navlist
-        if isnull(navnode.page) continue end
-        src = get(navnode.page)
-        page = doc.internal.pages[src]
-        println("- building $(page.build)")
+        DOM.Tag(:script)("documenterBaseURL=\"$(_relpath(".",src))\""),
+        DOM.Tag(:script)[
+            :src=>_relpath(htmlctx.requirejs_path, src),
+            Symbol("data-main") => _relpath(htmlctx.documenterjs_path, src)
+        ](),
+        script(_relpath("search-index.js", src)),
+    )
 
-        h = head(
-            meta[:charset=>"UTF-8"](),
-            meta[:name => "viewport", :content => "width=device-width, initial-scale=1.0"](),
-            title("Documenter.jl"),
+    logo = a[:href=>"http://julialang.org/"](
+        img[
+            ".logo",
+            :src => "http://docs.julialang.org/en/release-0.4/_static/julia-logo.svg",
+            :alt => "$(htmlctx.pkgname) logo"
+        ]()
+    )
+    page_nav = nav[".toc"](
+        logo,
+        h1(htmlctx.pkgname),
+        input[:type => "text", :placeholder => "Search docs"](),
+        #navitem(doc.user.pages, src)
+        navitem(NavContext(doc, navnode, htmlctx), htmlctx)
+    )
 
-            stylesheet_asset("normalize.css", src),
-            stylesheet_asset("style.css", src),
-            stylesheet_asset("highlight.css", src),
-
-            DOM.Tag(:script)("documenterBaseURL=\"$(_relpath(".",src))\""),
-            DOM.Tag(:script)[
-                :src=>_relpath(requirejs_path, src),
-                Symbol("data-main") => _relpath(documenterjs_path, src)
-            ](),
-            script(_relpath("search-index.js", src)),
-        )
-
-        logo = a[:href=>"http://julialang.org/"](
-            img[
-                ".logo",
-                :src => "http://docs.julialang.org/en/release-0.4/_static/julia-logo.svg",
-                :alt => "$(pkgname) logo"
-            ]()
-        )
-        page_nav = nav[".toc"](
-            logo,
-            h1(pkgname),
-            input[:type => "text", :placeholder => "Search docs"](),
-            #navitem(doc.user.pages, src)
-            navitem(NavContext(doc, navnode, pagedb), pagedb)
-        )
-
-        header_links = map(navpath(navnode)) do nn
-            if isnull(nn.page)
-                li(domify_pagetitle(nn, doc))
-            else
-                li(a[:href => navhref(nn, navnode)](domify_pagetitle(nn, doc)))
-            end
-        end
-
-        art_header = header(
-            nav(
-                ul(
-                    #li(a[:href => navhref("/", src)]("Home")),
-                    header_links
-                ),
-                a[".edit-page", :href=>"https://github.com/"](span[".fa"]("\uf09b"), " Edit on GitHub") # TODO
-            ),
-            hr()
-        )
-
-        # build the footer with nav links
-        art_footer = footer(hr())
-        Utilities.unwrap(navnode.prev) do mp
-            direction = span[".direction"]("Previous")
-            pagetitle = span[".title"](domify_pagetitle(mp, doc))
-            link = a[".previous", :href => navhref(mp, navnode)](direction, pagetitle)
-            push!(art_footer.nodes, link)
-        end
-        Utilities.unwrap(navnode.next) do mp
-            direction = span[".direction"]("Next")
-            pagetitle = span[".title"](domify_pagetitle(mp, doc))
-            link = a[".next", :href => navhref(mp, navnode)](direction, pagetitle)
-            push!(art_footer.nodes, link)
-        end
-
-        context = DomifyContext(page, doc)
-        pagenodes = domify(page, context)
-        art = article["#docs"](art_header, pagenodes, art_footer)
-
-        htmldoc = HTMLDocument(html[:lang=>"en"](h,body(page_nav, art)))
-        open(Formats.extension(Formats.HTML, page.build), "w") do io
-            print(io, htmldoc)
-        end
-
-        # Append to the search index
-        href = Formats.extension(Formats.HTML, src)
-        for idx in context.index
-            ref = isempty(idx.loc) ? href : "$(href)#$(idx.loc)"
-            println(fout_search, """
-            {
-                "location": "$(jsonescape(ref))",
-                "title": "$(jsonescape(idx.title))",
-                "category": "$(jsonescape(idx.category))",
-                "text": "$(jsonescape(idx.text))"
-            },
-            """)
+    header_links = map(navpath(navnode)) do nn
+        if isnull(nn.page)
+            li(domify_pagetitle(nn, doc))
+        else
+            li(a[:href => navhref(nn, navnode)](domify_pagetitle(nn, doc)))
         end
     end
 
-    println(fout_search, "]}")
-    close(fout_search)
+    art_header = header(
+        nav(
+            ul(
+                #li(a[:href => navhref("/", src)]("Home")),
+                header_links
+            ),
+            a[".edit-page", :href=>"https://github.com/"](span[".fa"]("\uf09b"), " Edit on GitHub") # TODO
+        ),
+        hr()
+    )
+
+    # build the footer with nav links
+    art_footer = footer(hr())
+    Utilities.unwrap(navnode.prev) do mp
+        direction = span[".direction"]("Previous")
+        pagetitle = span[".title"](domify_pagetitle(mp, doc))
+        link = a[".previous", :href => navhref(mp, navnode)](direction, pagetitle)
+        push!(art_footer.nodes, link)
+    end
+    Utilities.unwrap(navnode.next) do mp
+        direction = span[".direction"]("Next")
+        pagetitle = span[".title"](domify_pagetitle(mp, doc))
+        link = a[".next", :href => navhref(mp, navnode)](direction, pagetitle)
+        push!(art_footer.nodes, link)
+    end
+
+    context = DomifyContext(page, doc)
+    pagenodes = domify(page, context)
+    art = article["#docs"](art_header, pagenodes, art_footer)
+
+    htmldoc = HTMLDocument(html[:lang=>"en"](h,body(page_nav, art)))
+    open(Formats.extension(Formats.HTML, page.build), "w") do io
+        print(io, htmldoc)
+    end
+
+    # Append to the search index
+    href = Formats.extension(Formats.HTML, src)
+    for idx in context.index
+        ref = isempty(idx.loc) ? href : "$(href)#$(idx.loc)"
+        println(htmlctx.search_index, """
+        {
+            "location": "$(jsonescape(ref))",
+            "title": "$(jsonescape(idx.title))",
+            "category": "$(jsonescape(idx.category))",
+            "text": "$(jsonescape(idx.text))"
+        },
+        """)
+    end
 end
 
 _relpath(to, from) = relhref(from, to)
+
+script(src) = DOM.Tag(:script)[:src => src]()
 
 function jsonescape(s)
     s = replace(s, '\\', "\\\\")
@@ -186,7 +208,7 @@ flattenpages(p::Pair) = flattenpages(p.second)
 type NavContext
     doc     :: Documents.Document
     current :: NavNode
-    pagedb  :: PageDB
+    pagedb  :: HTMLContext
 end
 
 function navhref(to, from)
@@ -196,7 +218,7 @@ function navhref(to, from)
 end
 navlink(ctx, to) = DOM.Tag(:a)[".toctext",:href=>navhref(to, ctx.current)](domify_pagetitle(to, ctx.doc))
 
-navitem(ctx, pagedb::PageDB) = navitem(ctx, pagedb.navtree)
+navitem(ctx, htmlctx::HTMLContext) = navitem(ctx, htmlctx.doc.internal.navtree)
 navitem(ctx, p::Vector) = DOM.Tag(:ul)(map(p->navitem(ctx, p), p))
 function navitem(ctx, p::NavNode)
     @tags ul li span a
