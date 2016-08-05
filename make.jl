@@ -49,21 +49,11 @@ function loadpages(dir, prefix, doc)
     end
 end
 
-# UNTIL: refactor-pages PR
-if fieldtype(Documenter.Documents.Internal, :pages) <: Vector
-    function custompage!(doc, name, mds)
-        elements = Base.Markdown.parse(mds).content
-        build = joinpath(doc.user.build, name)
-        page = Page("$name", build, elements, ObjectIdDict(), Globals())
-        push!(doc.internal.pages, page)
-    end
-else
-    function custompage!(doc, name, mds)
-        elements = Base.Markdown.parse(mds).content
-        build = joinpath(doc.user.build, name)
-        page = Page("", build, elements, ObjectIdDict(), Globals())
-        doc.internal.pages[name] = page
-    end
+function custompage!(doc, name, mds)
+    elements = Base.Markdown.parse(mds).content
+    build = joinpath(doc.user.build, name)
+    page = Page("", build, elements, ObjectIdDict(), Globals())
+    doc.internal.pages[name] = page
 end
 
 # Add additional pages manually

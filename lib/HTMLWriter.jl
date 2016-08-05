@@ -19,6 +19,8 @@ import Documenter:
 
 using Documenter.Utilities.DOM
 import Documenter.Writers.HTMLWriter: mdconvert
+import Documenter.Documents: NavNode, navpath
+
 include("Pygments.jl")
 
 
@@ -42,64 +44,6 @@ else
     end
 end
 
-# Necessary until pages refactor is merged
-if isdefined(Documenter.Documents, :NavNode)
-    import Documenter.Documents: NavNode, navpath
-else
-    """
-    Element in the navigation tree of a document, containing navigation references
-    to other page, reference to the [`Page`](@ref) object etc.
-    """
-    type NavNode
-        page           :: Nullable{Compat.UTF8String} # unless null, should point to a valid Page in the document
-        title_override :: Nullable{Compat.UTF8String}
-        parent         :: Nullable{NavNode}
-        children       :: Vector{NavNode}
-        prev           :: Nullable{NavNode}
-        next           :: Nullable{NavNode}
-    end
-    NavNode(page, title_override, parent) = NavNode(page, title_override, parent, [], nothing, nothing)
-
-    """
-    Constructs a list of the parents of the `navnode`, ordered such that the `navnode`
-    itself is the last item.
-    """
-    navpath(navnode::NavNode) = isnull(navnode.parent) ? [navnode] :
-        push!(navpath(get(navnode.parent)), navnode)
-
-    """
-        walk_navpages(x, parent, doc)
-
-    Recursively walks through the [`Documents.Document`](@ref)'s `.user.pages` field,
-    generating [`Documents.NavNode`](@ref)s and related data structures in the
-    process.
-
-    This implementation is the de facto specification for the `.user.pages` field.
-    """
-    walk_navpages(ps::Vector, parent, doc) = map(p -> walk_navpages(p, parent, doc), ps)
-    function walk_navpages{T}(p::Pair{String, Vector{T}}, parent, doc)
-        nn = NavNode(nothing, p.first, parent)
-        nn.children = walk_navpages(p.second, nn, doc)
-        nn
-    end
-    function walk_navpages(p::Pair{String,String}, parent, doc)
-        nn = walk_navpages(p.second, parent, doc)
-        nn.title_override = p.first
-        nn
-    end
-    function walk_navpages(src::String, parent, pagedb)
-        doc = pagedb.doc
-        if !(src in keys(doc.internal.pages))
-            _src = first(splitext(src))
-            _src in keys(doc.internal.pages) || error("'$src' is not an existing page!")
-            src = _src
-        end
-        nn = NavNode(src, nothing, parent)
-        push!(pagedb.navlist, nn)
-        nn
-    end
-end
-
 """
 Build a `Page` "database" out of a `Document`.
 """
@@ -109,48 +53,20 @@ type PageDB
     navlist::Vector{NavNode}
 end
 
-
-# UNTIL: refactor-pages PR
-#function pagedb end
-if isdefined(Documenter.Documents, :NavNode)
-    PageDB(doc::Documents.Document) = PageDB(doc, doc.internal.navtree, doc.internal.navlist)
-    function findpage(doc, path)
-        for page in doc.internal.pages
-            pagepath = if startswith(page.source, "dynamic://")
-                string(page.source[length("dynamic://")+1 : end], ".md")
-            else
-                normpath(relpath(page.source, doc.user.source))
-            end
-            @show pagepath
-            if pagepath == path
-                return page
-            end
+PageDB(doc::Documents.Document) = PageDB(doc, doc.internal.navtree, doc.internal.navlist)
+function findpage(doc, path)
+    for page in doc.internal.pages
+        pagepath = if startswith(page.source, "dynamic://")
+            string(page.source[length("dynamic://")+1 : end], ".md")
+        else
+            normpath(relpath(page.source, doc.user.source))
         end
-        error("Unable to find page: $path")
-    end
-else
-    function PageDB(doc::Documents.Document)
-        pagedb = PageDB(doc, [], [])
-        mdpages = map(p -> "$p.md", keys(doc.internal.pages))
-        userpages = isempty(doc.user.pages) ? mdpages : doc.user.pages
-        pagedb.navtree = walk_navpages(userpages, nothing, pagedb)
-
-        # Finally we populate the .next and .prev fields of the navnodes that point
-        # to actual pages (leaf nodes).
-        local prev::Nullable{NavNode} = nothing
-        for navnode in pagedb.navlist
-            navnode.prev = prev
-            Utilities.unwrap(prev) do prevnode
-                prevnode.next = navnode
-            end
-            prev = navnode
+        @show pagepath
+        if pagepath == path
+            return page
         end
-
-        pagedb
     end
-
-    findpage(doc, path) = doc.internal.pages[pagename(path)]
-    pagename(src::String) = first(splitext(src))
+    error("Unable to find page: $path")
 end
 
 type SearchIndex
