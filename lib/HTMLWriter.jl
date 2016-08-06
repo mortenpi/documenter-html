@@ -511,7 +511,8 @@ function mdconvert(c::Code, parent::MD)
     @tags pre code
     language = isempty(c.language) ? "none" : c.language
     try
-        pre(code[".highlight.language-$(language)"]((domify(Pygments.lex(language, c.code)))))
+        #pre(code[".highlight.language-$(language)"]((domify(Pygments.lex(language, c.code)))))
+        pre(code[".highlight.language-$(language)"](c.code))
     catch
         warn("No lexer for $(language)")
         pre(code[".language-$(language)"](c.code))

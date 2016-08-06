@@ -5,7 +5,8 @@ requirejs.config({
     //baseUrl: "js",
     paths: {
         'jquery': 'https://code.jquery.com/jquery-3.1.0.js?',
-        'mathjax': 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML'
+        'mathjax': 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML',
+        'highlight': 'highlight.pack'
     },
     shim: {
         'mathjax' : {
@@ -44,6 +45,10 @@ require(['mathjax'], function(MathJax) {
     });
 })
 
+require(['highlight'], function(hljs) {
+    console.log("hljs loaded.")
+    hljs.initHighlightingOnLoad();
+})
 
 var currentScript = document.currentScript;
 
