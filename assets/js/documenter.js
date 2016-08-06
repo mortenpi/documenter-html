@@ -45,9 +45,14 @@ require(['mathjax'], function(MathJax) {
     });
 })
 
-require(['highlight'], function(hljs) {
+require(['jquery', 'highlight'], function($, hljs) {
     console.log("hljs loaded.")
-    hljs.initHighlightingOnLoad();
+    $(document).ready(function() {
+        console.log("DOM ready, initializing hljs.")
+        //hljs.initHighlightingOnLoad();
+        hljs.initHighlighting();
+    })
+
 })
 
 var currentScript = document.currentScript;
