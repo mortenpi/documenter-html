@@ -43,32 +43,23 @@ type HTMLContext
     doc :: Documents.Document
     pkgname :: Compat.String
     versionstring :: Compat.String
+    logo :: Compat.String
     scripts :: Vector{Compat.String}
     requirejs_path :: Compat.String
     documenterjs_path :: Compat.String
     stylesheets :: Vector{Compat.String}
     search_index :: IOBuffer
 end
-HTMLContext(doc) = HTMLContext(doc, "", "", [], "", "", [], IOBuffer())
+HTMLContext(doc) = HTMLContext(doc, "", "", "", [], "", "", [], IOBuffer())
 
-getpage(htmlctx, path) = htmlctx.doc.internal.pages[path]
-
-function copy_assets(doc::Documents.Document)
-    Utilities.log(doc, "copying assets to build directory.")
-    assets = doc.internal.assets
-    if isdir(assets)
-        builddir = joinpath(doc.user.build, "assets")
-        isdir(builddir) || mkdir(builddir)
-        for each in readdir(assets)
-            src = joinpath(assets, each)
-            dst = joinpath(builddir, each)
-            ispath(dst) && Utilities.warn("Overwriting '$dst'.")
-            cp(src, dst; remove_destination = true)
-        end
-    else
-        error("assets directory '$(abspath(assets))' is missing.")
-    end
+function add_stylesheet!(htmlctx, stylesheet)
+    asset = joinpath("css", stylesheet)
+    path = copy_asset(asset, htmlctx.doc)
+    push!(htmlctx.stylesheets, path)
 end
+
+getpage(path, doc) = doc.internal.pages[path]
+getpage(navnode::NavNode, doc) = getpage(get(navnode.page), doc)
 
 import Documenter.Writers: Writer, render
 function render(::Writer{Formats.HTML}, doc::Documents.Document)
@@ -76,62 +67,115 @@ function render(::Writer{Formats.HTML}, doc::Documents.Document)
     htmlctx.pkgname = "\$pkgname.jl" # TODO
     htmlctx.versionstring = "v0.0.0" # TODO
 
+    add_stylesheet!(htmlctx, "normalize.css")
+    add_stylesheet!(htmlctx, "style.css")
+    add_stylesheet!(htmlctx, "highlightjs_default.css")
+    #add_stylesheet!(htmlctx, "highlight.css")
+
+    local_assetsdir = joinpath(pwd(), "assets")
+    let src = joinpath(local_assetsdir, "logo.png")
+        if isfile(src)
+            dst = joinpath(doc.user.build, "logo.png")
+            info("Copying logo...")
+            cp(src, dst, remove_destination=true)
+            htmlctx.logo = "logo.png"
+        end
+    end
+
     htmlctx.requirejs_path = copy_asset("js/require.js", doc)
     htmlctx.documenterjs_path = copy_asset("js/documenter.js", doc)
     copy_asset("js/lunr.js", doc)
+    copy_asset("js/highlight.pack.js", doc)
 
-    println(htmlctx.search_index, "var documenterSearchIndex = {\"docs\": [\n")
     for navnode in doc.internal.navlist
         isnull(navnode.page) || render_page(navnode, htmlctx)
     end
-    println(htmlctx.search_index, "]}")
-    open("build/search-index.js", "w") do io
+
+    info("Writing the search index")
+    open("build/search-index.js", "w") do io # TODO
+        println(io, "var documenterSearchIndex = {\"docs\": [\n")
         write(io, takebuf_string(htmlctx.search_index))
+        println(io, "]}")
     end
 end
 
+"""
+Constructs and writes the page referred to by the `navnode` to `.build`.
+"""
 function render_page(navnode, htmlctx)
-    @tags html head title meta link
-    @tags body article header footer nav h1 ul li
-    @tags span a img input hr
-
-    doc = htmlctx.doc
+    @tags html body
 
     src = get(navnode.page)
-    page = getpage(htmlctx, src)
-    println(" - Building HTML page: $(page.build)")
+    page = getpage(navnode, htmlctx.doc)
+    println(" - Building page: $(page.build)")
 
-    h = head(
+    head = render_head(navnode, htmlctx)
+    navmenu = render_navmenu(navnode, htmlctx)
+    article = render_article(navnode, htmlctx)
+
+    htmldoc = HTMLDocument(
+        html[:lang=>"en"](
+            head,
+            body(navmenu, article)
+        )
+    )
+    open(Formats.extension(Formats.HTML, page.build), "w") do io
+        print(io, htmldoc)
+    end
+end
+
+function render_head(navnode, htmlctx)
+    @tags head meta link script title
+    src = get(navnode.page)
+    head(
         meta[:charset=>"UTF-8"](),
         meta[:name => "viewport", :content => "width=device-width, initial-scale=1.0"](),
-        title(htmlctx.pkgname), # TODO
+        title(htmlctx.pkgname), # TODO: title of the particular page
 
-        stylesheet_asset("normalize.css", src),
-        stylesheet_asset("style.css", src),
-        stylesheet_asset("highlight.css", src),
+        map(htmlctx.stylesheets) do stylesheet
+            link[
+                :href => relhref(src, stylesheet),
+                :rel => "stylesheet",
+                :type => "text/css"
+            ]()
+        end,
 
-        DOM.Tag(:script)("documenterBaseURL=\"$(_relpath(".",src))\""),
-        DOM.Tag(:script)[
-            :src=>_relpath(htmlctx.requirejs_path, src),
-            Symbol("data-main") => _relpath(htmlctx.documenterjs_path, src)
+        script("documenterBaseURL=\"$(relhref(src, "."))\""),
+        script[
+            :src => relhref(src, htmlctx.requirejs_path),
+            Symbol("data-main") => relhref(src, htmlctx.documenterjs_path)
         ](),
-        script(_relpath("search-index.js", src)),
+        script(relhref(src, "search-index.js")),
     )
+end
 
-    logo = a[:href=>"http://julialang.org/"](
-        img[
-            ".logo",
-            :src => "http://docs.julialang.org/en/release-0.4/_static/julia-logo.svg",
-            :alt => "$(htmlctx.pkgname) logo"
-        ]()
-    )
-    page_nav = nav[".toc"](
-        logo,
-        h1(htmlctx.pkgname),
-        input[:type => "text", :placeholder => "Search docs"](),
-        #navitem(doc.user.pages, src)
-        navitem(NavContext(doc, navnode, htmlctx), htmlctx)
-    )
+function render_navmenu(navnode, htmlctx)
+    @tags nav a img h1 input
+    src = get(navnode.page)
+    navmenu = nav[".toc"]()
+    if !isempty(htmlctx.logo)
+        push!(navmenu.nodes,
+            a[:href=>"http://julialang.org/"](
+                img[
+                    ".logo",
+                    :src => relhref(src, htmlctx.logo),
+                    :alt => "$(htmlctx.pkgname) logo"
+                ]()
+            )
+        )
+    end
+    push!(navmenu.nodes, h1(htmlctx.pkgname))
+    push!(navmenu.nodes, input[:type => "text", :placeholder => "Search docs"]())
+    push!(navmenu.nodes, navitem(NavContext(htmlctx.doc, navnode, htmlctx), htmlctx))
+    navmenu
+end
+
+function render_article(navnode, htmlctx)
+    @tags article header footer nav h1 ul li span a img input hr
+
+    src = get(navnode.page)
+    doc = htmlctx.doc
+    page = getpage(src, doc)
 
     header_links = map(navpath(navnode)) do nn
         if isnull(nn.page)
@@ -143,10 +187,7 @@ function render_page(navnode, htmlctx)
 
     art_header = header(
         nav(
-            ul(
-                #li(a[:href => navhref("/", src)]("Home")),
-                header_links
-            ),
+            ul(header_links),
             a[".edit-page", :href=>"https://github.com/"](span[".fa"]("\uf09b"), " Edit on GitHub") # TODO
         ),
         hr()
@@ -154,27 +195,22 @@ function render_page(navnode, htmlctx)
 
     # build the footer with nav links
     art_footer = footer(hr())
-    Utilities.unwrap(navnode.prev) do mp
+    Utilities.unwrap(navnode.prev) do nn
         direction = span[".direction"]("Previous")
-        pagetitle = span[".title"](domify_pagetitle(mp, doc))
-        link = a[".previous", :href => navhref(mp, navnode)](direction, pagetitle)
+        pagetitle = span[".title"](domify_pagetitle(nn, doc))
+        link = a[".previous", :href => navhref(nn, navnode)](direction, pagetitle)
         push!(art_footer.nodes, link)
     end
-    Utilities.unwrap(navnode.next) do mp
+
+    Utilities.unwrap(navnode.next) do nn
         direction = span[".direction"]("Next")
-        pagetitle = span[".title"](domify_pagetitle(mp, doc))
-        link = a[".next", :href => navhref(mp, navnode)](direction, pagetitle)
+        pagetitle = span[".title"](domify_pagetitle(nn, doc))
+        link = a[".next", :href => navhref(nn, navnode)](direction, pagetitle)
         push!(art_footer.nodes, link)
     end
 
     context = DomifyContext(page, doc)
     pagenodes = domify(page, context)
-    art = article["#docs"](art_header, pagenodes, art_footer)
-
-    htmldoc = HTMLDocument(html[:lang=>"en"](h,body(page_nav, art)))
-    open(Formats.extension(Formats.HTML, page.build), "w") do io
-        print(io, htmldoc)
-    end
 
     # Append to the search index
     href = Formats.extension(Formats.HTML, src)
@@ -189,11 +225,15 @@ function render_page(navnode, htmlctx)
         },
         """)
     end
+
+    article["#docs"](art_header, pagenodes, art_footer)
 end
 
-_relpath(to, from) = relhref(from, to)
-
-script(src) = DOM.Tag(:script)[:src => src]()
+function _relpath(to, from)
+    warn("Using deprecated _relpath:")
+    println(STDERR, stacktrace()[2])
+    relhref(from, to)
+end
 
 function jsonescape(s)
     s = replace(s, '\\', "\\\\")
@@ -214,7 +254,7 @@ end
 function navhref(to, from)
     from_src = get(from.page)
     to_src = get(to.page)
-    Formats.extension(Formats.HTML,_relpath(to_src, from_src))
+    Formats.extension(Formats.HTML,relhref(from_src, to_src))
 end
 navlink(ctx, to) = DOM.Tag(:a)[".toctext",:href=>navhref(to, ctx.current)](domify_pagetitle(to, ctx.doc))
 
@@ -240,9 +280,6 @@ function navitem(ctx, p::NavNode)
 
     item
 end
-#navitem(ctx, p::String) = li(navlink(ctx, p, p))
-#navitem(ctx, p::Pair) = li(p.first, navitem(ctx, p.second))
-#navitem(ctx, p::Pair{String,String}) = li(navlink(ctx, p.first, p.second))
 
 function domify_pagetitle(navnode, doc)::Vector{DOM.Node}
     !isnull(navnode.title_override) && return [DOM.Node(get(navnode.title_override))]
@@ -325,7 +362,7 @@ function domify(node::Documents.DocsNodes, context::DomifyContext)
 end
 
 function domify(node::Documents.DocsNode, context::DomifyContext)
-    @tags div section p ul li pre strong em a br
+    @tags code div section p ul li pre strong em a br
     page, doc = context.page, context.doc
     docheader = div[".docheader"](
         a[:id=>node.anchor.id, :href=>"#$(node.anchor.id)"]("#"),
@@ -506,7 +543,6 @@ function domify(mp::Pygments.Magpie)
 end
 
 import Base.Markdown: MD, Code, Header
-@tags code
 function mdconvert(c::Code, parent::MD)
     @tags pre code
     language = isempty(c.language) ? "none" : c.language
@@ -519,10 +555,7 @@ function mdconvert(c::Code, parent::MD)
     end
 end
 
-function mdconvert(c::Code, parent)
-    @tags code
-    code(c.code)
-end
+mdconvert(c::Code, parent) = DOM.Tag(:code)(c.code)
 
 if isdefined(Base.Markdown, :Admonition)
     import Base.Markdown: Admonition
@@ -579,3 +612,34 @@ function pageid(page, doc)
 end
 
 end
+
+#= GRAVEYARD
+
+function copy_assets(doc)
+    assetsdir = joinpath(Utilities.assetsdir(), "html")
+    copy_assets(doc, assetsdir)
+end
+
+function copy_assets(doc, assetsdir)
+    Utilities.log(doc, "copying assets to build directory.")
+    isdir(assetsdir) || error("assets directory '$(abspath(assets))' is missing.")
+    for file in readdir(assetsdir)
+        if !isfile(file)
+            warn("asset copy: skipping directory $file")
+        end
+        ext = splitext(file)
+        if !(ext == "css" || ext == "js")
+            warn("asset copy: unrecognized file type '$file' (we support only .js and .css)")
+            continue
+        end
+        # copy the file to <build>/<ext> (e.g. /css/file.css, /js/file.js)
+        builddir = joinpath(doc.user.build, ext)
+        isdir(builddir) || mkdir(builddir)
+        src = joinpath(assetsdir, file)
+        dst = joinpath(builddir, file)
+        ispath(dst) && Utilities.warn("Overwriting '$dst'.")
+        cp(src, dst; remove_destination = true)
+    end
+end
+
+=#
