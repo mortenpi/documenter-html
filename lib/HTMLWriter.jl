@@ -145,7 +145,7 @@ function render_head(navnode, htmlctx)
             :src => relhref(src, htmlctx.requirejs_path),
             Symbol("data-main") => relhref(src, htmlctx.documenterjs_path)
         ](),
-        script(relhref(src, "search-index.js")),
+        script[:src => relhref(src, "search-index.js")](),
     )
 end
 
