@@ -546,6 +546,13 @@ import Base.Markdown: MD, Code, Header
 function mdconvert(c::Code, parent::MD)
     @tags pre code
     language = isempty(c.language) ? "none" : c.language
+    pre(code[".language-$(language)"](c.code))
+end
+#= Pygments version
+import Base.Markdown: MD, Code, Header
+function mdconvert(c::Code, parent::MD)
+    @tags pre code
+    language = isempty(c.language) ? "none" : c.language
     try
         #pre(code[".highlight.language-$(language)"]((domify(Pygments.lex(language, c.code)))))
         pre(code[".highlight.language-$(language)"](c.code))
@@ -554,6 +561,7 @@ function mdconvert(c::Code, parent::MD)
         pre(code[".language-$(language)"](c.code))
     end
 end
+=#
 
 mdconvert(c::Code, parent) = DOM.Tag(:code)(c.code)
 
