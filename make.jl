@@ -274,9 +274,4 @@ for (src, page) in doc.internal.pages
     println(" - [$src] \t $(page.source)")
 end
 
-macro build()
-    quote
-        include("lib/HTMLWriter.jl")
-        Documenter.Writers.render(doc)
-    end
-end
+build() = Documenter.Writers.render(doc)
