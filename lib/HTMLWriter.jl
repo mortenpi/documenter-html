@@ -362,18 +362,6 @@ end
 function domify(node::Documents.DocsNode, context::DomifyContext)
     @tags code div section p ul li pre strong em a br
     page, doc = context.page, context.doc
-    docheader = div[".docheader"](
-        a[:id=>node.anchor.id, :href=>"#$(node.anchor.id)"]("#"),
-        " ",
-        strong(code("$(node.object.binding)")),
-        " — ", # &mdash;
-        em("$(Utilities.doccat(node.object))"),
-        "."
-    )
-    ret = [
-        docheader,
-        domify_doc(node.docstr,page,doc)
-    ]
 
     # push to search index
     push!(context.index, SearchIndex(
@@ -383,76 +371,17 @@ function domify(node::Documents.DocsNode, context::DomifyContext)
         Utilities.doccat(node.object)
     ))
 
-    # generate a table of methods
-    Utilities.unwrap(node.methods) do methodnodes
-        name = node.object.binding.var # name of the method without the modules
-
-        # We filter out the methods that are marked `visible`
-        ms = [m.method for m in filter(m -> m.visible, methodnodes)]
-
-        push!(ret, strong("Methods"))
-
-        # We print a small notice of the methods table is completely empty,
-        # and an unordered list of methods if there are some to display.
-        if isempty(methodnodes)
-            push!(ret, "This function has no methods.")
-        elseif isempty(ms)
-            push!(ret, "This function has no methods to display.")
-        else
-            # A regexp to match filenames with an absolute path
-            # TODO: improve the comment
-            r = Regex("$(Pkg.dir())/([A-Za-z0-9]+)/(.*)")
-
-            lis = map(ms) do m
-                tv, decls, file, line = Base.arg_decl_parts(m)
-                decls = decls[2:end]
-                file = string(file)
-                url = try
-                    get(Utilities.url(doc.internal.remote, doc.user.repo, m.module, file, line), "")
-                catch e
-                    # the url() fails sometimes because is can't chdir into somewhere
-                    warn(e)
-                    info(" > file: $(file)")
-                    ""
-                end
-                file_match = match(r, file)
-                if file_match !== nothing
-                    file = file_match.captures[2]
-                end
-                args_raw = join([Writers.MarkdownWriter.join_decl(d, html=false) for d in decls], ", ")
-                tvars = isempty(tv) ? "" : "{" * join(tv,", ") * "}"
-                signature = "$(name)$(tvars)($(args_raw))"
-                # TODO: Multiline signature (as done in the Markdown output)
-                if length(signature) <= 40
-                    li(
-                        code[".highlight.language-julia"](
-                            domify(Pygments.lex("julia",signature))
-                        ),
-                        " defined at ",
-                        a[:target=>"_blank", :href=>url]("$(file):$(line)")
-                    )
-                else
-                    args_raw = join([" "^4 * Writers.MarkdownWriter.join_decl(d, html=false) for d in decls], ",\n")
-                    signature = "$(name)$(tvars)(\n$(args_raw)\n)"
-                    li(
-                        pre(code[".highlight.language-julia"](
-                            domify(Pygments.lex("julia",signature))
-                        )),
-                        " defined at ",
-                        a[:target=>"_blank", :href=>url]("$(file):$(line)")
-                    )
-                end
-            end
-            push!(ret, ul[".methods"](lis))
-        end
-
-        # we print a small notice if we are not displaying all the methods
-        nh = length(methodnodes)-length(ms) # number of hidden methods
-        if nh > 0
-            push!(ret, p(em("Hiding $(nh) method$(nh==1?"":"s") defined outside of this package.")))
-        end
-    end
-    section[".docstring"](ret)
+    section[".docstring"](
+        div[".docheader"](
+            a[:id=>node.anchor.id, :href=>"#$(node.anchor.id)"]("#"),
+            " ",
+            strong(code("$(node.object.binding)")),
+            " — ", # &mdash;
+            em("$(Utilities.doccat(node.object))"),
+            "."
+        ),
+        domify_doc(node.docstr,page,doc)
+    )
 end
 
 function domify_doc(md::Markdown.MD, page, doc)
