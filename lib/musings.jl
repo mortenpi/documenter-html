@@ -1,6 +1,25 @@
 module Musings
 using Compat
 import Documenter: Documents
+
+"""
+Copies over a stylesheet from the assets directory and returns the `link` node.
+
+`stylesheet` should be just the name of the stylesheet with the extension
+(e.g. `normalize.css`). `src` is the path of the current page and used to
+determine the relative href.
+"""
+function stylesheet_asset(stylesheet, src)
+    asset = joinpath("css", stylesheet)
+    path = copy_asset(asset, src)
+    DOM.Tag(:link)[
+        :href => relhref(src, path),
+        :rel => "stylesheet",
+        :type => "text/css"
+    ]()
+end
+
+
 ## Outline?
 type PageSection
     header :: Markdown.Header
