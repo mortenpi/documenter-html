@@ -16,7 +16,23 @@ pages = [
     ],
     "Library" => [
         "lib/public.md",
-        "lib/internals.md",
+        "Internals" => [
+            "Internals" => "lib/internals.md",
+            "Anchors" => "lib/internals/anchors.md",
+            "Builder" => "lib/internals/builder.md",
+            "CrossReferences" => "lib/internals/cross-references.md",
+            "DocChecks" => "lib/internals/docchecks.md",
+            "DocSystem" => "lib/internals/docsystem.md",
+            "Documents" => "lib/internals/documents.md",
+            "DOM" => "lib/internals/dom.md",
+            "Expanders" => "lib/internals/expanders.md",
+            "Formats" => "lib/internals/formats.md",
+            "Generator" => "lib/internals/generator.md",
+            "Selectors" => "lib/internals/selectors.md",
+            "Utilities" => "lib/internals/utilities.md",
+            "Walkers" => "lib/internals/walkers.md",
+            "Writers" => "lib/internals/writers.md",
+        ]
     ],
     "Dynamic pages" => [
         "dynamic/code",
