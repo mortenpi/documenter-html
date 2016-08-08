@@ -21,8 +21,6 @@ using Documenter.Utilities.DOM
 import Documenter.Writers.HTMLWriter: mdconvert
 import Documenter.Documents: NavNode, navpath
 
-include("Pygments.jl")
-
 include("compat.jl")
 
 type SearchIndex
@@ -533,35 +531,12 @@ function domify(node, page, doc)
     end
 end
 
-function domify(mp::Pygments.Magpie)
-    @tags span
-    ret = Vector()
-    for (t,v) in mp
-        push!(ret, isempty(t) ? span(v) : span[".$t"](v))
-    end
-    ret
-end
-
 import Base.Markdown: MD, Code, Header
 function mdconvert(c::Code, parent::MD)
     @tags pre code
     language = isempty(c.language) ? "none" : c.language
     pre(code[".language-$(language)"](c.code))
 end
-#= Pygments version
-import Base.Markdown: MD, Code, Header
-function mdconvert(c::Code, parent::MD)
-    @tags pre code
-    language = isempty(c.language) ? "none" : c.language
-    try
-        #pre(code[".highlight.language-$(language)"]((domify(Pygments.lex(language, c.code)))))
-        pre(code[".highlight.language-$(language)"](c.code))
-    catch
-        warn("No lexer for $(language)")
-        pre(code[".language-$(language)"](c.code))
-    end
-end
-=#
 
 mdconvert(c::Code, parent) = DOM.Tag(:code)(c.code)
 

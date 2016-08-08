@@ -1,3 +1,10 @@
+"""
+Usage
+
+```julia
+include("Pygments.jl")
+```
+"""
 module Pygments
 
 using PyCall
@@ -34,3 +41,29 @@ end
 #length(iter::Magpie) = length(iter.obj)
 
 end # module
+
+
+#= Pygments version
+import Base.Markdown: MD, Code, Header
+function mdconvert(c::Code, parent::MD)
+    @tags pre code
+    language = isempty(c.language) ? "none" : c.language
+    try
+        #pre(code[".highlight.language-$(language)"]((domify(Pygments.lex(language, c.code)))))
+        pre(code[".highlight.language-$(language)"](c.code))
+    catch
+        warn("No lexer for $(language)")
+        pre(code[".language-$(language)"](c.code))
+    end
+end
+
+function domify(mp::Pygments.Magpie)
+    @tags span
+    ret = Vector()
+    for (t,v) in mp
+        push!(ret, isempty(t) ? span(v) : span[".$t"](v))
+    end
+    ret
+end
+
+=#
