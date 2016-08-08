@@ -6,7 +6,9 @@ if isdefined(Documenter.Utilities, :MDFlatten)
     import Documenter.Writers.HTMLWriter:
         relhref,
         copy_asset,
-        stylesheet_asset
+        stylesheet_asset,
+        collect_subsections,
+        pagetitle,
 else
     info("Loading methods from compat.jl")
     include("MDFlatten.jl")
@@ -65,5 +67,30 @@ else
             :rel => "stylesheet",
             :type => "text/css"
         ]()
+    end
+
+    """
+    Tries to guess the page title by looking at the `<h1>` headers and returns the
+    header contents as a `Nullable` (nulled if the algorithm was unable to determine
+    the header).
+    """
+    function pagetitle(page::Documenter.Documents.Page)::Nullable{Any}
+        for e in page.elements
+            isa(e, Base.Markdown.Header{1}) && return e.text
+        end
+        return nothing
+    end
+
+    """
+    Returns a list of tuples `(anchor, text)`, corresponding to all level 2 headers.
+    """
+    function collect_subsections(page::Documents.Page)
+        # TODO: Should probably be replaced by a proper outline algorithm.
+        #       Currently we ignore the case when there are multiple h1-s.
+        hs = filter(e -> isa(e, Base.Markdown.Header{2}), page.elements)
+        map(hs) do e
+            anchor = page.mapping[e]
+            "#$(anchor.id)-$(anchor.nth)", e.text
+        end
     end
 end

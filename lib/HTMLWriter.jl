@@ -169,7 +169,7 @@ function render_navmenu(navnode, htmlctx)
 end
 
 function render_article(navnode, htmlctx)
-    @tags article header footer nav h1 ul li span a img input hr
+    @tags article header footer nav ul li hr span a
 
     src = get(navnode.page)
     doc = htmlctx.doc
@@ -227,21 +227,11 @@ function render_article(navnode, htmlctx)
     article["#docs"](art_header, pagenodes, art_footer)
 end
 
-function _relpath(to, from)
-    warn("Using deprecated _relpath:")
-    println(STDERR, stacktrace()[2])
-    relhref(from, to)
-end
-
 function jsonescape(s)
     s = replace(s, '\\', "\\\\")
     s = replace(s, '\n', "\\n")
     replace(s, '"', "\\\"")
 end
-
-flattenpages(pages::Vector) = mapreduce(flattenpages, vcat, pages)
-flattenpages(page::String) = [page]
-flattenpages(p::Pair) = flattenpages(p.second)
 
 type NavContext
     doc     :: Documents.Document
@@ -254,6 +244,7 @@ function navhref(to, from)
     to_src = get(to.page)
     Formats.extension(Formats.HTML,relhref(from_src, to_src))
 end
+
 navlink(ctx, to) = DOM.Tag(:a)[".toctext",:href=>navhref(to, ctx.current)](domify_pagetitle(to, ctx.doc))
 
 navitem(ctx, htmlctx::HTMLContext) = navitem(ctx, htmlctx.doc.internal.navtree)
@@ -268,10 +259,10 @@ function navitem(ctx, p::NavNode)
     end
 
     if p === ctx.current && !isnull(p.page)
-        sections = collect_subsections(ctx.doc.internal.pages[get(p.page)])
-        internal_links = map(sections) do s
-            anchor, title = s
-            li(a[".toctext", :href => anchor](title))
+        subs = collect_subsections(ctx.doc.internal.pages[get(p.page)])
+        internal_links = map(subs) do _
+            anchor, text = _
+            li(a[".toctext", :href => anchor](mdconvert(text)))
         end
         push!(item.nodes, ul[".internal"](internal_links))
     end
@@ -414,10 +405,10 @@ domify(anchor::Documents.MetaNode, page, doc) = Vector{DOM.Node}()
 function domify(page::Documents.Page, context::DomifyContext)
     stillpage = true
     sl = ""
-    st = get(pagetitle_string(page), "<UNTITLED>")
+    st = mdflatten(get(pagetitle(page), "<UNTITLED>"))
     ss = IOBuffer()
     map(page.elements) do elem
-        if typeof(elem) <: Header
+        if typeof(elem) <: Markdown.Header
             searchcat = stillpage ? "Page" : "Section"
             stillpage && (stillpage = false)
             push!(context.index, SearchIndex(sl, st, takebuf_string(ss), searchcat))
@@ -460,72 +451,59 @@ function domify(node, page, doc)
     end
 end
 
-import Base.Markdown: MD, Code, Header
-function mdconvert(c::Code, parent::MD)
-    @tags pre code
-    language = isempty(c.language) ? "none" : c.language
-    pre(code[".language-$(language)"](c.code))
 end
 
-mdconvert(c::Code, parent) = DOM.Tag(:code)(c.code)
+module Musings
+using Compat
+import Documenter: Documents
+## Outline?
+type PageSection
+    header :: Markdown.Header
+    anchor :: Compat.String
+    subsections :: Vector{PageSection}
+end
 
-if isdefined(Base.Markdown, :Admonition)
-    import Base.Markdown: Admonition
-    function mdconvert(a::Admonition, parent)
-        @tags div
-        div[".admonition.$(a.category)"](
-            div[".admonition-title"](a.title),
-            div[".admonition-text"](mdconvert(a.content, a))
+function sections(page::Documents.Page)
+    headers = filter(e -> isa(e, Markdown.Header), page.elements)
+    sections(headers, page)
+end
+
+function sections(headers::Vector, page::Documents.Page)
+    isempty(headers) && return []
+    maxlevel = Utilities.header_level(headers[1])
+    topheaders = find(h -> Utilities.header_level(h) <= maxlevel, headers)
+
+    map(enumerate(topheaders)) do _
+        n, i = _
+        last = (n == length(topheaders)) ? length(headers) : i-1
+        header = headers[i]
+        anchor = page.mapping[header]
+        PageSection(
+            header,
+            "#$(anchor.id)-$(anchor.nth)",
+            sections(headers[i+1:last], page)
         )
     end
+
 end
 
-mdconvert(expr::Union{Expr,Symbol}, parent) = string(expr)
-
-# Other utilities
-
-"""
-Returns a `Nullable{String}`, which is nulled if the page title could not be
-determined.
-"""
-function pagetitle_string(page::Documenter.Documents.Page)::Nullable{String}
-    for e in page.elements
-        if typeof(e) === Base.Markdown.Header{1}
-            return mdflatten(e.text)
-        end
-    end
-    return nothing
-end
-
-function pagetitle(page::Documenter.Documents.Page)::Nullable{Any}
-    for e in page.elements
-        if typeof(e) === Base.Markdown.Header{1}
-            return e.text
-        end
-    end
-    return nothing
-end
-
-function collect_subsections(page::Documenter.Documents.Page)
-    # TODO: Multiple H1-s?
-    # TODO: Can we get header "link" as well?
-    h2s = filter(e->typeof(e)===Base.Markdown.Header{2}, page.elements)
-    map(h2s) do e
-        anchor = page.mapping[e]
-        "#$(anchor.id)-$(anchor.nth)", mdconvert(e.text)
+print_sections(sections) = print_sections(sections, 0)
+function print_sections(sections, n)
+    for s in sections
+        print("  "^n)
+        print(" ")
+        Markdown.plain(STDOUT, Markdown.Header{n+1}(s.header.text))
+        print_sections(s.subsections, n+1)
     end
 end
 
+## Other musings
 function pageid(page, doc)
     for (src, page_try) in doc.internal.pages
         page == page_try && return src
     end
     throw(KeyError("page [$(object_id(page))] not found in document [$(object_id(doc))]"))
 end
-
-end
-
-#= GRAVEYARD
 
 function copy_assets(doc)
     assetsdir = joinpath(Utilities.assetsdir(), "html")
@@ -554,4 +532,4 @@ function copy_assets(doc, assetsdir)
     end
 end
 
-=#
+end
