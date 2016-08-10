@@ -28,6 +28,7 @@ doc = Documenter.Documents.Document(
             "dynamic/code",
             "Admonitions & Co" => "dynamic/admonitions",
             "dynamic/styles",
+            "dynamic/latex",
             "dynamic/bugs"
         ],
     ]
@@ -168,6 +169,17 @@ a small footprint | UnicodePlots, Plotly
 ## Pictures
 
 [![Ducks! (alt-text)](http://www.freedigitalphotos.net/images/img/homepage/87357.jpg)](https://en.wikipedia.org/wiki/Duck)
+
+""")
+
+custompage!(doc, "dynamic/latex", """
+# The ``\\sin(x^2)`` project
+
+... aka ``\\LaTeX`` in titles.
+
+```math
+y = f(x)
+```
 
 """)
 
