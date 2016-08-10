@@ -3,67 +3,35 @@ import Documenter: Builder, Selectors, Formats
 import Documenter.Documents: Page, Globals
 import Documenter.Builder: SetupBuildDirectory
 
-pages = [
-    "Overview" => "index.md",
-    "Manual" => [
-        "Guide" => "man/guide.md",
-        "man/examples.md",
-        "man/syntax.md",
-        "man/doctests.md",
-        "man/hosting.md",
-        "man/latex.md",
-        "man/internals.md",
-    ],
-    "Library" => [
-        "lib/public.md",
-        "Internals" => [
-            "Internals" => "lib/internals.md",
-            "Anchors" => "lib/internals/anchors.md",
-            "Builder" => "lib/internals/builder.md",
-            "CrossReferences" => "lib/internals/cross-references.md",
-            "DocChecks" => "lib/internals/docchecks.md",
-            "DocSystem" => "lib/internals/docsystem.md",
-            "Documents" => "lib/internals/documents.md",
-            "DOM" => "lib/internals/dom.md",
-            "Expanders" => "lib/internals/expanders.md",
-            "Formats" => "lib/internals/formats.md",
-            "Generator" => "lib/internals/generator.md",
-            "Selectors" => "lib/internals/selectors.md",
-            "Utilities" => "lib/internals/utilities.md",
-            "Walkers" => "lib/internals/walkers.md",
-            "Writers" => "lib/internals/writers.md",
-        ]
-    ],
-    "Dynamic pages" => [
-        "dynamic/code",
-        "Admonitions & Co" => "dynamic/admonitions",
-        "dynamic/styles",
-        "dynamic/bugs"
-    ],
-]
-
 # Configure Documenter
 Documenter.Selectors.disable(::Type{Documenter.Builder.RenderDocument}) = true
 Documenter.Selectors.disable(::Type{Documenter.Builder.CheckDocument}) = true
 
+function loadpages(dir, prefix)
+    names = collect(readdir(dir))
+    map!(n -> joinpath(prefix, n), names)
+    sort(names)
+end
+
 println("Creating the document...")
 ispath("build") && rm("build", recursive=true)
 doc = Documenter.Documents.Document(
-    source = relpath(joinpath(Pkg.dir("Documenter"), "docs/src")),
+    sitename = "Julia language",
+    source = "julia-docs/",
     format = Formats.HTML,
     modules = Documenter,
-    pages = pages
+    pages = [
+        "Manual" => loadpages("julia-docs/manual", "manual"),
+        "Standard Libary" => loadpages("julia-docs/stdlib", "stdlib"),
+        "DevDocs" => loadpages("julia-docs/devdocs", "devdocs"),
+        "Dynamic pages" => [
+            "dynamic/code",
+            "Admonitions & Co" => "dynamic/admonitions",
+            "dynamic/styles",
+            "dynamic/bugs"
+        ],
+    ]
 )
-@show doc.user.source
-
-function loadpages(dir, prefix, doc)
-    map(readdir(dir)) do p
-        mds = readstring(joinpath(dir,p))
-        name = first(splitext(joinpath(prefix,p)))
-        custompage!(doc, name, mds)
-        name
-    end
-end
 
 function custompage!(doc, name, mds)
     elements = Base.Markdown.parse(mds).content
@@ -71,11 +39,6 @@ function custompage!(doc, name, mds)
     page = Page("", build, elements, ObjectIdDict(), Globals())
     doc.internal.pages[name] = page
 end
-
-# Add additional pages manually
-#push!(doc.user.pages, "JuliaDocs - Manual" => loadpages("julia-docs/manual", "manual", doc))
-#push!(doc.user.pages, "JuliaDocs - Standard Libary" => loadpages("julia-docs/stdlib", "stdlib", doc))
-#push!(doc.user.pages, "JuliaDocs - DevDocs" => loadpages("julia-docs/devdocs", "devdocs", doc))
 
 custompage!(doc, "dynamic/code", """
 # Code examples
@@ -263,9 +226,6 @@ cd(doc.user.root) do
     @show doc.user.root
     Selectors.runner(SetupBuildDirectory, doc)
     mkdir("build/dynamic")
-    mkdir("build/manual")
-    mkdir("build/stdlib")
-    mkdir("build/devdocs")
     Selectors.dispatch(Builder.DocumentPipeline, doc)
 end
 
