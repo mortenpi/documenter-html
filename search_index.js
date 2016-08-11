@@ -1,6 +1,20 @@
 var documenterSearchIndex = {"docs": [
 
 {
+    "location": "index.html#",
+    "title": "Home",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "index.html#The-Julia-manual-1",
+    "title": "Home",
+    "category": "section",
+    "text": "note: Note\nBuilt with Documenter.jl"
+},
+
+{
     "location": "manual/arrays.html#",
     "title": "Multi-dimensional Arrays",
     "category": "page",
@@ -3287,7 +3301,7 @@ var documenterSearchIndex = {"docs": [
     "location": "stdlib/arrays.html#Base.permute!",
     "title": "Base.permute!",
     "category": "Function",
-    "text": "permute!(v, p)\n\nPermute vector v in-place, according to permutation p. No checking is done to verify that p is a permutation.\n\nTo return a new permutation, use v[p]. Note that this is generally faster than permute!(v,p) for large vectors.\n\n\n\npermute!{Tv,Ti,Tp<:Integer,Tq<:Integer}(X::SparseMatrixCSC{Tv,Ti}, A::SparseMatrixCSC{Tv,Ti},\n    p::AbstractVector{Tp}, q::AbstractVector{Tq}[, C::SparseMatrixCSC{Tv,Ti}])\n\nBilaterally permute A, storing result PAQ (A[p,q]) in X. Stores intermediate result (AQ)^T (transpose(A[:,q])) in optional argument C if present. Requires that none of X, A, and, if present, C alias each other; to store result PAQ back into A, use the following method lacking X:\n\npermute!{Tv,Ti,Tp<:Integer,Tq<:Integer}(A::SparseMatrixCSC{Tv,Ti}, p::AbstractVector{Tp},\n    q::AbstractVector{Tq}[, C::SparseMatrixCSC{Tv,Ti}[, workcolptr::Vector{Ti}]])\n\nX's dimensions must match those of A (X.m == A.m and X.n == A.n), and X must have enough storage to accommodate all allocated entries in A (length(X.rowval) >= nnz(A) and length(X.nzval) >= nnz(A)). Column-permutation q's length must match A's column count (length(q) == A.n). Row-permutation p's length must match A's row count (length(p) == A.m).\n\nC's dimensions must match those of transpose(A) (C.m == A.n and C.n == A.m), and C must have enough storage to accommodate all allocated entries in A (length(C.rowval) >= nnz(A)andlength(C.nzval) >= nnz(A)`).\n\nFor additional (algorithmic) information, and for versions of these methods that forgo argument checking, see (unexported) parent methods unchecked_noalias_permute! and unchecked_aliasing_permute!.\n\nSee also: permute\n\n\n\n"
+    "text": "permute!{Tv,Ti,Tp<:Integer,Tq<:Integer}(X::SparseMatrixCSC{Tv,Ti}, A::SparseMatrixCSC{Tv,Ti},\n    p::AbstractVector{Tp}, q::AbstractVector{Tq}[, C::SparseMatrixCSC{Tv,Ti}])\n\nBilaterally permute A, storing result PAQ (A[p,q]) in X. Stores intermediate result (AQ)^T (transpose(A[:,q])) in optional argument C if present. Requires that none of X, A, and, if present, C alias each other; to store result PAQ back into A, use the following method lacking X:\n\npermute!{Tv,Ti,Tp<:Integer,Tq<:Integer}(A::SparseMatrixCSC{Tv,Ti}, p::AbstractVector{Tp},\n    q::AbstractVector{Tq}[, C::SparseMatrixCSC{Tv,Ti}[, workcolptr::Vector{Ti}]])\n\nX's dimensions must match those of A (X.m == A.m and X.n == A.n), and X must have enough storage to accommodate all allocated entries in A (length(X.rowval) >= nnz(A) and length(X.nzval) >= nnz(A)). Column-permutation q's length must match A's column count (length(q) == A.n). Row-permutation p's length must match A's row count (length(p) == A.m).\n\nC's dimensions must match those of transpose(A) (C.m == A.n and C.n == A.m), and C must have enough storage to accommodate all allocated entries in A (length(C.rowval) >= nnz(A)andlength(C.nzval) >= nnz(A)`).\n\nFor additional (algorithmic) information, and for versions of these methods that forgo argument checking, see (unexported) parent methods unchecked_noalias_permute! and unchecked_aliasing_permute!.\n\nSee also: permute\n\n\n\npermute!(v, p)\n\nPermute vector v in-place, according to permutation p. No checking is done to verify that p is a permutation.\n\nTo return a new permutation, use v[p]. Note that this is generally faster than permute!(v,p) for large vectors.\n\n\n\n"
 },
 
 {
@@ -4694,7 +4708,7 @@ var documenterSearchIndex = {"docs": [
     "location": "stdlib/dates.html#Base.round",
     "title": "Base.round",
     "category": "Function",
-    "text": "round(z, RoundingModeReal, RoundingModeImaginary)\n\nReturns the nearest integral value of the same type as the complex-valued z to z, breaking ties using the specified RoundingModes. The first RoundingMode is used for rounding the real components while the second is used for rounding the imaginary components.\n\n\n\nround([T,] x, [digits, [base]], [r::RoundingMode])\n\nRounds x to an integer value according to the provided RoundingMode, returning a value of the same type as x. When not specifying a rounding mode the global mode will be used (see rounding), which by default is round to the nearest integer (RoundNearest mode), with ties (fractional values of 0.5) being rounded to the nearest even integer.\n\njulia> round(1.7)\n2.0\n\njulia> round(1.5)\n2.0\n\njulia> round(2.5)\n2.0\n\nThe optional RoundingMode argument will change how the number gets rounded.\n\nround(T, x, [r::RoundingMode]) converts the result to type T, throwing an InexactError if the value is not representable.\n\nround(x, digits) rounds to the specified number of digits after the decimal place (or before if negative). round(x, digits, base) rounds using a base other than 10.\n\njulia> round(pi, 2)\n3.14\n\njulia> round(pi, 3, 2)\n3.125\n\nnote: Note\nRounding to specified digits in bases other than 2 can be inexact when operating on binary floating point numbers. For example, the Float64 value represented by 1.15 is actually less than 1.15, yet will be rounded to 1.2.julia> x = 1.15\n1.15\n\njulia> @sprintf \"%.20f\" x\n\"1.14999999999999991118\"\n\njulia> x < 115//100\ntrue\n\njulia> round(x, 1)\n1.2\n\n\n\nround(dt::TimeType, p::Period, [r::RoundingMode]) -> TimeType\n\nReturns the Date or DateTime nearest to dt at resolution p. By default (RoundNearestTiesUp), ties (e.g., rounding 9:30 to the nearest hour) will be rounded up.\n\nFor convenience, p may be a type instead of a value: round(dt, Dates.Hour) is a shortcut for round(dt, Dates.Hour(1)).\n\njulia> round(Date(1985, 8, 16), Dates.Month)\n1985-08-01\n\njulia> round(DateTime(2013, 2, 13, 0, 31, 20), Dates.Minute(15))\n2013-02-13T00:30:00\n\njulia> round(DateTime(2016, 8, 6, 12, 0, 0), Dates.Day)\n2016-08-07T00:00:00\n\nValid rounding modes for round(::TimeType, ::Period, ::RoundingMode) are RoundNearestTiesUp (default), RoundDown (floor), and RoundUp (ceil).\n\n\n\n"
+    "text": "round(dt::TimeType, p::Period, [r::RoundingMode]) -> TimeType\n\nReturns the Date or DateTime nearest to dt at resolution p. By default (RoundNearestTiesUp), ties (e.g., rounding 9:30 to the nearest hour) will be rounded up.\n\nFor convenience, p may be a type instead of a value: round(dt, Dates.Hour) is a shortcut for round(dt, Dates.Hour(1)).\n\njulia> round(Date(1985, 8, 16), Dates.Month)\n1985-08-01\n\njulia> round(DateTime(2013, 2, 13, 0, 31, 20), Dates.Minute(15))\n2013-02-13T00:30:00\n\njulia> round(DateTime(2016, 8, 6, 12, 0, 0), Dates.Day)\n2016-08-07T00:00:00\n\nValid rounding modes for round(::TimeType, ::Period, ::RoundingMode) are RoundNearestTiesUp (default), RoundDown (floor), and RoundUp (ceil).\n\n\n\nround(z, RoundingModeReal, RoundingModeImaginary)\n\nReturns the nearest integral value of the same type as the complex-valued z to z, breaking ties using the specified RoundingModes. The first RoundingMode is used for rounding the real components while the second is used for rounding the imaginary components.\n\n\n\nround([T,] x, [digits, [base]], [r::RoundingMode])\n\nRounds x to an integer value according to the provided RoundingMode, returning a value of the same type as x. When not specifying a rounding mode the global mode will be used (see rounding), which by default is round to the nearest integer (RoundNearest mode), with ties (fractional values of 0.5) being rounded to the nearest even integer.\n\njulia> round(1.7)\n2.0\n\njulia> round(1.5)\n2.0\n\njulia> round(2.5)\n2.0\n\nThe optional RoundingMode argument will change how the number gets rounded.\n\nround(T, x, [r::RoundingMode]) converts the result to type T, throwing an InexactError if the value is not representable.\n\nround(x, digits) rounds to the specified number of digits after the decimal place (or before if negative). round(x, digits, base) rounds using a base other than 10.\n\njulia> round(pi, 2)\n3.14\n\njulia> round(pi, 3, 2)\n3.125\n\nnote: Note\nRounding to specified digits in bases other than 2 can be inexact when operating on binary floating point numbers. For example, the Float64 value represented by 1.15 is actually less than 1.15, yet will be rounded to 1.2.julia> x = 1.15\n1.15\n\njulia> @sprintf \"%.20f\" x\n\"1.14999999999999991118\"\n\njulia> x < 115//100\ntrue\n\njulia> round(x, 1)\n1.2\n\n\n\n"
 },
 
 {
@@ -7505,10 +7519,38 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "dynamic/styles.html#bar",
+    "title": "bar",
+    "category": "Function",
+    "text": "An informative oneliner.\n\n\n\n"
+},
+
+{
+    "location": "dynamic/styles.html#baz",
+    "title": "baz",
+    "category": "Function",
+    "text": "An informative oneliner.\n\n\n\n"
+},
+
+{
+    "location": "dynamic/styles.html#foobar",
+    "title": "foobar",
+    "category": "Function",
+    "text": "An informative oneliner.\n\n\n\n"
+},
+
+{
+    "location": "dynamic/styles.html#barbaz",
+    "title": "barbaz",
+    "category": "Function",
+    "text": "An informative oneliner.\n\n\n\n"
+},
+
+{
     "location": "dynamic/styles.html#Docstrings-1",
     "title": "Demonstrating styles of MD elements",
     "category": "section",
-    "text": "Of course, docstrings can be included. Such as the one for the functions foo:fooIn addition to that we can have even more docstrings!# Example with foo and Bar\nx = Bar()\nfoo(x)BarThat's all folks!"
+    "text": "Of course, docstrings can be included. Such as the one for the functions foo:fooIn addition to that we can have even more docstrings!# Example with foo and Bar\nx = Bar()\nfoo(x)Bar\nbar\nbaz\nfoobar\nbarbazThat's all folks!"
 },
 
 {
