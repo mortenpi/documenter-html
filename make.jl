@@ -22,6 +22,7 @@ doc = Documenter.Documents.Document(
     format = Formats.HTML,
     modules = [Main, Documenter],
     pages = [
+        "Home" => "index",
         "Manual" => loadpages("julia-docs/manual", "manual"),
         "Standard Libary" => loadpages("julia-docs/stdlib", "stdlib"),
         "DevDocs" => loadpages("julia-docs/devdocs", "devdocs"),
@@ -41,6 +42,16 @@ function custompage!(doc, name, mds)
     page = Page("", build, elements, ObjectIdDict(), Globals())
     doc.internal.pages[name] = page
 end
+
+custompage!(doc, "index", """
+# The Julia manual
+
+!!! note
+    Built with Documenter.jl
+
+```@contents
+```
+""")
 
 custompage!(doc, "dynamic/code", """
 # Code examples
