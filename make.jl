@@ -1,3 +1,4 @@
+using DocStringExtensions
 using Documenter
 import Documenter: Builder, Selectors, Formats
 import Documenter.Documents: Page, Globals
@@ -19,7 +20,7 @@ doc = Documenter.Documents.Document(
     sitename = "Julia language",
     source = "julia-docs/",
     format = Formats.HTML,
-    modules = Documenter,
+    modules = [Main, Documenter],
     pages = [
         "Manual" => loadpages("julia-docs/manual", "manual"),
         "Standard Libary" => loadpages("julia-docs/stdlib", "stdlib"),
@@ -123,6 +124,23 @@ custompage!(doc, "dynamic/admonitions", """
         Admonition in an admonition?
 """)
 
+"""
+$(SIGNATURES)
+
+`foo` is a function that does things.
+"""
+foo() = nothing
+foo(x,y) = nothing
+
+"""
+Bar is a type!
+"""
+type Bar
+    x :: Int
+    "`y` is documented."
+    y :: Float64
+end
+
 custompage!(doc, "dynamic/styles", """
 # Demonstrating *styles* of MD elements
 
@@ -169,6 +187,24 @@ a small footprint | UnicodePlots, Plotly
 ## Pictures
 
 [![Ducks! (alt-text)](http://www.freedigitalphotos.net/images/img/homepage/87357.jpg)](https://en.wikipedia.org/wiki/Duck)
+
+## Docstrings
+
+Of course, docstrings can be included. Such as the one for the functions [`foo`](@ref):
+```@docs
+foo
+```
+In addition to that we can have even more docstrings!
+```julia
+# Example with foo and Bar
+x = Bar()
+foo(x)
+```
+```@docs
+Bar
+```
+
+That's all folks!
 
 """)
 
