@@ -143,6 +143,18 @@ $(SIGNATURES)
 foo() = nothing
 foo(x,y) = nothing
 
+"An informative oneliner."
+bar() = nothing
+
+"An informative oneliner."
+baz() = nothing
+
+"An informative oneliner."
+foobar() = nothing
+
+"An informative oneliner."
+barbaz() = nothing
+
 """
 Bar is a type!
 """
@@ -213,6 +225,10 @@ foo(x)
 ```
 ```@docs
 Bar
+bar
+baz
+foobar
+barbaz
 ```
 
 That's all folks!
