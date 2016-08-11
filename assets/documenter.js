@@ -1,22 +1,25 @@
 console.log("documenter.js loaded")
 
 requirejs.config({
-    //appDir: ".",
-    //baseUrl: "js",
     paths: {
         'jquery': 'https://code.jquery.com/jquery-3.1.0.js?',
-        'mathjax': 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML'
+        'jqueryui': 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min',
+        'mathjax': 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML',
+        'highlight': 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/highlight.min',
+        'highlight-julia': 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/languages/julia.min',
+        'lunr': 'https://cdnjs.cloudflare.com/ajax/libs/lunr.js/0.7.1/lunr.min'
     },
     shim: {
         'mathjax' : {
             exports: "MathJax"
-        }
+        },
+        'highlight-julia': ['highlight']
     }
 });
 
 // Load MathJax
 require(['mathjax'], function(MathJax) {
-    console.log("MathJax loaded.")
+    console.debug("MathJax loaded.")
     MathJax.Hub.Config({
       "tex2jax": {
         inlineMath: [['$','$'], ['\\(','\\)']],
@@ -44,21 +47,20 @@ require(['mathjax'], function(MathJax) {
     });
 })
 
+require(['jquery', 'highlight', 'highlight-julia'], function($, hljs) {
+    console.debug("hljs loaded.")
+    $(document).ready(function() {
+        console.debug("DOM ready, initializing hljs.")
+        hljs.initHighlighting();
+    })
+
+})
 
 var currentScript = document.currentScript;
 
-function setSearchIndex(index) {
-    console.log("setSearchIndex called.")
-    console.log(index)
-}
-
 require(["jquery", "lunr"], function($,lunr) {
-    console.log("lunr loaded.")
+    console.debug("lunr loaded.")
 
-    //data = $.getJSON((require.toUrl("search-index.json")))
-    //console.log(data)
-
-    console.log("Building lunr index...")
     var index = lunr(function () {
         this.ref('location')
         this.field('title', {boost: 10})
@@ -67,14 +69,11 @@ require(["jquery", "lunr"], function($,lunr) {
     var store = {}
 
     documenterSearchIndex['docs'].forEach(function(e) {
-        console.log("Indexing: " + e.location)
         index.add(e)
         store[e.location] = e
     })
 
-    console.log("setting up jQuery.")
     $(function(){
-        console.log("documenter.js: prepend")
         $('body').append('<article id="search" class="overlay"> </div>')
         $('#search').append('<span id="search-close"></span>')
         $('#search').append('<h1 id="search-title">Search</h1>')
@@ -89,7 +88,7 @@ require(["jquery", "lunr"], function($,lunr) {
         function update_search() {
             $('body').css('overflow', 'hidden')
             $('#search').show()
-            query = $('nav.toc input').val()
+            query = $('#search-query').val()
             results = index.search(query)
             $('#search-meta').text("Number of results: " + results.length)
             $('#search-results').empty()
@@ -99,13 +98,12 @@ require(["jquery", "lunr"], function($,lunr) {
                 link.text(data.title)
                 link.attr('href', documenterBaseURL+'/'+result.ref)
                 cat = $('<span class="category">('+data.category+')</span>')
-                dbg = $('<span class="score debug">'+result.score+'</span>')
-                li = $('<li>').append(link).append(cat).append(dbg)
+                li = $('<li>').append(link).append(cat)
                 $('#search-results').append(li)
             })
         }
 
-        $('nav.toc input').keyup(update_search)
-        $('nav.toc input').change(update_search)
+        $('#search-query').keyup(update_search)
+        $('#search-query').change(update_search)
     })
 })
