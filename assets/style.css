@@ -344,7 +344,7 @@ article section.docstring a.source-link {
 }
 
 /* Search */
-#search {
+#search-results {
     /* restoring values, since a global `article` selector changes them */
     margin: initial;
     min-width: initial;
