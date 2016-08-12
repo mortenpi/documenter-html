@@ -246,9 +246,17 @@ article section.docstring {
     border-radius: 3px;
 }
 
-article div.docheader {
-    /*margin: 1em 0;*/
+article section.docstring .docstring-header {
     margin-bottom: 1em;
+}
+
+article section.docstring .docstring-binding {
+    color: #333;
+    font-weight: bold;
+}
+
+article section.docstring .docstring-category {
+    font-style: italic;
 }
 
 article section.docstring a.source-link {
@@ -256,9 +264,10 @@ article section.docstring a.source-link {
   font-weight: bold;
 }
 
-ul.methods pre {
-    /* HACK: overflow: auto / scroll make the list bullets disappear. */
-    overflow: visible;
+.nav-anchor,
+.nav-anchor:hover,
+.nav-anchor:visited {
+    color: #333;
 }
 
 /*
