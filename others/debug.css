@@ -1,0 +1,72 @@
+@import url("https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.css");
+
+/* Font imports */
+@import url("https://fonts.googleapis.com/css?family=Lato");
+@import url("https://fonts.googleapis.com/css?family=Merriweather|Merriweather+Sans");
+@import url("https://fonts.googleapis.com/css?family=Open+Sans");
+@import url("https://fonts.googleapis.com/css?family=Source+Code+Pro");
+@import url("https://fontlibrary.org/face/fantasque-sans-mono");
+
+#options {
+    position: fixed;
+    bottom: 1em;
+    right: 1em;
+    background-color: lightgray;
+    border: 1px solid black;
+    min-width: 20em;
+
+    font: initial;
+    font-family: sans;
+    font-size: smaller;
+}
+
+#options-title {
+    background: black;
+    font-weight: bold;
+    color: white;
+    padding: 0.1em;
+    text-align: center;
+}
+
+#options select,
+#options .ui-widget {
+    display: block;
+    width: 95%;
+    margin: 0.2em 0;
+}
+
+#options .value {
+    font-weight: bold;
+    background-color: yellow;
+}
+
+.debug {
+    display: none;
+}
+
+#search span.score {
+    float: right;
+    font-size: x-small;
+}
+
+#search span.score::before {
+    content: 'Score: ';
+}
+
+.ukwnode {
+    margin: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border: 2px solid black;
+    background-color: lightblue;
+}
+
+.ukwnode h1 {
+    font-size: medium;
+}
+
+.mdnote {
+    position: absolute;
+    right: 0;
+    font-size: x-small;
+}

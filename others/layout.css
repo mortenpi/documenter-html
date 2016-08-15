@@ -1,0 +1,21 @@
+/* Overrides for responsive design */
+@media screen and (max-width: 42em) {
+    nav.toc {
+        box-shadow: none;
+        position: relative;
+        width: 100%;
+    }
+
+    nav.toc h1:before {
+        font-family: "FontAwesome";
+        content: "\f0c9 ";
+    }
+
+    article {
+        margin-left: auto;
+    }
+
+    .edit-page {
+        display: none;
+    }
+}
